@@ -9,6 +9,7 @@ import Location from '../../assets/location.svg';
 import Home from '../../assets/home.svg';
 import Megaphone from '../../assets/megaphone.svg';
 
+//UNUSED USE AS REFERENCE
 
 export default function NavBar({ navigation }) {
     const [buttonToggle, setButtonToggle] = useState([0, 1, 0]);

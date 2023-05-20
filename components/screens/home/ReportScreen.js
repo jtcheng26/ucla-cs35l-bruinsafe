@@ -6,9 +6,6 @@ import TouchableScale from "react-native-touchable-scale";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import Modal from "react-native-modal";
-import {Camera, useCameraDevices} from 'react-native-vision-camera';
-import ImagePicker from 'react-native-image-picker';
-import { RNCamera } from 'react-native-camera';
 import Tabs from "../../overlays/NavBar";
 
 
@@ -53,16 +50,6 @@ export default function ReportScreen() {
         }
     }
 
-    const handleCamera = async () => {
-        const { status } = await RNCamera.requestCameraPermissions();
-        if (status === 'granted') {
-          // Camera permission granted, open the camera
-          console.log('Opening camera...');
-        } else {
-          // Camera permission not granted
-          console.log('Camera permission denied');
-        }
-      };
     
 
       /*  async function getPermission() {
@@ -213,7 +200,6 @@ export default function ReportScreen() {
 
             <TouchableScale
             className="mt-10"
-            onPress={handleCamera}
             >
                 <Cam
                 fill="#80ACBF"

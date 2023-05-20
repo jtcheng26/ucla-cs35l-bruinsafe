@@ -14,13 +14,10 @@ export default function Map() {
                 longitude: -122.4324,
                 latitudeDelta: 0.0922,
                 longitudeDelta: 0.0421,
-              }}
+              }} 
             
         >
         </MapView>
-        <Text>
-            Hello
-        </Text>
     </View>
   );
 }
