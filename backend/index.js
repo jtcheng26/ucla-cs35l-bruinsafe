@@ -1,8 +1,10 @@
 require("dotenv").config();
 
-const { mongoose, BlogPost } = require("./models.js");
+const { mongoose, UserModel } = require("./models.js");
 
-const app = require("express")();
+const express = require("express");
+const app = express();
+app.use(express.json());
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const port = process.env.PORT || 8080;
@@ -23,9 +25,25 @@ io.on("connection", (socket) => {
   });
 });
 
-app.get("/", (req, res) => {
-  new BlogPost({ title: "title", body: "body", date: new Date() }).save();
-  res.send("Hello World!")
+app.get("/user/:id", async (req, res) => {
+  const id = req.params.id
+  if (!mongoose.isValidObjectId(id)) {
+    res.send("Invalid ID", 400)
+    return
+  }
+  const model = await UserModel.findById(id).exec()
+  if (model) {
+    res.send(model.toJSON())
+  } else
+  res.send("User not found", 400);
+});
+
+app.post("/user/create", (req, res) => {
+  const email = req.body.email;
+  const name = req.body.name;
+  const model = new UserModel({ email: email, name: name });
+  model.save();
+  res.send(model.toJSON());
 });
 server.listen(port, function () {
   console.log(`Listening on port ${port}`);

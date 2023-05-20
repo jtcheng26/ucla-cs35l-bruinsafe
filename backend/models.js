@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 mongoose
   .connect(process.env.DATABASE_URL)
   .then((res) => {
-    console.log("Connected");
+    console.log("Connected to MongoDB");
   })
   .catch((err) => {
     console.log("Failed to connect", err);
@@ -11,23 +11,13 @@ mongoose
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
-/* Schema to represent ... */
-const BlogPostSchema = new Schema({
-  author: ObjectId,
-  title: String,
-  body: String,
-  date: Date,
+/* Schema to represent Users */
+const UserSchema = new Schema({
+  id: ObjectId,
+  email: String,
+  name: String,
 });
 
-/* Schema to represent ... */
-const Schema2 = new Schema({
-  author: ObjectId,
-  title: String,
-  body: String,
-  date: Date,
-});
+const UserModel = mongoose.model("User", UserSchema);
 
-const BlogPost = mongoose.model("BlogPost", BlogPostSchema);
-const BlogPost2 = mongoose.model("BlogPost2", Schema2);
-
-module.exports = { mongoose, BlogPost, BlogPost2 };
+module.exports = { mongoose, UserModel };
