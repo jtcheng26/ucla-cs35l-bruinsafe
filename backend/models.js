@@ -18,6 +18,17 @@ const UserSchema = new Schema({
   name: String,
 });
 
-const UserModel = mongoose.model("User", UserSchema);
+const ReportSchema = new Schema({
+  type: String,
+  timestamp: Date,
+  description: String,
+  location: {
+    latitude: Number,
+    longitude: Number,
+  },
+});
 
-module.exports = { mongoose, UserModel };
+const UserModel = mongoose.model("User", UserSchema);
+const ReportModel = mongoose.model("Report", ReportSchema);
+
+module.exports = { mongoose, UserModel, ReportModel };
