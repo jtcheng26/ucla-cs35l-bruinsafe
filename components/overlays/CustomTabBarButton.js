@@ -6,7 +6,7 @@ import Location from '../../assets/location.svg';
 import Home from '../../assets/home.svg';
 import Megaphone from '../../assets/megaphone.svg';
 
-const CustomTabBarButton = (props) => {
+export default function CustomTabBarButton(props){
     const {route, children, active, onPress} = props;
     const [buttonToggle, setButtonToggle] = useState([0, 1, 0]);
 
@@ -31,14 +31,7 @@ if (route == "Home")
 {
  return (
     <View style={styles.buttonWrapper}>
-    <TouchableScale style={styles.active} activeScale={0.95} onPress={() =>
-    {
-
-        onPress;
-        buttonClick(0);
-    }
-    
-    }>
+    <TouchableScale style={styles.active} activeScale={0.95} onPress={onPress}>
 
             <View className="flex justify-center items-center">
                     <Home width="60" height="60" elevation="20" fill={true ?  "#80ACBF" : "#FBBF24" } />
@@ -96,15 +89,31 @@ else if (route == "Report")
     )
 }
 
+else if (route == "Home")
+
+{
+    return (
+        <View style={styles.buttonWrapper}>
+        <TouchableScale style={styles.active} activeScale={0.95} onPress={onPress}>
+    
+                <View className="flex justify-center items-center">
+                        <Home width="60" height="60" elevation="20" fill={true ?  "#80ACBF" : "#FBBF24" } />
+                        {buttonToggle[0] == 1 ? (
+                            <Svg height="20" width="20">
+                                <Circle cx="10" cy="10" r="4" fill="#FBBF24"/>
+                            </Svg>) : null}
+                </View>
+    
+        </TouchableScale>
+        </View>
+    
+    )
+
 
 
 }
 
-
-
-
-
-export default CustomTabBarButton
+}
 
 const styles = StyleSheet.create({
     inactive:
