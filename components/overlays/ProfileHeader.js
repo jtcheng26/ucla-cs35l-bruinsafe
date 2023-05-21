@@ -23,7 +23,7 @@ export default function ProfileHeader({ name, icon }) {
     
     return (
         <>
-            <Modal
+            {/* <Modal
             isVisible={screenVisible}
             onBackdropPress={() => setScreenVisible(false)}
             onDismiss={() => setScreenVisible(false)}
@@ -131,15 +131,16 @@ export default function ProfileHeader({ name, icon }) {
                     </View>      
 
                 </SafeAreaView>
-            </Modal>
-            <SafeAreaView
+            </Modal> */}
+            {/* <SafeAreaView
             className="flex-row w-full h-12 items-center"
             >
 
                 <TouchableScale
-                className="flex-row w-1/2 h-12 mt-10 items-center"
+                // className="flex-row w-1/2 h-12 mt-10 items-center"
+                className="absolute top-10"
                 activeScale={0.97}
-                onPress={() => setScreenVisible(true)}
+                // onPress={() => setScreenVisible(true)}
                 >
                     <Image 
                     source={pfp}
@@ -151,7 +152,23 @@ export default function ProfileHeader({ name, icon }) {
                         {userName}
                     </Text>
                 </TouchableScale>
-            </SafeAreaView>
+            </SafeAreaView> */}
+            <TouchableScale
+                // className="flex-row w-1/2 h-12 mt-10 items-center"
+                className="absolute-center"
+                activeScale={0.97}
+                // onPress={() => setScreenVisible(true)}
+                >
+                    <Image 
+                    source={pfp}
+                    className="w-8 h-8 mr-4 ml-6"
+                    />
+                    <Text
+                    className="text-white "
+                    >
+                        {userName}
+                    </Text>
+                </TouchableScale>
         </>
     );
 }
