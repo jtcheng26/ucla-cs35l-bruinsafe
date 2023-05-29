@@ -15,10 +15,11 @@ export default function ProfileHeader({ name, icon }) {
     const [changedName, setChangedName] = useState(null);
     const [phonenumber, setPhoneNumber] = useState(null);
     const [emergencyContact, setEmergencyContact] = useState(null);
+    const [email, setEmail] = useState(null);
 
     const styles = {
         inputText: "text-white text-lg align-left mt-4 ml-3",
-        inputField: "p-2 w-12/12 m-2 justify-start border-b-2 border-sky-300",
+        inputField: "py-2 w-12/12 text-white m-2 justify-start border-b-2 border-sky-300",
     }
     
     return (
@@ -40,7 +41,7 @@ export default function ProfileHeader({ name, icon }) {
                 className="w-screen h-screen bg-sky-950 rounded-xl flex-col items-center"
                 >
                     <Text
-                    className="text-white mt-6 text-4xl font-bold text-center"
+                    className="text-white mt-10 text-4xl font-bold text-center"
                     >
                         Edit Your Profile
                     </Text>
@@ -67,6 +68,22 @@ export default function ProfileHeader({ name, icon }) {
                         <Text
                         className={styles.inputText}
                         >
+                            Email:
+                        </Text>
+                        <TextInput
+                        className={styles.inputField + " h-10"}
+                        placeholderTextColor="#0284BE"
+                        placeholder="Ex: johndoe@g.ucla.edu"
+                        onChangeText={setEmail}
+                        />
+                    </View>
+
+                    <View
+                    className="w-11/12 mt-4"
+                    >
+                        <Text
+                        className={styles.inputText}
+                        >
                             Phone Number:
                         </Text>
                         <TextInput
@@ -76,7 +93,6 @@ export default function ProfileHeader({ name, icon }) {
                         onChangeText={setPhoneNumber}
                         />
                     </View>
-
 
                     <View
                     className="w-11/12 mt-4"
@@ -98,7 +114,7 @@ export default function ProfileHeader({ name, icon }) {
                     className="w-full items-center absolute bottom-0"
                     >
                         <View
-                        className="flex-row"
+                        className="flex-row mb-4"
                         >
                             <TouchableScale
                             className="bg-red-500 w-10 h-10 m-6 pt-1 rounded-full items-center justify-center"
@@ -117,7 +133,7 @@ export default function ProfileHeader({ name, icon }) {
                             activeScale={0.98}
                             onPress={() => {
                                 setScreenVisible(false)
-                                if(changedName != "") setUserName(changedName);
+                                if(!(changedName == "" || !changedName)) setUserName(changedName);
                             }}
                             >
                                 <Check 
@@ -132,12 +148,12 @@ export default function ProfileHeader({ name, icon }) {
 
                 </SafeAreaView>
             </Modal>
-            <SafeAreaView
-            className="flex-row w-full h-12 items-center"
+            <View
+            className="absolute top-10 flex-row w-full h-12 items-center"
             >
 
                 <TouchableScale
-                className="flex-row w-1/2 h-12 mt-10 items-center"
+                className="flex-row w-1/2 h-12 items-center"
                 activeScale={0.97}
                 onPress={() => setScreenVisible(true)}
                 >
@@ -151,7 +167,7 @@ export default function ProfileHeader({ name, icon }) {
                         {userName}
                     </Text>
                 </TouchableScale>
-            </SafeAreaView>
+            </View>
         </>
     );
 }

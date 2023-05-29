@@ -28,7 +28,7 @@ export default function NavBar({onPress}) {
     }
     return (
         <View className="flex-1 justify-end">
-            <View className="flex flex-row space-x-5 mb-7">
+            <View className="flex flex-row space-x-5">
                 <TouchableScale activeScale={0.95} onPress={() => buttonClick(0)}>
                     <View className="flex justify-center items-center">
                         <Home width={styles.buttonSize} height={styles.buttonSize} fill={buttonToggle[0] == 1 ? "#FBBF24" : "#80ACBF"} />
