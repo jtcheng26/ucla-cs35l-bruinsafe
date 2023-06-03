@@ -32,7 +32,7 @@ export default function NavBar({ navigation }) {
         }
     }
     return (
-        <View className="flex-1 justify-end">
+        <View className="absolute bottom-0 pb-0">
             <View className="flex flex-row space-x-5 mb-7">
 
                 <TouchableScale activeScale={0.95} onPress={() => buttonClick(0)}>
@@ -70,7 +70,6 @@ export default function NavBar({ navigation }) {
                         </Svg>) : null}
 
                     </View>
-
                 </TouchableScale>
 
 
