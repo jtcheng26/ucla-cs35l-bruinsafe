@@ -321,7 +321,7 @@ export default function MapScreen() {
         region={location}
         customMapStyle={mapStyle}
       >
-        {/* {GOOGLE_MAPS_APIKEY && ( */}
+        {GOOGLE_MAPS_APIKEY && (
           <MapViewDirections
             origin={origin}
             destination={destination}
@@ -332,7 +332,7 @@ export default function MapScreen() {
               console.log(res);
             }}
           />
-        {/* )} */}
+        )}
       </MapView>
       <ProfileHeader name={"David Smalberg"}/>
       <NumberReports numReports={9} />
