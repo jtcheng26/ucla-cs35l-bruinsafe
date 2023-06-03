@@ -230,7 +230,7 @@ export default function ReportScreen() {
                 )
                 : (<></>)
             }
-            <Tabs/>
+            {/* <Tabs/> */}
         </View>
     );
 }
