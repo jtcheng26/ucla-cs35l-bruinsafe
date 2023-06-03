@@ -1,6 +1,5 @@
 import { View, Text, TextInput, Keyboard, Image, TouchableOpacity, SafeAreaView } from "react-native";
-import { useState } from "react";
-import NavBar from "../../overlays/NavBar";
+import { useState, useEffect } from "react";
 import Camera from "../../../assets/camera.svg"
 import ProfileHeader from "../../overlays/ProfileHeader";
 import TouchableScale from "react-native-touchable-scale";
@@ -20,8 +19,6 @@ export default function ReportScreen() {
     }
 
     const [incidentDescription, setDescription] = useState(null);
-    const [date, setDate] = useState(new Date());
-    const [time, setTime] = useState(new Date());
     const [toSubmit, setToSubmit] = useState(false);
     const [submitPressed, setSubmitPressed] = useState(false);
     const [ddopen, setDDOpen] = useState(false);
@@ -50,26 +47,31 @@ export default function ReportScreen() {
 
     }
 
-    const setDate1 = (newDate) => {
-        const curDate = newDate;
-        setDate(curDate);
-      };
-
-    const setTime1 = (newTime) => {
-        const curTime = newTime;
-        setTime(curTime);
-    }
-
     const handleSubmit = () => {
         setSubmitPressed(true);
         if( incidentValue.length != 0 && incidentDescription ) {
-            axios.post('/report/create', {
-                type: incidentValue,
-                description: incidentDescription,
-            })
-            .catch(error => {
-                console.log("Error: ", error)
-            });
+            // axios.post('/report/create', {
+            //     type: incidentValue,
+            //     description: incidentDescription,
+            // })
+            // .catch(error => {
+            //     console.log("Error: ", error)
+            // });
+            // useEffect(() => {
+                const sendData = async () => {
+                    try {
+                        const data = {
+                            type: incidentValue,
+                            description: incidentDescription,
+                        };
+                        const response = await axios.post('/report/create', data);
+                        console.log(response.data);
+                    } catch(error) {
+                        console.error(error);
+                    }
+                };
+                sendData();
+            // }, []);
             setToSubmit(true);
         }
     }
@@ -80,8 +82,6 @@ export default function ReportScreen() {
         setIncidentValue([]);
         setDescription(null);
         setDDOpen(false);
-        setDate(new Date());
-        setTime(new Date());
     }
 
     return (
@@ -280,7 +280,6 @@ export default function ReportScreen() {
                 )
                 : (<></>)
             }
-            <NavBar />
         </SafeAreaView>
     );
 }
