@@ -14,7 +14,7 @@ export default function MapScreen() {
         latitudeDelta: 0.009,
         longitudeDelta: 0.009
     };
-    const [walking, setWalking] = useState(true);
+    const [walking, setWalking] = useState(false);
     return (
         <View className="flex-1 justify-center items-center h-full w-full bg-sky-950">
             {/* <ProfileHeader /> */}
