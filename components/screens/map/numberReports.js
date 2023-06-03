@@ -18,7 +18,7 @@ export default function numberReports({numReports}) {
     }
     return (
         <TouchableScale className={styles.bgStyle} activeScale={1}>
-            <Text className={styles.textStyle}>{numReports} reports nearby</Text>
+            <Text className={styles.textStyle}>{numReports} {(numReports != 1) ? "reports nearby" : "report nearby"}</Text>
         </TouchableScale>
     );
 }

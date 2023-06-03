@@ -291,7 +291,7 @@ export default function MapScreen() {
         latitudeDelta: 0.009,
         longitudeDelta: 0.009
     };
-    const [walking, setWalking] = useState(false);
+    const [walking, setWalking] = useState(true);
     return (
         <View className="flex-1 justify-center items-center h-full w-full bg-sky-950">
             <MapView 
@@ -301,8 +301,8 @@ export default function MapScreen() {
                 region={location}
             />
             <ProfileHeader name={"David Smalberg"}/>
-            <NumberReports numReports={1}/>
-            {walking ? <WalkingPage /> : <WalkButton />}
+            <NumberReports numReports={9}/>
+            {walking ? <WalkingPage locationName={"Westwood Plaza"} walkerFullName={"Carey Nachenberg"}/> : <WalkButton />}
         </View>
     )
 }
