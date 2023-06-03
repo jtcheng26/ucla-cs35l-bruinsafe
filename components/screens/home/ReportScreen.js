@@ -1,10 +1,7 @@
 import { View, Text, TextInput, Keyboard, Image, TouchableOpacity, SafeAreaView, Linking } from "react-native";
 import { useState, useRef, useEffect } from "react";
-import Cam from "../../../assets/camera.svg"
 import ProfileHeader from "../../overlays/ProfileHeader";
 import TouchableScale from "react-native-touchable-scale";
-import DateTimePicker from '@react-native-community/datetimepicker';
-import RNDateTimePicker from "@react-native-community/datetimepicker";
 import Modal from "react-native-modal";
 import DropDownPicker from "react-native-dropdown-picker";
 import axios from "axios"
@@ -43,10 +40,6 @@ export default function ReportScreen() {
         if(nativeEvent.key === 'Enter') Keyboard.dismiss();
     }
 
-    const handleCamera = () => {
-
-    }
-
     const handleSubmit = () => {
         setSubmitPressed(true);
         if( incidentValue.length != 0 && incidentDescription ) {
@@ -58,43 +51,29 @@ export default function ReportScreen() {
             //     console.log("Error: ", error)
             // });
             // useEffect(() => {
-                const sendData = async () => {
-                    try {
-                        const data = {
-                            type: incidentValue,
-                            description: incidentDescription,
-                        };
-                        const response = await axios.post('/report/create', data);
-                        console.log(response.data);
-                    } catch(error) {
-                        console.error(error);
-                    }
-                };
-                sendData();
+            // setDescription(incidentDescription.trim());
+            const sendData = async () => {
+                try {
+                    const data = {
+                        type: incidentValue[0],
+                        description: incidentDescription.replace('\n', ''),
+                        location: {
+                            latitude: 169,
+                            longitude: 198
+                        }
+                    };
+                    const response = await axios.post('http://169.232.214.177:8080/report/create', data);
+                    console.log(response.data);
+                } catch(error) {
+                    console.error(error);
+                }
+            };
+            sendData();
             // }, []);
             setToSubmit(true);
         }
     }
 
-    
-
-      /*  async function getPermission() {
-            const permission = await Camera.requestCameraPermissionAsync();
-            if (permission === 'denied') await Linking.openSettings();
-
-
-        }
-        getPermission();
- 
-        const devices = useCameraDevices('wide-angle-camera')
-        const device = devices.back
-
-        return (
-            <Camera
-            style = {styles.absoluteFill}
-            device = {device}
-            />
-        ) */
 
     const clear = () => {
         setSubmitPressed(false);
@@ -108,15 +87,15 @@ export default function ReportScreen() {
         <SafeAreaView
         className="flex-1 justify-center items-center bg-sky-950"
         >
-            <ProfileHeader name={"Anonymous"}/>
+            <ProfileHeader name={"David Smalberg"}/>
             <Text
-            className="font-bold text-white text-center text-3xl mt-16"
+            className="font-bold text-white text-center text-3xl"
             >
                 Report an Incident
             </Text>
 
             <View
-            className="w-11/12 h-1/2 mt-2"
+            className="w-11/12 h-1/2 mt-6"
             >
                 <Text
                 className={styles.inputText}
@@ -173,43 +152,14 @@ export default function ReportScreen() {
                 badgeColors="rgb(166 210 250)"
                 />
 
-                {/* <Text
-                className={styles.inputText + " mb-3"}
-                >
-                    Time of Incident:
-                </Text>
-                <View
-                className="flex-row justify-center"
-                >
-                    <RNDateTimePicker 
-                    mode="date" 
-                    value={date}
-                    themeVariant="dark"
-                    onChange={() => setDate1}
-                    accentColor="#80ACBF"
-                    maximumDate={new Date()}
-                    />
-
-                    <View 
-                    className="w-6"
-                    />
-
-                    <RNDateTimePicker 
-                    mode="time"
-                    value={time} 
-                    themeVariant="dark"
-                    onChange={() => setTime1}
-                    accentColor="#80ACBF"
-                    //maximumDate={new Date()}
-                    />
-                </View> */}
-
                 <Text
                 className={styles.inputText}
                 >
                     Description:
                 </Text>
                 <TextInput
+                enablesReturnKeyAutomatically
+                returnKeyType="done"
                 className={styles.inputField + " h-1/2 pt-3"}
                 textAlignVertical="bottom"
                 placeholderTextColor="#0369a1"
@@ -217,7 +167,7 @@ export default function ReportScreen() {
                 onKeyPress={enterPress}
                 multiline={true}
                 placeholder="Ex: 5'7 man wearing a blue hoodie..."
-                value={incidentDescription}
+                value={(incidentDescription) ? incidentDescription.replace('\n', '') : null}
                 />  
 
             </View>
@@ -268,18 +218,7 @@ export default function ReportScreen() {
 
 
             <TouchableScale
-            className="mt-10"
-            onPress={handleCamera}
-            >
-                <Cam
-                fill="#80ACBF"
-                width={60}
-                height={60}
-                />
-            </TouchableScale>
-
-            <TouchableScale
-            className="rounded-lg mt-6 h-8 w-40 justify-center items-center bg-red-500"
+            className="rounded-lg mt-20 h-8 w-40 justify-center items-center bg-red-500"
             activeScale={0.95}
             onPress={handleSubmit}
             >

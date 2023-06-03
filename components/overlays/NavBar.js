@@ -33,14 +33,9 @@ export default function NavBar({ updateScreen }) {
         }
     }
     return (
-<<<<<<< HEAD
-        <View className="flex-1 justify-end">
-            <View className="flex flex-row space-x-5">
-=======
         <View className="absolute w-full bottom-0 pb-0 items-center align-center">
             <View className="flex flex-row space-x-5 mb-7">
 
->>>>>>> main
                 <TouchableScale activeScale={0.95} onPress={() => buttonClick(0)}>
 
                     <View className="flex justify-center items-center">
