@@ -9,9 +9,7 @@ import Location from '../../assets/location.svg';
 import Home from '../../assets/home.svg';
 import Megaphone from '../../assets/megaphone.svg';
 
-//UNUSED USE AS REFERENCE
-
-export default function NavBar({ navigation }) {
+export default function NavBar({ updateScreen }) {
     const [buttonToggle, setButtonToggle] = useState([0, 1, 0]);
 
     const styles = {
@@ -23,16 +21,19 @@ export default function NavBar({ navigation }) {
     function buttonClick(i) {
         if (i == 0) {
             setButtonToggle([1, 0, 0]);
+            updateScreen("home");
         } else if (i == 1) {
             setButtonToggle([0, 1, 0]);
+            updateScreen("map");
         } else if (i == 2) {
             setButtonToggle([0, 0, 1]);
+            updateScreen("report");
         } else {
             setButtonToggle([0, 0, 0]);
         }
     }
     return (
-        <View className="absolute bottom-0 pb-0">
+        <View className="absolute w-full bottom-0 pb-0 items-center align-center">
             <View className="flex flex-row space-x-5 mb-7">
 
                 <TouchableScale activeScale={0.95} onPress={() => buttonClick(0)}>
