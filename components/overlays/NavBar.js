@@ -21,12 +21,15 @@ export default function NavBar({ updateScreen }) {
     function buttonClick(i) {
         if (i == 0) {
             setButtonToggle([1, 0, 0]);
+            setTimeout(() => {}, 1000);
             updateScreen("home");
         } else if (i == 1) {
             setButtonToggle([0, 1, 0]);
+            setTimeout(() => {}, 1000);
             updateScreen("map");
         } else if (i == 2) {
             setButtonToggle([0, 0, 1]);
+            setTimeout(() => {}, 1000);
             updateScreen("report");
         } else {
             setButtonToggle([0, 0, 0]);
