@@ -3,6 +3,8 @@ require("dotenv").config();
 const { mongoose, UserModel, ReportModel } = require("./models.js");
 
 const express = require("express");
+const ip = require('ip');
+const ipAddress = ip.address();
 const app = express();
 app.use(express.json());
 const server = require("http").createServer(app);
@@ -68,7 +70,7 @@ app.post("/report/search", async (req, res) => {
   res.send(nearby);
 });
 
-const REPORT_TYPES = ["suspicious", "danger", "violence"];
+const REPORT_TYPES = ["suspicious", "danger", "rape", "violence"];
 app.post("/report/create", (req, res) => {
   const type = req.body.type;
   const timestamp = new Date();
@@ -91,4 +93,5 @@ app.post("/report/create", (req, res) => {
 /* ======================= Run App ======================= */
 server.listen(port, function () {
   console.log(`Listening on port ${port}`);
+  console.log(`Network access via: ${ipAddress}:${port}!`);
 });

@@ -6,7 +6,6 @@ import { StyleSheet, Text, View } from 'react-native';
 import HomeScreen from './components/screens/home/HomeScreen';
 import MapScreen from './components/screens/map/MapScreen';
 import ReportScreen from './components/screens/home/ReportScreen';
-import MapScreen from './components/screens/home/MapScreen';
 
 export default function App() {
     const [screen, setScreen] = useState("map");
