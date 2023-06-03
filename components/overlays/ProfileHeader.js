@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { View, Text, Image, TextInput, SafeAreaView } from "react-native";
 import Modal from "react-native-modal";
+import tw from "tailwind-react-native-classnames"
 import TouchableScale from "react-native-touchable-scale";
 import pfp from "../../assets/Default_pfp.svg.png"
 import Cancel from "../../assets/cancel.svg"
@@ -19,7 +20,11 @@ export default function ProfileHeader({ name, icon }) {
 
     const styles = {
         inputText: "text-white text-lg align-left mt-4 ml-3",
+<<<<<<< HEAD
         inputField: "py-2 w-12/12 text-white m-2 justify-start border-b-2 border-sky-300",
+=======
+        inputField: "text-white p-2 w-12/12 m-2 justify-start border-b-2 border-sky-300",
+>>>>>>> main
     }
     
     return (
@@ -88,6 +93,7 @@ export default function ProfileHeader({ name, icon }) {
                         </Text>
                         <TextInput
                         className={styles.inputField + " h-10"}
+                        inputStyle={{color: 'white'}}
                         placeholderTextColor="#0284BE"
                         placeholder="Ex: (XXX) XXX - XXXX"
                         onChangeText={setPhoneNumber}
@@ -148,26 +154,39 @@ export default function ProfileHeader({ name, icon }) {
 
                 </SafeAreaView>
             </Modal>
+<<<<<<< HEAD
             <View
             className="absolute top-10 flex-row w-full h-12 items-center"
+=======
+            <SafeAreaView
+            className="absolute top-12 left-2"
+>>>>>>> main
             >
-
                 <TouchableScale
+<<<<<<< HEAD
                 className="flex-row w-1/2 h-12 items-center"
+=======
+                className="flex-row w h-12 items-center"
+>>>>>>> main
                 activeScale={0.97}
                 onPress={() => setScreenVisible(true)}
                 >
                     <Image 
                     source={pfp}
-                    className="w-8 h-8 mr-4 ml-6"
+                    className="w-8 h-8 mr-2 ml-4"
                     />
                     <Text
-                    className="text-white "
+                    className="text-white font-bold"
                     >
                         {userName}
                     </Text>
                 </TouchableScale>
+<<<<<<< HEAD
             </View>
+=======
+            </SafeAreaView>
+
+>>>>>>> main
         </>
     );
 }

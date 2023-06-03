@@ -53,14 +53,16 @@ app.post("/user/create", (req, res) => {
 const MAX_RADIUS = 0.1 * 0.1 + 0.1 * 0.1;
 
 app.post("/report/search", async (req, res) => {
-  const location = req.body.location
-  console.log(location)
+  const myLoc = {
+    latitude: req.body.latitude,
+    longitude: req.body.longitude
+  }
   // optimize this for larger datasets in the future
   const all = await ReportModel.find({});
   const nearby = all.filter((report) => {
-    const loc = report.get("location");
-    const dx = Math.abs(loc.latitude - location.latitude);
-    const dy = Math.abs(loc.longitude - location.longitude);
+    const reportLoc = report.get("location");
+    const dx = Math.abs(myLoc.latitude - reportLoc.latitude);
+    const dy = Math.abs(myLoc.longitude - reportLoc.longitude);
     return dx * dx + dy * dy <= MAX_RADIUS;
   });
   res.send(nearby);

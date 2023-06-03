@@ -1,6 +1,6 @@
-import { View, Text, TextInput, Keyboard, Image, TouchableOpacity, SafeAreaView } from "react-native";
-import { useState, useEffect } from "react";
-import Camera from "../../../assets/camera.svg"
+import { View, Text, TextInput, Keyboard, Image, TouchableOpacity, SafeAreaView, Linking } from "react-native";
+import { useState, useRef, useEffect } from "react";
+import Cam from "../../../assets/camera.svg"
 import ProfileHeader from "../../overlays/ProfileHeader";
 import TouchableScale from "react-native-touchable-scale";
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -75,6 +75,26 @@ export default function ReportScreen() {
             setToSubmit(true);
         }
     }
+
+    
+
+      /*  async function getPermission() {
+            const permission = await Camera.requestCameraPermissionAsync();
+            if (permission === 'denied') await Linking.openSettings();
+
+
+        }
+        getPermission();
+ 
+        const devices = useCameraDevices('wide-angle-camera')
+        const device = devices.back
+
+        return (
+            <Camera
+            style = {styles.absoluteFill}
+            device = {device}
+            />
+        ) */
 
     const clear = () => {
         setSubmitPressed(false);
@@ -251,7 +271,7 @@ export default function ReportScreen() {
             className="mt-10"
             onPress={handleCamera}
             >
-                <Camera
+                <Cam
                 fill="#80ACBF"
                 width={60}
                 height={60}
