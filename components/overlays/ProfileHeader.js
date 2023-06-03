@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { View, Text, Image, TextInput, SafeAreaView } from "react-native";
 import Modal from "react-native-modal";
+import tw from "tailwind-react-native-classnames"
 import TouchableScale from "react-native-touchable-scale";
 import pfp from "../../assets/Default_pfp.svg.png"
 import Cancel from "../../assets/cancel.svg"
@@ -18,7 +19,7 @@ export default function ProfileHeader({ name, icon }) {
 
     const styles = {
         inputText: "text-white text-lg align-left mt-4 ml-3",
-        inputField: "p-2 w-12/12 m-2 justify-start border-b-2 border-sky-300",
+        inputField: "text-white p-2 w-12/12 m-2 justify-start border-b-2 border-sky-300",
     }
     
     return (
@@ -71,6 +72,7 @@ export default function ProfileHeader({ name, icon }) {
                         </Text>
                         <TextInput
                         className={styles.inputField + " h-10"}
+                        inputStyle={{color: 'white'}}
                         placeholderTextColor="#0284BE"
                         placeholder="Ex: (XXX) XXX - XXXX"
                         onChangeText={setPhoneNumber}

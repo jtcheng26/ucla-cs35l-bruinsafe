@@ -1,12 +1,13 @@
-import { View, Text, TextInput, Keyboard, Image, TouchableOpacity, SafeAreaView } from "react-native";
-import { useState } from "react";
-import NavBar from "../../overlays/NavBar";
-import Camera from "../../../assets/camera.svg"
+import { View, Text, TextInput, Keyboard, Image, TouchableOpacity, SafeAreaView, Linking } from "react-native";
+import { useState, useRef, useEffect } from "react";
+import Cam from "../../../assets/camera.svg"
 import ProfileHeader from "../../overlays/ProfileHeader";
 import TouchableScale from "react-native-touchable-scale";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import Modal from "react-native-modal";
+import Tabs from "../../overlays/NavBar";
+
 
 
 
@@ -23,6 +24,9 @@ export default function ReportScreen() {
     const [time, setTime] = useState(new Date());
     const [toSubmit, setToSubmit] = useState(false);
     const [submitPressed, setSubmitPressed] = useState(false);
+    //const [hasCameraPermssion, setCameraPermission] = useState(false);
+    //const cameraRef = useRef(null)
+
 
     const enterPress = ({ nativeEvent }) => {
         if(nativeEvent.key === 'Enter') Keyboard.dismiss();
@@ -45,6 +49,26 @@ export default function ReportScreen() {
             setToSubmit(true);
         }
     }
+
+    
+
+      /*  async function getPermission() {
+            const permission = await Camera.requestCameraPermissionAsync();
+            if (permission === 'denied') await Linking.openSettings();
+
+
+        }
+        getPermission();
+ 
+        const devices = useCameraDevices('wide-angle-camera')
+        const device = devices.back
+
+        return (
+            <Camera
+            style = {styles.absoluteFill}
+            device = {device}
+            />
+        ) */
 
     const clear = () => {
         setSubmitPressed(false);
@@ -177,7 +201,7 @@ export default function ReportScreen() {
             <TouchableScale
             className="mt-10"
             >
-                <Camera
+                <Cam
                 fill="#80ACBF"
                 width={60}
                 height={60}
@@ -206,7 +230,7 @@ export default function ReportScreen() {
                 )
                 : (<></>)
             }
-            <NavBar />
+            <Tabs/>
         </View>
     );
 }
