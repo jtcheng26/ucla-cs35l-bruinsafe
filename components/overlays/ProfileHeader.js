@@ -14,8 +14,7 @@ export default function ProfileHeader({ name, icon }) {
     const [screenVisible, setScreenVisible] = useState(false)
     const [userName, setUserName] = useState(name)
     const [changedName, setChangedName] = useState(null);
-    const [phonenumber, setPhoneNumber] = useState(null);
-    const [emergencyContact, setEmergencyContact] = useState(null);
+    const [email, setEmail] = useState(null);
 
     const styles = {
         inputText: "text-white text-lg align-left mt-4 ml-3",
@@ -41,13 +40,13 @@ export default function ProfileHeader({ name, icon }) {
                 className="w-screen h-screen bg-sky-950 rounded-xl flex-col items-center"
                 >
                     <Text
-                    className="text-white mt-6 text-4xl font-bold text-center"
+                    className="text-white mt-14 text-4xl font-bold text-center"
                     >
                         Edit Your Profile
                     </Text>
 
                     <View
-                    className="w-11/12 mt-4"
+                    className="w-11/12 mt-8"
                     >
                         <Text
                         className={styles.inputText}
@@ -68,39 +67,21 @@ export default function ProfileHeader({ name, icon }) {
                         <Text
                         className={styles.inputText}
                         >
-                            Phone Number:
+                            Email:
                         </Text>
                         <TextInput
                         className={styles.inputField + " h-10"}
-                        inputStyle={{color: 'white'}}
                         placeholderTextColor="#0284BE"
-                        placeholder="Ex: (XXX) XXX - XXXX"
-                        onChangeText={setPhoneNumber}
+                        placeholder="Ex: johndoe@g.ucla.edu"
+                        onChangeText={setEmail}
                         />
                     </View>
 
-
                     <View
-                    className="w-11/12 mt-4"
-                    >
-                        <Text
-                        className={styles.inputText}
-                        >
-                            Emergency Contact:
-                        </Text>
-                        <TextInput
-                        className={styles.inputField + " h-10"}
-                        placeholderTextColor="#0284BE"
-                        placeholder="Ex: (XXX) XXX - XXXX"
-                        onChangeText={setEmergencyContact}
-                        />
-                    </View>        
-
-                    <View
-                    className="w-full items-center absolute bottom-0"
+                    className="w-full items-center absolute bottom-6"
                     >
                         <View
-                        className="flex-row"
+                        className="flex-row mb-4"
                         >
                             <TouchableScale
                             className="bg-red-500 w-10 h-10 m-6 pt-1 rounded-full items-center justify-center"
@@ -119,7 +100,7 @@ export default function ProfileHeader({ name, icon }) {
                             activeScale={0.98}
                             onPress={() => {
                                 setScreenVisible(false)
-                                if(changedName != "") setUserName(changedName);
+                                if(!(changedName == "" || !changedName)) setUserName(changedName);
                             }}
                             >
                                 <Check 
