@@ -24,7 +24,7 @@ export default function ProfileHeader({ name, icon }) {
     
     return (
         <>
-            {/* <Modal
+            <Modal
             isVisible={screenVisible}
             onBackdropPress={() => setScreenVisible(false)}
             onDismiss={() => setScreenVisible(false)}
@@ -133,44 +133,27 @@ export default function ProfileHeader({ name, icon }) {
                     </View>      
 
                 </SafeAreaView>
-            </Modal> */}
-            {/* <SafeAreaView
-            className="flex-row w-full h-12 items-center"
+            </Modal>
+            <SafeAreaView
+            className="absolute top-12 left-2"
             >
-
                 <TouchableScale
-                // className="flex-row w-1/2 h-12 mt-10 items-center"
-                className="absolute top-10"
+                className="flex-row w h-12 items-center"
                 activeScale={0.97}
-                // onPress={() => setScreenVisible(true)}
+                onPress={() => setScreenVisible(true)}
                 >
                     <Image 
                     source={pfp}
-                    className="w-8 h-8 mr-4 ml-6"
+                    className="w-8 h-8 mr-2 ml-4"
                     />
                     <Text
-                    className="text-white "
+                    className="text-white font-bold"
                     >
                         {userName}
                     </Text>
                 </TouchableScale>
-            </SafeAreaView> */}
-            <TouchableScale
-                // className="flex-row w-1/2 h-12 mt-10 items-center"
-                className="absolute-center"
-                activeScale={0.97}
-                // onPress={() => setScreenVisible(true)}
-                >
-                    <Image 
-                    source={pfp}
-                    className="w-8 h-8 mr-4 ml-6"
-                    />
-                    <Text
-                    className="text-white "
-                    >
-                        {userName}
-                    </Text>
-                </TouchableScale>
+            </SafeAreaView>
+
         </>
     );
 }
