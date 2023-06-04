@@ -1,11 +1,9 @@
 import { View, Text, Image } from 'react-native';
 import Svg, { Path, SvgXml, SvgUri, Circle } from 'react-native-svg';
 import pfp from "../../../assets/Default_pfp.svg.png"
-import moment from 'moment';
 import ProgressBar from './ProgessBar';
 
-export default function WalkingPage({walkerFullName, locationName}) {
-    const currentDateTime = moment().format("HH:mm:ss");
+export default function WalkingPage({walkerFullName, locationName, currentTime}) {
     const timeLeft = 15;
     return (
         <View className="absolute bottom-10 mb-20 h-36 w-10/12 rounded-xl bg-cyan-800/90">
@@ -20,7 +18,7 @@ export default function WalkingPage({walkerFullName, locationName}) {
                             <Svg height="20" width="20">
                                     <Circle cx="10" cy="10" r="4" fill="#FBBF24"/>
                             </Svg>
-                            <Text className="text-gray-400 text-right">{currentDateTime}</Text>
+                            <Text className="text-gray-400 text-right">{currentTime}</Text>
                         </View>
                         <Text className="text-gray-400 text-right">{locationName}</Text> 
                     </View>

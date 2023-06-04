@@ -239,6 +239,6 @@ export default function ReportScreen() {
                 )
                 : (<></>)
             }
-        </View>
+        </SafeAreaView>
     );
 }
