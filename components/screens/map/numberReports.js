@@ -3,7 +3,7 @@ import TouchableScale from 'react-native-touchable-scale';
 
 export default function numberReports({numReports}) {
     const styles = {
-        bgStyle: "absolute top-24 px-5 py-2 rounded-full",
+        bgStyle: "absolute top-28 px-5 py-2 rounded-full",
         textStyle: "font-bold"
     }
     if (numReports > 7) {
