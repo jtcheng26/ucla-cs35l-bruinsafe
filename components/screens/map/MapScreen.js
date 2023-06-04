@@ -1,5 +1,6 @@
 import { View, Text } from "react-native";
 import { useState } from "react";
+import { LinearGradient } from 'expo-linear-gradient';
 import NavBar from "../../overlays/NavBar";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import ProfileHeader from "../../overlays/ProfileHeader";
@@ -7,6 +8,7 @@ import WalkButton from "./walkButton";
 import WalkingPage from "./WalkingPage";
 import NumberReports from "./numberReports";
 import mapStyle from "./mapStyle.json";
+import moment from 'moment';
 
 import MapViewDirections from "react-native-maps-directions";
 
@@ -24,283 +26,7 @@ const GOOGLE_MAPS_APIKEY = process.env.GOOGLE_APIKEY;
 34.070726, -118.450186 de neve plaza
 */
 
-let MapStyle = [
-    {
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#1d2c4d"
-        }
-      ]
-    },
-    {
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#8ec3b9"
-        }
-      ]
-    },
-    {
-      "elementType": "labels.text.stroke",
-      "stylers": [
-        {
-          "color": "#1a3646"
-        }
-      ]
-    },
-    {
-      "featureType": "administrative.country",
-      "elementType": "geometry.stroke",
-      "stylers": [
-        {
-          "color": "#4b6878"
-        }
-      ]
-    },
-    {
-      "featureType": "administrative.land_parcel",
-      "stylers": [
-        {
-          "visibility": "off"
-        }
-      ]
-    },
-    {
-      "featureType": "administrative.land_parcel",
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#64779e"
-        }
-      ]
-    },
-    {
-      "featureType": "administrative.neighborhood",
-      "stylers": [
-        {
-          "visibility": "off"
-        }
-      ]
-    },
-    {
-      "featureType": "administrative.province",
-      "elementType": "geometry.stroke",
-      "stylers": [
-        {
-          "color": "#4b6878"
-        }
-      ]
-    },
-    {
-      "featureType": "landscape.man_made",
-      "elementType": "geometry.stroke",
-      "stylers": [
-        {
-          "color": "#334e87"
-        }
-      ]
-    },
-    {
-      "featureType": "landscape.natural",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#023e58"
-        }
-      ]
-    },
-    {
-      "featureType": "poi",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#283d6a"
-        }
-      ]
-    },
-    {
-      "featureType": "poi",
-      "elementType": "labels.text",
-      "stylers": [
-        {
-          "visibility": "off"
-        }
-      ]
-    },
-    {
-      "featureType": "poi",
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#6f9ba5"
-        }
-      ]
-    },
-    {
-      "featureType": "poi",
-      "elementType": "labels.text.stroke",
-      "stylers": [
-        {
-          "color": "#1d2c4d"
-        }
-      ]
-    },
-    {
-      "featureType": "poi.park",
-      "elementType": "geometry.fill",
-      "stylers": [
-        {
-          "color": "#023e58"
-        }
-      ]
-    },
-    {
-      "featureType": "poi.park",
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#3C7680"
-        }
-      ]
-    },
-    {
-      "featureType": "road",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#304a7d"
-        }
-      ]
-    },
-    {
-      "featureType": "road",
-      "elementType": "labels",
-      "stylers": [
-        {
-          "visibility": "off"
-        }
-      ]
-    },
-    {
-      "featureType": "road",
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#98a5be"
-        }
-      ]
-    },
-    {
-      "featureType": "road",
-      "elementType": "labels.text.stroke",
-      "stylers": [
-        {
-          "color": "#1d2c4d"
-        }
-      ]
-    },
-    {
-      "featureType": "road.highway",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#2c6675"
-        }
-      ]
-    },
-    {
-      "featureType": "road.highway",
-      "elementType": "geometry.stroke",
-      "stylers": [
-        {
-          "color": "#255763"
-        }
-      ]
-    },
-    {
-      "featureType": "road.highway",
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#b0d5ce"
-        }
-      ]
-    },
-    {
-      "featureType": "road.highway",
-      "elementType": "labels.text.stroke",
-      "stylers": [
-        {
-          "color": "#023e58"
-        }
-      ]
-    },
-    {
-      "featureType": "transit",
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#98a5be"
-        }
-      ]
-    },
-    {
-      "featureType": "transit",
-      "elementType": "labels.text.stroke",
-      "stylers": [
-        {
-          "color": "#1d2c4d"
-        }
-      ]
-    },
-    {
-      "featureType": "transit.line",
-      "elementType": "geometry.fill",
-      "stylers": [
-        {
-          "color": "#283d6a"
-        }
-      ]
-    },
-    {
-      "featureType": "transit.station",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#3a4762"
-        }
-      ]
-    },
-    {
-      "featureType": "water",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#0e1626"
-        }
-      ]
-    },
-    {
-      "featureType": "water",
-      "elementType": "labels.text",
-      "stylers": [
-        {
-          "visibility": "off"
-        }
-      ]
-    },
-    {
-      "featureType": "water",
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#4e6d70"
-        }
-      ]
-    }
-  ]
-
+//#020617
 export default function MapScreen() {
     let location = {
         latitude: 33.1507,
@@ -308,18 +34,56 @@ export default function MapScreen() {
         latitudeDelta: 0.009,
         longitudeDelta: 0.009
     };
-    const [walking, setWalking] = useState(true);
+   // const currentDateTime = moment().format("HH:mm:ss");
+    const [walking, setWalking] = useState(false);
+    const [currentDateTime, setDateTime] = useState(moment().format("hh:mm a"));
+    setInterval(() => {
+        setDateTime(moment().format("hh:mm a"))}, 2500);
     return (
-        <View className="flex-1 justify-center items-center h-full w-full bg-sky-950">
+        <View className="bg-sky-950 from-slate-950 flex-1 justify-center items-center h-full w-full">
             <MapView 
                 provider={PROVIDER_GOOGLE}
-                customMapStyle={MapStyle}
+                customMapStyle={mapStyle}
                 className="w-full h-full py-18"
                 region={location}
             />
+            <View className="absolute top-0 w-full">
+                <LinearGradient
+                    colors={['#020617', 'transparent']}
+                    start={{x : 0.5, y : 0.2}}
+                    end={{x: 0.5, y: 1}}
+                >
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                </LinearGradient>
+            </View>
+            <View className="absolute bottom-0 w-full">
+                <LinearGradient
+                    colors={['transparent', '#020617']}
+                    start={{x: 0.5, y: 0}}
+                    end={{x: 0.5, y: 0.8}}
+                >
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                </LinearGradient>
+            </View>
             <ProfileHeader name={"David Smalberg"}/>
             <NumberReports numReports={9}/>
-            {walking ? <WalkingPage locationName={"Westwood Plaza"} walkerFullName={"Carey Nachenberg"}/> : <WalkButton />}
+            {walking ? <WalkingPage locationName={"Westwood Plaza"} walkerFullName={"Carey Nachenberg"} currentTime={currentDateTime}/> : <WalkButton />}
         </View>
     )
 }
