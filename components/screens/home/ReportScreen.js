@@ -232,13 +232,13 @@ export default function ReportScreen() {
                 (submitPressed && (incidentValue.length == 0 || !incidentDescription))
                 ? (
                     <Text
-                    className="text-sm text-red-500 mt-3"
+                    className="text-sm text-red-500 mt-3 bg"
                     >
                         Error: ALL fields must be filled out
                     </Text>
                 )
                 : (<></>)
             }
-        </View>
+        </SafeAreaView>
     );
 }
