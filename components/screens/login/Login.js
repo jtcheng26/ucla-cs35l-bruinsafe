@@ -3,13 +3,15 @@ import TouchableScale from "react-native-touchable-scale";
 import { useState } from "react"
 import axios from "axios";
 import MainPage from "../home/MainPage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 
 export default function Login() {
     const styles = {
         inputField: "w-full h-14 text-sky-200 rounded-full text-md bg-sky-700 px-6 my-4 text-justify",
-        inputBox: "text-sky-200 pt-1 w-full text-lg mb-4 justify-start border-b-2 border-sky-300",
+        inputBox: "text-sky-200 pb-2 pt-1 w-full text-lg mb-4 justify-start border-b-2 border-sky-300",
         inputText: "text-sky-400 text-md align-left mt-6"
     }
 
@@ -43,6 +45,8 @@ export default function Login() {
                     }
                     const response = await axios.post('http://169.232.214.177:8080/user/create', data);
                     console.log(response.data);
+                    await AsyncStorage.setItem('@name', response.data.name).then(() => console.log('Name saved ', response.data.name)).catch(error => console.log('Error saving data: ', error));
+                    await AsyncStorage.setItem('@id', response.data._id).then(() => console.log('ID saved ', response.data._id)).catch(error => console.log('Error saving data: ', error));
                     setPW(null);
                     setEmail(null);
                     setSignupSuccess(true);

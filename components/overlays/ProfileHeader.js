@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, Image, TextInput, SafeAreaView } from "react-native";
 import Modal from "react-native-modal";
 import tw from "tailwind-react-native-classnames"
@@ -6,6 +6,9 @@ import TouchableScale from "react-native-touchable-scale";
 import pfp from "../../assets/Default_pfp.svg.png"
 import Cancel from "../../assets/cancel.svg"
 import Check from "../../assets/check.svg"
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from "axios";
+
 
 
 
@@ -20,6 +23,43 @@ export default function ProfileHeader({ name, icon }) {
         inputText: "text-white text-lg align-left mt-4 ml-3",
         inputField: "text-white p-2 w-12/12 m-2 justify-start border-b-2 border-sky-300",
     }
+
+
+    const handleProfileEdit = () => {
+        setScreenVisible(false);
+
+        const retrieveUser = async() => {
+            try {
+                const r_id = await AsyncStorage.getItem("@id")
+                const data = {
+                    name: changedName, 
+                    id: r_id
+                }
+                console.log(r_id)
+                const response = await axios.put('http://169.232.214.177:8080/user/edit', data);
+                console.log(response.data);
+                AsyncStorage.setItem('@name', changedName)
+                setUserName(changedName)
+            } catch(error) {
+                console.error(error)
+            }
+        }
+
+        if(!(changedName == "" || !changedName)) retrieveUser();
+    }
+
+    useEffect(() => {
+        const getName = async() => {
+            try {
+                const cur_name = await AsyncStorage.getItem("@name")
+                console.log(cur_name)
+                setUserName(cur_name)
+            } catch(error) {
+                console.error(error)
+            }
+        }
+        getName();
+    }, []);
     
     return (
         <>
@@ -27,8 +67,8 @@ export default function ProfileHeader({ name, icon }) {
             isVisible={screenVisible}
             onBackdropPress={() => setScreenVisible(false)}
             onDismiss={() => setScreenVisible(false)}
-            animationIn="slideInLeft"
-            animationOut="slideOutLeft"
+            animationIn="slideInDown"
+            animationOut="slideOutUp"
             hideModalContentWhileAnimating={true}
             backdropOpacity={0.5}
             animationInTiming={500}
@@ -37,7 +77,7 @@ export default function ProfileHeader({ name, icon }) {
             className="justify-start m-0"
             >
                 <SafeAreaView
-                className="w-screen h-screen bg-sky-950 rounded-xl flex-col items-center"
+                className="w-screen h-1/2 bg-sky-950 rounded-3xl flex-col items-center"
                 >
                     <Text
                     className="text-white mt-14 text-4xl font-bold text-center"
@@ -56,29 +96,13 @@ export default function ProfileHeader({ name, icon }) {
                         <TextInput
                         className={styles.inputField + " h-10"}
                         placeholderTextColor="#0284BE"
-                        placeholder="Ex: John/Jane Doe..."
+                        placeholder={"Currently: " + userName}
                         onChangeText={setChangedName}
                         />
                     </View>
 
                     <View
-                    className="w-11/12 mt-4"
-                    >
-                        <Text
-                        className={styles.inputText}
-                        >
-                            Email:
-                        </Text>
-                        <TextInput
-                        className={styles.inputField + " h-10"}
-                        placeholderTextColor="#0284BE"
-                        placeholder="Ex: johndoe@g.ucla.edu"
-                        onChangeText={setEmail}
-                        />
-                    </View>
-
-                    <View
-                    className="w-full items-center absolute bottom-6"
+                    className="w-full items-center absolute bottom-2"
                     >
                         <View
                         className="flex-row mb-4"
@@ -98,10 +122,7 @@ export default function ProfileHeader({ name, icon }) {
                             <TouchableScale
                             className="bg-green-500 w-10 h-10 m-6 pt-2 rounded-full items-center justify-center"
                             activeScale={0.98}
-                            onPress={() => {
-                                setScreenVisible(false)
-                                if(!(changedName == "" || !changedName)) setUserName(changedName);
-                            }}
+                            onPress={() => handleProfileEdit()}
                             >
                                 <Check 
                                 width={45}
