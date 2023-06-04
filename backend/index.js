@@ -49,6 +49,23 @@ app.post("/user/create", (req, res) => {
   res.send(model.toJSON());
 });
 
+app.put("/user/edit", async (req, res) => {
+  const id = req.body.id;
+  const name = req.body.name;
+
+  if (!mongoose.isValidObjectId(id)) {
+    res.send("Invalid ID", 400);
+    return;
+  }
+  const model = await UserModel.findByIdAndUpdate(id, { name: name })
+ 
+  if (model) {
+    res.send({
+     "matched": model.matchedCount
+    })
+  } else res.send("User not found", 400)
+})
+
 /* ======================= Report Routes ======================= */
 
 // only get reports within 0.1 latitude (~7mi radius)
@@ -67,7 +84,7 @@ app.post("/report/search", async (req, res) => {
     const dy = Math.abs(myLoc.longitude - reportLoc.longitude);
     return dx * dx + dy * dy <= MAX_RADIUS;
   });
-  res.send(nearby);
+  res.send(all);
 });
 
 const REPORT_TYPES = ["suspicious", "danger", "rape", "violence"];
