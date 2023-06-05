@@ -67,7 +67,7 @@ app.post("/report/search", async (req, res) => {
     const dy = Math.abs(myLoc.longitude - reportLoc.longitude);
     return dx * dx + dy * dy <= MAX_RADIUS;
   });
-  res.send(nearby);
+  res.send(all);
 });
 
 const REPORT_TYPES = ["suspicious", "danger", "rape", "violence"];

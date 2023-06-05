@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { LinearGradient } from 'expo-linear-gradient';
 import NavBar from "../../overlays/NavBar";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
@@ -9,6 +9,8 @@ import WalkingPage from "./WalkingPage";
 import NumberReports from "./numberReports";
 import mapStyle from "./mapStyle.json";
 import moment from 'moment';
+import EscortList from './escortList';
+import axios from 'axios';
 
 import MapViewDirections from "react-native-maps-directions";
 
@@ -29,14 +31,30 @@ const GOOGLE_MAPS_APIKEY = process.env.GOOGLE_APIKEY;
 //#020617
 export default function MapScreen() {
     let location = {
-        latitude: 33.1507,
-        longitude: -96.8236,
+        latitude: 34.069201,
+        longitude: -118.443515,
         latitudeDelta: 0.009,
         longitudeDelta: 0.009
     };
-   // const currentDateTime = moment().format("HH:mm:ss");
     const [walking, setWalking] = useState(false);
+    const [data, setData] = useState({});
     const [currentDateTime, setDateTime] = useState(moment().format("hh:mm a"));
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                let dataCopy = {...data};
+                let numReports = await axios.post("http://169.232.214.177:8080/report/search", {location:location});
+                let currentLocation = await axios.get("http://api.openweathermap.org/geo/1.0/reverse?lat=" + location.latitude + "&lon=" + location.longitude + "&cnt=1&APPID=1107f09a2cd574c391617612953ada00");
+                dataCopy.cityName = currentLocation.data[0].name;
+                dataCopy.stateName = currentLocation.data[0].state;
+                dataCopy.numReports = parseInt(numReports.data.length);
+                setData(dataCopy);
+            } catch (e) {
+                console.error(e)
+            }
+        };
+        fetchData();
+    }, []);
     setInterval(() => {
         setDateTime(moment().format("hh:mm a"))}, 2500);
     return (
@@ -81,9 +99,9 @@ export default function MapScreen() {
                     <Text> </Text>
                 </LinearGradient>
             </View>
-            <ProfileHeader name={"David Smalberg"}/>
-            <NumberReports numReports={9}/>
-            {walking ? <WalkingPage locationName={"Westwood Plaza"} walkerFullName={"Carey Nachenberg"} currentTime={currentDateTime}/> : <WalkButton />}
+            <ProfileHeader name={"David Smallberg"}/>
+            <NumberReports numReports={data.numReports}/>
+            {walking ? <WalkingPage locationName={data.cityName} walkerFullName={"Carey Nachenberg"} currentTime={currentDateTime}/> : <WalkButton text={"walk with someone"} onPress={setWalking} />}
         </View>
     )
 }
