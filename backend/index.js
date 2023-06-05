@@ -47,6 +47,21 @@ app.get("/user/:id", async (req, res) => {
   } else res.send("User not found", 400);
 });
 
+app.post("/user/login", async (req, res) => {
+  const email = req.body.email;
+  const  model = await UserModel.findOne({email: email});
+  if (!model) {
+    res.send("User not found", 400)
+  } else {
+    const pw = hashpw(req.body.password)
+    if (model.password != pw) {
+      res.send("Wrong password", 400)
+    } else {
+      res.send(model.toJSON(), 200)
+    }
+  }
+})
+
 app.post("/user/create", (req, res) => {
   const email = req.body.email;
   const name = req.body.name;
