@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import { useState } from "react";
-import { LinearGradient } from 'expo-linear-gradient';
+import { LinearGradient } from "expo-linear-gradient";
 import NavBar from "../../overlays/NavBar";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import ProfileHeader from "../../overlays/ProfileHeader";
@@ -8,7 +8,7 @@ import WalkButton from "./walkButton";
 import WalkingPage from "./WalkingPage";
 import NumberReports from "./numberReports";
 import mapStyle from "./mapStyle.json";
-import moment from 'moment';
+import moment from "moment";
 
 import MapViewDirections from "react-native-maps-directions";
 
@@ -28,62 +28,84 @@ const GOOGLE_MAPS_APIKEY = process.env.GOOGLE_APIKEY;
 
 //#020617
 export default function MapScreen() {
-    let location = {
-        latitude: 33.1507,
-        longitude: -96.8236,
-        latitudeDelta: 0.009,
-        longitudeDelta: 0.009
-    };
-   // const currentDateTime = moment().format("HH:mm:ss");
-    const [walking, setWalking] = useState(false);
-    const [currentDateTime, setDateTime] = useState(moment().format("hh:mm a"));
-    setInterval(() => {
-        setDateTime(moment().format("hh:mm a"))}, 2500);
-    return (
-        <View className="bg-sky-950 from-slate-950 flex-1 justify-center items-center h-full w-full">
-            <MapView 
-                provider={PROVIDER_GOOGLE}
-                customMapStyle={mapStyle}
-                className="w-full h-full py-18"
-                region={location}
-            />
-            <View className="absolute top-0 w-full">
-                <LinearGradient
-                    colors={['#020617', 'transparent']}
-                    start={{x : 0.5, y : 0.2}}
-                    end={{x: 0.5, y: 1}}
-                >
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                </LinearGradient>
-            </View>
-            <View className="absolute bottom-0 w-full">
-                <LinearGradient
-                    colors={['transparent', '#020617']}
-                    start={{x: 0.5, y: 0}}
-                    end={{x: 0.5, y: 0.8}}
-                >
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                </LinearGradient>
-            </View>
-            <ProfileHeader name={"David Smalberg"}/>
-            <NumberReports numReports={9}/>
-            {walking ? <WalkingPage locationName={"Westwood Plaza"} walkerFullName={"Carey Nachenberg"} currentTime={currentDateTime}/> : <WalkButton />}
-        </View>
-    )
+  let location = {
+    latitude: 33.1507,
+    longitude: -96.8236,
+    latitudeDelta: 0.009,
+    longitudeDelta: 0.009,
+  };
+  // const currentDateTime = moment().format("HH:mm:ss");
+  const [walking, setWalking] = useState(false);
+  const [currentDateTime, setDateTime] = useState(moment().format("hh:mm a"));
+  setInterval(() => {
+    setDateTime(moment().format("hh:mm a"));
+  }, 2500);
+  return (
+    <View className="bg-sky-950 from-slate-950 flex-1 justify-center items-center h-full w-full">
+      <MapView
+        provider={PROVIDER_GOOGLE}
+        customMapStyle={mapStyle}
+        className="w-full h-full py-18"
+        region={location}
+      >
+        {GOOGLE_MAPS_APIKEY && (
+          <MapViewDirections
+            origin={origin}
+            destination={destination}
+            apikey={GOOGLE_MAPS_APIKEY}
+            onReady={(res) => {
+              console.log(res);
+            }}
+          />
+        )}
+      </MapView>
+
+      <View className="absolute top-0 w-full">
+        <LinearGradient
+          colors={["#020617", "transparent"]}
+          start={{ x: 0.5, y: 0.2 }}
+          end={{ x: 0.5, y: 1 }}
+        >
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+        </LinearGradient>
+      </View>
+      <View className="absolute bottom-0 w-full">
+        <LinearGradient
+          colors={["transparent", "#020617"]}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 0.8 }}
+        >
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+        </LinearGradient>
+      </View>
+
+      <ProfileHeader name={"David Smalberg"} />
+      <NumberReports numReports={9} />
+      {walking ? (
+        <WalkingPage
+          locationName={"Westwood Plaza"}
+          walkerFullName={"Carey Nachenberg"}
+          currentTime={currentDateTime}
+        />
+      ) : (
+        <WalkButton />
+      )}
+    </View>
+  );
 }

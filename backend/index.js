@@ -11,6 +11,12 @@ const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const port = process.env.PORT || 8080;
 
+const { createHash } = require('crypto')
+
+function hashpw(string) {
+  return createHash('sha256').update(string).digest('hex');
+}
+
 io.on("connection", (socket) => {
   socket.emit("connect", { message: "a new client connected" });
   socket.on("chat", (message) => {
@@ -44,7 +50,8 @@ app.get("/user/:id", async (req, res) => {
 app.post("/user/create", (req, res) => {
   const email = req.body.email;
   const name = req.body.name;
-  const model = new UserModel({ email: email, name: name });
+  const pw = hashpw(req.body.password)
+  const model = new UserModel({ email: email, name: name, password: pw });
   model.save();
   res.send(model.toJSON());
 });
@@ -52,18 +59,22 @@ app.post("/user/create", (req, res) => {
 app.put("/user/edit", async (req, res) => {
   const id = req.body.id;
   const name = req.body.name;
+  const pw = hashpw(req.body.password)
 
   if (!mongoose.isValidObjectId(id)) {
     res.send("Invalid ID", 400);
     return;
   }
-  const model = await UserModel.findByIdAndUpdate(id, { name: name })
- 
-  if (model) {
-    res.send({
-     "matched": model.matchedCount
-    })
-  } else res.send("User not found", 400)
+  const model = await UserModel.findById(id)
+  if (!model) {
+    res.send("User not found", 404)
+  }
+  else if (model.password != pw) {
+    res.send("Wrong password", 400)
+  } else {
+    await UserModel.findByIdAndUpdate(id, { name: name })
+    res.send("Success", 200)
+  }
 })
 
 /* ======================= Report Routes ======================= */

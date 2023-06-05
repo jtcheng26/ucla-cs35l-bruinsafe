@@ -16,6 +16,7 @@ const UserSchema = new Schema({
   id: ObjectId,
   email: String,
   name: String,
+  password: String // hash
 });
 
 const ReportSchema = new Schema({
