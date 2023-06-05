@@ -8,6 +8,7 @@ import Cancel from "../../assets/cancel.svg"
 import Check from "../../assets/check.svg"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from "axios";
+import { BASE_URL } from "../screens/login/Login";
 
 
 
@@ -31,12 +32,13 @@ export default function ProfileHeader({ name, icon }) {
         const retrieveUser = async() => {
             try {
                 const r_id = await AsyncStorage.getItem("@id")
+                const r_pw = await AsyncStorage.getItem("@pw")
                 const data = {
                     name: changedName, 
-                    id: r_id
+                    id: r_id,
+                    password: r_pw
                 }
-                console.log(r_id)
-                const response = await axios.put('http://169.232.214.177:8080/user/edit', data);
+                const response = await axios.put(BASE_URL + '/user/edit', data);
                 console.log(response.data);
                 AsyncStorage.setItem('@name', changedName)
                 setUserName(changedName)

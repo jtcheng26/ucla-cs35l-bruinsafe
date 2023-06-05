@@ -5,6 +5,9 @@ import axios from "axios";
 import MainPage from "../home/MainPage";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+export const BASE_URL = "http://169.232.214.20:8080";
+
+
 
 
 
@@ -17,11 +20,13 @@ export default function Login() {
 
     const [email, setEmail] = useState(null);
     const [pw, setPW] = useState(null);
+    const [confirmPW, setConfirmPW] = useState(null)
     const [logError, setLogError] = useState("");
     const [signupSuccess, setSignupSuccess] = useState(false)
+    const [suTxt, setSUTxt] = useState("LOGIN")
 
     const handleSignup = () => {
-        if(email && pw) {
+        if(email && pw && confirmPW) {
             if(!email.includes('@')) {
                 setLogError("Must use an email");
                 return;
@@ -32,21 +37,27 @@ export default function Login() {
                 return;
             }
 
+            if(pw != confirmPW) {
+                setLogError("Passwords must match");
+                return;
+            }
+
             setLogError(null);
 
             const sendUser = async() => {
                 try {
                     const at = email.indexOf("@")
                     const userName = email.slice(0, at)
-                    console.log(userName)
                     const data = {
                         name: userName,
-                        email: email
+                        email: email,
+                        password: pw
                     }
-                    const response = await axios.post('http://169.232.214.177:8080/user/create', data);
+                    const response = await axios.post(BASE_URL + '/user/create', data);
                     console.log(response.data);
                     await AsyncStorage.setItem('@name', response.data.name).then(() => console.log('Name saved ', response.data.name)).catch(error => console.log('Error saving data: ', error));
                     await AsyncStorage.setItem('@id', response.data._id).then(() => console.log('ID saved ', response.data._id)).catch(error => console.log('Error saving data: ', error));
+                    await AsyncStorage.setItem('@pw', pw).then(() => console.log('ID saved ', pw)).catch(error => console.log('Error saving data: ', error));
                     setPW(null);
                     setEmail(null);
                     setSignupSuccess(true);
@@ -57,12 +68,54 @@ export default function Login() {
             sendUser();
         } else {
             setLogError("Must fill out all fields");
-                return;
+            return;
         }
     }
 
     const handleLogin = () => {
+        if(!(email && pw)) {
+            setLogError("Must fill out all fields");
+            return;
+        }
+        try {
+            const correctUNPW = async() => {
+                const data = {
+                    email: email,
+                    password: pw
+                }
+                const response = await axios.post(BASE_URL + '/user/login', data);
+                console.log(response.data._id)
+                await AsyncStorage.setItem('@name', response.data.name).then(() => console.log('Name saved ', response.data.name)).catch(error => console.log('Error saving data: ', error));
+                await AsyncStorage.setItem('@id', response.data._id).then(() => console.log('ID saved ', response.data._id)).catch(error => console.log('Error saving data: ', error));
+                await AsyncStorage.setItem('@pw', pw).then(() => console.log('ID saved ', pw)).catch(error => console.log('Error saving data: ', error));
+                setPW(null);
+                setEmail(null);
+                setSignupSuccess(true);
+            }   
+            correctUNPW();
+        } catch(e) {
+            console.error(e)
+            setLogError("Incorrect Email or Password");
+        }
+    }
 
+    const handleLoginAndSignUp = () => {
+        if(suTxt == "SIGN UP") {
+            handleSignup()
+        } else {
+            handleLogin();
+        }
+    }
+
+    const handleSwitch = () => {
+        setEmail(null);
+        setPW(null);
+        setConfirmPW(null);
+        if(suTxt == "SIGN UP") {
+            setSUTxt("LOGIN")
+        } else {
+            setSUTxt("SIGN UP")
+        }
     }
     
     if(signupSuccess) {
@@ -73,15 +126,15 @@ export default function Login() {
 
     return (
        <View
-       className="w-full h-full bg-sky-950 items-center justify-center"
+       className="w-full h-full bg-sky-950 items-center justify-center pt-20"
        >
             <Text
-            className="absolute top-1/4 text-5xl text-amber-400 font-extrabold"
+            className="text-5xl text-amber-400 font-extrabold mb-10"
             >
                 BruinSafe
             </Text>
             <View
-            className="absolute w-10/12 h-1/3 pt-4" 
+            className="w-10/12" 
             >
                 <Text
                 className={styles.inputText}
@@ -96,6 +149,7 @@ export default function Login() {
                 value={email}
                 keyboardType="email-address"
                 />
+
                 <Text
                 className={styles.inputText}
                 >
@@ -110,32 +164,53 @@ export default function Login() {
                 value={pw}
                 />
 
+                {(suTxt == "SIGN UP") ?
+                (<>
+                    <Text
+                    className={styles.inputText}
+                    >
+                        Confirm Password:
+                    </Text>
+                    <TextInput
+                    secureTextEntry
+                    className={styles.inputBox}
+                    placeholder=""
+                    placeholderTextColor={"rgb(2 132 199)"}
+                    onChangeText={setConfirmPW}
+                    value={confirmPW}
+                    />
+                </>) :
+                null}
+
             </View>
             <TouchableScale 
-                className="absolute bottom-64 border-sky-300 border-2 w-1/3 mt-10 h-10 items-center justify-center bg-transparent"
+                className="border-sky-300 border-2 w-1/3 mt-10 h-10 items-center justify-center bg-sky-300"
                 activeScale={0.97}
+                onPress={() => handleLoginAndSignUp()}
                 >
                     <Text
-                    className="text-sky-300 text-md font-semibold"
+                    className="text-sky-950 text-md font-semibold"
                     >
-                        LOGIN
+                        {suTxt}
                     </Text>
             </TouchableScale>
 
             <TouchableScale
-            className="absolute bottom-48 border-sky-300 border-2 w-1/3 mt-10 h-10 items-center justify-center bg-sky-300"
-            onPress={() => handleSignup()}
+            className="border-sky-300 border-2 w-1/3 mt-4 h-10 items-center justify-center bg-transparent"
+            onPress={() => handleSwitch()}
             activeScale={0.97}
             >
                 <Text
-                className="text-sky-950 text-md font-semibold"
+                className="text-sky-300 text-md font-semibold"
                 >
-                    SIGN UP
+                    {(suTxt == "SIGN UP") ?
+                    "BACK":
+                    "NEW USER?"}
                 </Text>
             </TouchableScale>
 
             <Text
-            className="absolute bottom-32 my-4 text-md text-red-600 bott"
+            className="my-6 text-md text-red-600"
             >
                 {logError}
             </Text>
