@@ -1,29 +1,22 @@
-import React, { useState } from "react";
-import "./login.css";
+import React, { useState } from 'react';
+import { View, TextInput } from 'react-native';
 
-function TextBox({className, placeholder}) {
-  const [inputValue, setInputValue] = useState("");
+const MyComponent = () => {
+  const [text, setText] = useState('');
 
-  const handleInputChange = (event) => {
-    setInputValue(event.target.value);
-  };
-
-  const handleButtonClick = () => {
-    // Perform any action you want when the button is clicked
-    console.log("Button Clicked");
+  const handleTextChange = (newText) => {
+    setText(newText);
   };
 
   return (
-    <div>
-      <input
-        type="text"
-        value={inputValue}
-        onChange={handleInputChange}
-        className={className}
-        placeholder={placeholder}
+    <View>
+      <TextInput
+        value={text}
+        onChangeText={handleTextChange}
+        placeholder="Type something..."
       />
-    </div>
+    </View>
   );
-}
+};
 
-export default TextBox;
+export default MyComponent;
