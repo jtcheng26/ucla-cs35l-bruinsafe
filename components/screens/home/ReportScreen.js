@@ -43,15 +43,6 @@ export default function ReportScreen() {
     const handleSubmit = () => {
         setSubmitPressed(true);
         if( incidentValue.length != 0 && incidentDescription ) {
-            // axios.post('/report/create', {
-            //     type: incidentValue,
-            //     description: incidentDescription,
-            // })
-            // .catch(error => {
-            //     console.log("Error: ", error)
-            // });
-            // useEffect(() => {
-            // setDescription(incidentDescription.trim());
             const sendData = async () => {
                 try {
                     const data = {
@@ -62,14 +53,13 @@ export default function ReportScreen() {
                             longitude: 198
                         }
                     };
-                    const response = await axios.post('http://169.232.214.177:8080/report/create', data);
+                    const response = await axios.post(BASE_URL + '/report/create', data);
                     console.log(response.data);
                 } catch(error) {
                     console.error(error);
                 }
             };
             sendData();
-            // }, []);
             setToSubmit(true);
         }
     }
@@ -102,13 +92,6 @@ export default function ReportScreen() {
                 >
                     Incident Type:
                 </Text>
-                {/* <TextInput
-                className={styles.inputField + " h-10"}
-                placeholderTextColor="#0369a1"
-                placeholder="Ex: Attempted Robbery..."
-                onChangeText={setIncidentType}
-                value={incidentType}
-                /> */}
 
                 <DropDownPicker
                 placeholder="Select at least one"
