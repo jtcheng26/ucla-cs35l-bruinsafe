@@ -8,8 +8,7 @@ import { BASE_URL } from "../../../constants";
 import PassMeter from "react-native-passmeter"
 
 
-const MIN_LEN = 8,
-    LABELS = ["Too Short", "Weak", "Normal", "Strong", "Secure"]
+
 
 export default function Login() {
     const styles = {
@@ -65,7 +64,7 @@ export default function Login() {
                 return;
             }
 
-            quickCheck(email, pw);
+            // quickCheck(email, pw);
 
             if(pw != confirmPW) {
                 setLogError("Passwords must match");
@@ -113,7 +112,7 @@ export default function Login() {
             return;
         }
 
-        quickCheck(email, pw);
+        // quickCheck(email, pw);
 
         try {
             const correctUNPW = async() => {
@@ -183,7 +182,7 @@ export default function Login() {
                 </Text>
                 <TextInput
                 className={styles.inputBox}
-                placeholder="UCLA email"
+                // placeholder="UCLA email"
                 placeholderTextColor={"rgb(2 132 199)"}
                 onChangeText={setEmail}
                 value={email}
@@ -198,22 +197,14 @@ export default function Login() {
                 <TextInput
                 secureTextEntry
                 className={styles.inputBox}
-                placeholder="Minimum 8 characters with one special character"
+                // placeholder="Minimum 8 characters with one special character"
                 placeholderTextColor={"rgb(2 132 199)"}
-                onChangeText={pw => setPW(pw)}
+                onChangeText={setPW}
                 value={pw}
                 />
 
-
                 {(suTxt == "SIGN UP") ?
                 (<>
-                    <PassMeter>
-                        showLabels
-                        password={pw}
-                        minLength={MIN_LEN}
-                        labels={LABELS}
-                    </PassMeter>
-                    
                     <Text
                     className={styles.inputText}
                     >
