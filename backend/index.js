@@ -19,7 +19,7 @@ function hashpw(string) {
 
 /* ======================= Walk Routes ======================= */
 
-const { walkRequest, walkAccept } = require('./walk.js')
+const { walkRequest, walkAccept, getWalks } = require('./walk.js')
 
 io.on("connection", (socket) => {
   
@@ -41,6 +41,8 @@ io.on("connection", (socket) => {
 app.post("/walk/request", walkRequest)
 
 app.post("/walk/accept", walkAccept)
+
+app.get("/walk/get", getWalks)
 
 /* ======================= User Routes ======================= */
 

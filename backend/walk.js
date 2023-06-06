@@ -13,7 +13,7 @@ const walkRequest = async (req, res) => {
   const origin = req.body.origin;
   const dest = req.body.destination;
   const model = await UserModel.findById(user).exec();
-  console.log(req.body)
+  console.log(req.body);
   if (!mongoose.isValidObjectId(user)) {
     res.status(400).send("Invalid ID");
   } else if (!model) res.status(404).send("User not found");
@@ -55,4 +55,9 @@ const walkAccept = async (req, res) => {
   }
 };
 
-module.exports = { walkRequest, walkAccept };
+const getWalks = async (req, res) => {
+  const walks = await WalkModel.find({});
+  res.send(walks.map(w => w.toJSON()));
+};
+
+module.exports = { walkRequest, walkAccept, getWalks };
