@@ -147,6 +147,9 @@ export default function MapScreen() {
             strokeWidth={6}
             lineCap="round"
             mode="WALKING"
+            onReady={(res) => {
+                console.log(res)
+            }}
           />
         ) : (
           ""
@@ -191,7 +194,7 @@ export default function MapScreen() {
           <Text> </Text>
         </LinearGradient>
       </View>
-      <ProfileHeader name={"David Smallberg"} />
+      {/* <ProfileHeader name={"David Smallberg"} /> */}
       <NumberReports numReports={data.numReports} />
       <SafetyLevel numReports={data.numReports} />
       <View className="w-1/12 h-1/12 absolute m-auto flex justify-center items-center">

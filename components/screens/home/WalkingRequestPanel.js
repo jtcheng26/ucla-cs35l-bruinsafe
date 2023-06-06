@@ -5,14 +5,16 @@ import pfp from "../../../assets/Default_pfp.svg.png"
 
 
 export default function WalkingRequestPanel({ 
-    name,
+    user,
     src={pfp},
-    time=10
+    time=parseInt(Math.random()*20),
+    onDecline,
+    onAccept,
 }) {
 
     return (
         <View
-        className="rounded-3xl mt-6 mb-2 bg-sky-700 py-2 round"
+        className="rounded-3xl mt-6 mb-2 bg-sky-700 py-2"
         >
             <View
             className="flex-row mt-6"
@@ -32,7 +34,7 @@ export default function WalkingRequestPanel({
             <Text
             className="ml-6 mb-1 text-2xl text-white font-semibold"
             >
-                {name}
+                {user.name}
             </Text>
 
             <View
@@ -52,6 +54,7 @@ export default function WalkingRequestPanel({
                 <TouchableScale
                 className="ml-4 rounded-full px-6 h-8 bg-sky-900 justify-center items-center"
                 activeScale={0.95}
+                onPress={() => onDecline(user._id)}
                 >
                     <Text
                     className="text-sky-200"
