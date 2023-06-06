@@ -49,10 +49,11 @@ app.get("/user/:id", async (req, res) => {
 
 app.post("/user/login", async (req, res) => {
   const email = req.body.email;
-  const  model = await UserModel.findOne({email: email});
+  const model = await UserModel.findOne({email: email}).exec();
   if (!model) {
     res.status(400).json({error : "User not found" });
   } else {
+    if (!req.body.password) res.send("Invalid password", 400)
     const pw = hashpw(req.body.password)
     if (model.password != pw) {
       res.status(400).json({error : "Wrong password" });
@@ -65,6 +66,7 @@ app.post("/user/login", async (req, res) => {
 app.post("/user/create", (req, res) => {
   const email = req.body.email;
   const name = req.body.name;
+  if (!req.body.password) res.send("Invalid password", 400)
   const pw = hashpw(req.body.password)
 
   UserModel.findOne( {$or: [{email: email}, { password: pw}] },
@@ -112,6 +114,16 @@ app.put("/user/edit", async (req, res) => {
   }
 })
 
+app.get("/users/nearby", async (req, res) => {
+  const users = await UserModel.find({});
+  const jsonUsers = users.map(user => {
+    const json = user.toJSON()
+    delete json["password"]
+    return json
+  })
+  res.send(jsonUsers);
+})
+
 /* ======================= Report Routes ======================= */
 
 // only get reports within 0.1 latitude (~7mi radius)
@@ -137,16 +149,18 @@ const REPORT_TYPES = ["theft", "assault", "rape", "abuse", "kidnapping",
                     "stalking", "hate crime", "indecent exposure", "drug distribution", 
                     "vandalism", "solicitation"];
 app.post("/report/create", (req, res) => {
-  const type = req.body.type;
+  const types = req.body.types;
   const timestamp = new Date();
   const description = req.body.description;
   const location = req.body.location;
-  if (!REPORT_TYPES.includes(type)) {
-    res.send("Invalid report type", 400);
-    return;
+  for (let type of types) {
+    if (!REPORT_TYPES.includes(type)) {
+      res.send("Invalid report type", 400);
+      return;
+    }
   }
   const model = new ReportModel({
-    type: type,
+    types: types,
     timestamp: timestamp,
     description: description,
     location: location,

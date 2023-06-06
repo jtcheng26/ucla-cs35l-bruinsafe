@@ -8,7 +8,7 @@ import Cancel from "../../assets/cancel.svg"
 import Check from "../../assets/check.svg"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from "axios";
-import { BASE_URL } from "../screens/login/Login";
+import { BASE_URL } from "../../constants";
 
 
 
@@ -54,7 +54,6 @@ export default function ProfileHeader({ name, icon }) {
         const getName = async() => {
             try {
                 const cur_name = await AsyncStorage.getItem("@name")
-                console.log(cur_name)
                 setUserName(cur_name)
             } catch(error) {
                 console.error(error)
@@ -72,7 +71,7 @@ export default function ProfileHeader({ name, icon }) {
             animationIn="slideInDown"
             animationOut="slideOutUp"
             hideModalContentWhileAnimating={true}
-            backdropOpacity={0.5}
+            backdropOpacity={0.7}
             animationInTiming={500}
             animationOutTiming={500}
             propagateSwipe={true}
@@ -139,19 +138,23 @@ export default function ProfileHeader({ name, icon }) {
                 </SafeAreaView>
             </Modal>
             <SafeAreaView
-            className="absolute top-12 left-2"
+            className="absolute top-14 left-2"
             >
                 <TouchableScale
                 className="flex-row w h-12 items-center"
                 activeScale={0.97}
                 onPress={() => setScreenVisible(true)}
                 >
-                    <Image 
-                    source={pfp}
-                    className="w-8 h-8 mr-2 ml-4"
-                    />
+                    <View
+                    className="bg-white rounded-full mr-4 ml-4"
+                    >
+                        <Image 
+                        source={pfp}
+                        className="w-8 h-8"
+                        />
+                    </View>
                     <Text
-                    className="text-white font-bold"
+                    className="text-white text-lg font-semibold"
                     >
                         {userName}
                     </Text>
