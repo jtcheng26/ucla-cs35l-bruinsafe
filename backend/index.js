@@ -129,16 +129,18 @@ const REPORT_TYPES = ["theft", "assault", "rape", "abuse", "kidnapping",
                     "stalking", "hate crime", "indecent exposure", "drug distribution", 
                     "vandalism", "solicitation"];
 app.post("/report/create", (req, res) => {
-  const type = req.body.type;
+  const types = req.body.types;
   const timestamp = new Date();
   const description = req.body.description;
   const location = req.body.location;
-  if (!REPORT_TYPES.includes(type)) {
-    res.send("Invalid report type", 400);
-    return;
+  for (let type of types) {
+    if (!REPORT_TYPES.includes(type)) {
+      res.send("Invalid report type", 400);
+      return;
+    }
   }
   const model = new ReportModel({
-    type: type,
+    types: types,
     timestamp: timestamp,
     description: description,
     location: location,
