@@ -153,9 +153,9 @@ app.post("/report/search", async (req, res) => {
   res.send(all);
 });
 
-const REPORT_TYPES = ["theft", "assault", "rape", "abuse", "kidnapping", 
-                    "stalking", "hate crime", "indecent exposure", "drug distribution", 
-                    "vandalism", "solicitation"];
+const REPORT_TYPES = ["Theft", "Assault", "Rape", "Abuse", "Kidnapping", 
+                    "Stalking", "Hate Crime", "Indecent Exposure", "Drug Distribution", 
+                    "Vandalism", "Solicitation", "Speeding"];
 app.post("/report/create", (req, res) => {
   const types = req.body.types;
   const timestamp = new Date();

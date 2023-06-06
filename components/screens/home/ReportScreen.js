@@ -5,6 +5,7 @@ import TouchableScale from "react-native-touchable-scale";
 import Modal from "react-native-modal";
 import DropDownPicker from "react-native-dropdown-picker";
 import axios from "axios"
+import { BASE_URL } from "../../../constants";
 
 
 
@@ -20,17 +21,18 @@ export default function ReportScreen() {
     const [ddopen, setDDOpen] = useState(false);
 
     const [incidentType, setIncidentType] = useState([
-        {label: 'Theft', value: 'theft'},
-        {label: 'Assault', value: 'assault'},
-        {label: 'Rape', value: 'rape'},
-        {label: 'Abuse', value: 'abuse'},
-        {label: 'Kidnapping', value: 'kidnapping'},
-        {label: 'Stalking', value: 'stalking'},
-        {label: 'Hate Crime', value: 'hate crime'},
-        {label: 'Indecent Exposure', value: 'indecent exposure'},
-        {label: 'Drug Distribution', value: 'drug distribution'},
-        {label: 'Vandalism', value: 'vandalism'},
-        {label: 'Solicitation', value: 'solicitation'},
+        {label: 'Theft', value: 'Theft'},
+        {label: 'Assault', value: 'Assault'},
+        {label: 'Rape', value: 'Rape'},
+        {label: 'Abuse', value: 'Abuse'},
+        {label: 'Kidnapping', value: 'Kidnapping'},
+        {label: 'Stalking', value: 'Stalking'},
+        {label: 'Hate Crime', value: 'Hate Crime'},
+        {label: 'Indecent Exposure', value: 'Indecent Exposure'},
+        {label: 'Drug Distribution', value: 'Drug Distribution'},
+        {label: 'Vandalism', value: 'Vandalism'},
+        {label: 'Solicitation', value: 'Solicitation'},
+        {label: 'Speeding', value: 'Speeding'}, 
     ]);
 
     const [incidentValue, setIncidentValue] = useState([]);
@@ -47,7 +49,7 @@ export default function ReportScreen() {
                     const lat_offset = 0.0085 - (0.017 * Math.random());
                     const lon_offset = 0.0085 - (0.017 * Math.random());
                     const data = {
-                        type: incidentValue[0],
+                        types: incidentValue,
                         description: incidentDescription.replace('\n', ''),
                         location: {
                             latitude: 34.068925 + lat_offset,
@@ -101,6 +103,7 @@ export default function ReportScreen() {
                 //itemSeparator
                 multiple
                 min={0}
+                max={3}
                 items={incidentType}
                 setItems={setIncidentType}
                 value={incidentValue}
