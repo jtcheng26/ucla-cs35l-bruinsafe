@@ -49,10 +49,11 @@ app.get("/user/:id", async (req, res) => {
 
 app.post("/user/login", async (req, res) => {
   const email = req.body.email;
-  const  model = await UserModel.findOne({email: email});
+  const model = await UserModel.findOne({email: email}).exec();
   if (!model) {
     res.send("User not found", 400)
   } else {
+    if (!req.body.password) res.send("Invalid password", 400)
     const pw = hashpw(req.body.password)
     if (model.password != pw) {
       res.send("Wrong password", 400)
@@ -65,6 +66,7 @@ app.post("/user/login", async (req, res) => {
 app.post("/user/create", (req, res) => {
   const email = req.body.email;
   const name = req.body.name;
+  if (!req.body.password) res.send("Invalid password", 400)
   const pw = hashpw(req.body.password)
   const model = new UserModel({ email: email, name: name, password: pw });
   model.save();
@@ -90,6 +92,16 @@ app.put("/user/edit", async (req, res) => {
     await UserModel.findByIdAndUpdate(id, { name: name })
     res.send("Success", 200)
   }
+})
+
+app.get("/users/nearby", async (req, res) => {
+  const users = await UserModel.find({});
+  const jsonUsers = users.map(user => {
+    const json = user.toJSON()
+    delete json["password"]
+    return json
+  })
+  res.send(jsonUsers);
 })
 
 /* ======================= Report Routes ======================= */
