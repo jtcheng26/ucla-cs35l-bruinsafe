@@ -20,12 +20,11 @@ These instructions will get you a copy of BruinSafe up and running on your local
 
 #### Prerequisites
 
-- Node.js (>= version 18.0.0)
-- npm (>= version 8.3.0)
-- Expo CLI (>= version 6.3.0)
-  - For installation instructions: <https://docs.expo.dev/more/expo-cli#installation>
+- Node.js (>= v18.0.0)
+- npm (>= v8.3.0)
+- Expo CLI (>= v6.3.0)
+  - For installation instructions: [Expo CLI Installation](https://docs.expo.dev/more/expo-cli#installation)
 - Expo Go (Mobile App)
-  - Optional: Android Studio or Xcode (for running the app on emulator on   local device)
 
 **Note: Do not use WSL2.0/WSL1.0 functionality**
 
@@ -37,13 +36,13 @@ These instructions will get you a copy of BruinSafe up and running on your local
    git clone https://github.com/jtcheng26/ucla-cs35l-bruinsafe.git
     ```
 
-2. Install dependencies:
+2. Install dependencies by running:
 
    ```bash
    npm install
    ```
 
-   - Alternatively
+   - Alternatively run:
 
         ```bash
         yarn install
@@ -62,7 +61,7 @@ These instructions will get you a copy of BruinSafe up and running on your local
   - If IOS scan using Camera App
   - If Android scan using Expo Go App
   - Certain networks may create issues, if so:
-    - Stop hosting process on local device (Ctrl c)
+    - Stop hosting on local device by typing **'CTRL + C'**
     - Run:
 
         ```bash
