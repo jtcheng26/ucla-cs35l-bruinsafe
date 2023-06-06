@@ -17,6 +17,7 @@ import * as Location from "expo-location";
 import { BASE_URL } from "../../../constants";
 import LocationButton from "../../../assets/location.svg";
 import useUserId from "../../hooks/useUserId";
+import ConfirmPath from './confirmPath';
 
 import MapViewDirections from "react-native-maps-directions";
 
@@ -167,7 +168,7 @@ export default function MapScreen() {
         />
       );
     } else if (actionState == 2) {
-      return <PathSelect />;
+      return <ConfirmPath onPress={setButtonAction} coordinates={mapMarkerList[0]} />;
     } else {
       return null;
     }
