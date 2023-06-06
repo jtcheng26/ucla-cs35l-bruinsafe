@@ -16,6 +16,7 @@ import axios from 'axios';
 import * as Location from 'expo-location';
 import { BASE_URL } from '../../../constants';
 import LocationButton from '../../../assets/location.svg';
+import useUserId from '../../hooks/useUserId';
 
 import MapViewDirections from "react-native-maps-directions";
 
@@ -35,6 +36,7 @@ const GOOGLE_MAPS_APIKEY = process.env.GOOGLE_APIKEY;
 
 //#020617
 export default function MapScreen() {
+  const { id } = useUserId();
   const [walking, setWalking] = useState(true);
   const [markerVisible, setMarkerVisible] = useState(false);
   const [mapMarkerList, setMapMarkerList] = useState([]);
@@ -76,6 +78,10 @@ export default function MapScreen() {
   useEffect(() => {
     getPermissions();
   }, []);
+  const fetchMarkers = async () => { 
+    let allMarkers = await axios.get(BASE_URL + "/walk/get");
+    
+  };
   const getLocation = async () => {
     try {
         curLocation = {
@@ -103,7 +109,7 @@ export default function MapScreen() {
     } else {
         return null;
     }
-};
+  };
   const fetchData = async () => {
     try {
       let dataCopy = { ...data };
