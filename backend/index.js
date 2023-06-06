@@ -51,13 +51,13 @@ app.post("/user/login", async (req, res) => {
   const email = req.body.email;
   const  model = await UserModel.findOne({email: email});
   if (!model) {
-    res.send("User not found", 400)
+    res.status(400).json({error : "User not found" });
   } else {
     const pw = hashpw(req.body.password)
     if (model.password != pw) {
-      res.send("Wrong password", 400)
+      res.status(400).json({error : "Wrong password" });
     } else {
-      res.send(model.toJSON(), 200)
+      res.status(200).json(model.toJSON());
     }
   }
 })
@@ -66,9 +66,29 @@ app.post("/user/create", (req, res) => {
   const email = req.body.email;
   const name = req.body.name;
   const pw = hashpw(req.body.password)
-  const model = new UserModel({ email: email, name: name, password: pw });
-  model.save();
-  res.send(model.toJSON());
+
+  UserModel.findOne( {$or: [{email: email}, { password: pw}] },
+    (err, exisitingUser) => {
+
+      if (err) {
+        res.send("Internal Server Error", 500)
+      }
+      else if (existingUser)
+      {
+        if (existingUser.email == email){
+          res.status(400).json({ error: "User with specified email already exists" });
+        }
+        else
+          res.status(400).json({ error: "User with password already exists" });
+      }
+      else
+      {
+        const model = new UserModel({ email: email, name: name, password: pw });
+        model.save();
+        res.status(200).json(model.toJSON());
+      }
+    })
+
 });
 
 app.put("/user/edit", async (req, res) => {

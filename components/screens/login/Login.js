@@ -179,7 +179,7 @@ export default function Login() {
                 </Text>
                 <TextInput
                 className={styles.inputBox}
-                placeholder=""
+                placeholder="UCLA email"
                 placeholderTextColor={"rgb(2 132 199)"}
                 onChangeText={setEmail}
                 value={email}
