@@ -1,11 +1,12 @@
 import {View, Text} from 'react-native';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import TouchableScale from 'react-native-touchable-scale';
 import Svg, { Path, SvgXml, SvgUri, Circle } from 'react-native-svg';
 import Location from '../../../assets/location.svg';
 import {Marker} from 'react-native-maps';
 import axios from 'axios';
 import BASE_URL from '../../../constants';
+import useUserId from '../../hooks/useUserId';
 
 export default function walkButton({onPress, text, setMarker, setMarkerStyle, region, markerList, setMarkerList, regionCoords}) {
     const [buttonText, setButtonText] = useState(text);
@@ -13,6 +14,11 @@ export default function walkButton({onPress, text, setMarker, setMarkerStyle, re
         start: null,
         end: null
     });
+    const { id } = useUserId()
+    useEffect(() => {
+        if (id)
+            console.log(id)
+    }, [id])
     const handleClick = async () => {
         if (buttonText === "walk with someone") {
             console.log(regionCoords);
@@ -34,7 +40,7 @@ export default function walkButton({onPress, text, setMarker, setMarkerStyle, re
             let copyMarkerList = markerList.slice();
             let copyPath = {...path};
             copyPath.start = region;
-            setPath()
+            setPath(copyPath);
             // copyMarkerList.push(<Marker coordinate={regionCoords} pinColor="#FBBF24"/>);
             // setMarkerList(copyMarkerList);
         } else if (buttonText === "set end") {
@@ -48,6 +54,8 @@ export default function walkButton({onPress, text, setMarker, setMarkerStyle, re
             let copyMarkerList = markerList.slice();
             let copyPath = {...path};
             copyPath.end = region;
+            setPath(copyPath);
+            const pushCoords = axios.post(BASE_URL + "/walk/request", {...path, user: id })
             // copyMarkerList.push(<Marker coordinate={regionCoords} pinColor="#BA132C"/>);
             // setMarkerList(copyMarkerList);
             // const pushCoords = await axios.post(BASE_URL + "");

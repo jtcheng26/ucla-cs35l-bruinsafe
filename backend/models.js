@@ -29,7 +29,22 @@ const ReportSchema = new Schema({
   },
 });
 
+const WalkSchema = new Schema({
+  origin: {
+    latitude: Number,
+    longitude: Number
+  },
+  destination: {
+    latitude: Number,
+    longitude: Number
+  },
+  user: ObjectId,
+  state: Number, // 0 = started, 1 = in progress, 2 = finished
+  guardian: ObjectId
+})
+
 const UserModel = mongoose.model("User", UserSchema);
 const ReportModel = mongoose.model("Report", ReportSchema);
+const WalkModel = mongoose.model("Walk", WalkSchema)
 
-module.exports = { mongoose, UserModel, ReportModel };
+module.exports = { mongoose, UserModel, ReportModel, WalkModel };

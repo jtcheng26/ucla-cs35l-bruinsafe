@@ -78,7 +78,7 @@ export default function ReportScreen() {
         <SafeAreaView
         className="flex-1 justify-center items-center bg-sky-950"
         >
-            <ProfileHeader name={"David Smalberg"}/>
+            {/* <ProfileHeader name={"David Smalberg"}/> */}
             <Text
             className="font-bold text-white text-center text-3xl"
             >
