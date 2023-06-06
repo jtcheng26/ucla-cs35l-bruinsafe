@@ -12,7 +12,7 @@ import moment from 'moment';
 import EscortList from './escortList';
 import axios from 'axios';
 import * as Location from 'expo-location';
-import {BASE_URL} from '../login/Login';
+import { BASE_URL } from "../../../constants";
 
 import MapViewDirections from "react-native-maps-directions";
 

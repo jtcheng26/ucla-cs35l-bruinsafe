@@ -8,7 +8,6 @@ import axios from "axios"
 
 
 
-
 export default function ReportScreen() {
     const styles = {
         inputField: "p-2 rounded-xl w-12/12 m-2 bg-sky-200 justify-start",
@@ -45,12 +44,14 @@ export default function ReportScreen() {
         if( incidentValue.length != 0 && incidentDescription ) {
             const sendData = async () => {
                 try {
+                    const lat_offset = 0.0085 - (0.017 * Math.random());
+                    const lon_offset = 0.0085 - (0.017 * Math.random());
                     const data = {
                         type: incidentValue[0],
                         description: incidentDescription.replace('\n', ''),
                         location: {
-                            latitude: 169,
-                            longitude: 198
+                            latitude: 34.068925 + lat_offset,
+                            longitude: -118.446629 + lon_offset
                         }
                     };
                     const response = await axios.post(BASE_URL + '/report/create', data);
@@ -201,7 +202,7 @@ export default function ReportScreen() {
 
 
             <TouchableScale
-            className="rounded-lg mt-20 h-8 w-40 justify-center items-center bg-red-500"
+            className="rounded-lg mt-16 h-10 w-40 justify-center items-center bg-red-500"
             activeScale={0.95}
             onPress={handleSubmit}
             >
