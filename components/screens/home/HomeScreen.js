@@ -7,11 +7,26 @@ import { BASE_URL } from '../../../constants';
 import WalkingRequestPanel from './WalkingRequestPanel';
 import { useState, useEffect, useMemo } from 'react';
 import ReportsPanel from './ReportsPanel';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function HomeScreen() {
     const [users, setUsers] = useState([])
     const [reports, setReports] = useState([]);
+    const month = {
+        "01": "Jan",
+        "02": "Feb",
+        "03": "Mar",
+        "04": "Apr",
+        "05": "May",
+        "06": "Jun",
+        "07": "Jul",
+        "08": "Aug",
+        "09": "Sep",
+        "10": "Oct",
+        "11": "Nov",
+        "12": "Dec",
+    }
 
     useEffect(() => {
         const fetchNearbyUsers = async() => {
@@ -54,7 +69,9 @@ export default function HomeScreen() {
     useEffect(() => {
         if (!users) return [];
         (async () => {
-            const fetched = await Promise.all(users.map(u => axios.get(BASE_URL + "/user/" + u.user)))
+            const cur_user_id = await AsyncStorage.getItem("@id");
+            let newArr = users.filter(u => u.user !== cur_user_id);
+            const fetched = await Promise.all(newArr.map(u => axios.get(BASE_URL + "/user/" + u.user)));
             setNewUsers(fetched.map(f =>
                 f.data
             ))
@@ -68,7 +85,7 @@ export default function HomeScreen() {
             <Text
             className="text-2xl font-semibold text-amber-400 mt-28 mb-2 ml-8"
             >
-                Walk Requests
+                Nearby Walk Requests
             </Text>
             <View
             className="w-full h-2/5 items-center justify-center"
@@ -78,7 +95,7 @@ export default function HomeScreen() {
                 >
                     {newUsers.map(f => (
                         <WalkingRequestPanel 
-                        key={f._id}
+                        key={Math.random()}
                         user={f}
                         onDecline={handleDecline}
                         />
@@ -100,13 +117,12 @@ export default function HomeScreen() {
                     {reports.map((report) => (
                         <ReportsPanel
                         key={report._id}
-                        type={
-                            (report.types.length > 0) ?
-                            report.types.join(", ") :
-                            report.type
-                        }
+                        type={report.types.join(", ")}
                         desc={report.description}
-                        date={report.timestamp.slice(0,10)}
+                        date={month[report.timestamp.slice(5,7)] + " " +
+                            report.timestamp.slice(8,10) + 
+                            ", " + report.timestamp.slice(0,4)
+                        }
                         />
                     ))}
                 </ScrollView>
