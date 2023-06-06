@@ -69,7 +69,7 @@ useEffect(() => {
                     <Text
                     className="text-sky-900"
                     >
-                        accept
+                        Accept
                     </Text>
                 </TouchableScale>
 
@@ -81,7 +81,7 @@ useEffect(() => {
                     <Text
                     className="text-sky-200"
                     >
-                        decline
+                        Decline
                     </Text>
                 </TouchableScale>
             </View>
