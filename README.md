@@ -2,6 +2,13 @@
 
 [![React Native](https://img.shields.io/badge/React%20Native-v0.64.2-blue.svg)](https://facebook.github.io/react-native/)
 
+Los Angeles is not pedestrian friendly.
+
+With high crime rates and a car reliant infrastruction, walking around LA
+is often dangerous. However, what do we do when walking is unavoidable?
+
+Our solution: BruinSafe.
+
 BruinSafe is a mobile app that aims to enhance the personal safety of UCLA students by providing real-time location tracking equipped with walk requests with peers, nearby crime alerts, and crime report tracking.
 
 ## Table of Contents
