@@ -1,5 +1,13 @@
 const { mongoose, UserModel, WalkModel } = require("./models");
 
+/*
+
+:/walk/request
+user: userid
+origin: orig coords
+destination: dest coords
+
+*/
 const walkRequest = async (req, res) => {
   const user = req.body.user;
   const origin = req.body.origin;
@@ -20,6 +28,13 @@ const walkRequest = async (req, res) => {
   }
 };
 
+/*
+
+:/walk/accept
+id: of walk coords
+user: userid coords
+
+*/
 const walkAccept = async (req, res) => {
   const walkId = req.body.id;
   const userId = req.body.user;

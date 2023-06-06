@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import NavBar from "../../overlays/NavBar";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
@@ -8,14 +8,14 @@ import WalkButton from "./walkButton";
 import WalkingPage from "./WalkingPage";
 import NumberReports from "./numberReports";
 import mapStyle from "./mapStyle.json";
-import moment from 'moment';
-import EscortList from './escortList';
-import PathSelect from './PathSelect';
-import SafetyLevel from './SafetyLevel';
-import axios from 'axios';
-import * as Location from 'expo-location';
-import { BASE_URL } from '../../../constants';
-import LocationButton from '../../../assets/location.svg';
+import moment from "moment";
+import EscortList from "./escortList";
+import PathSelect from "./PathSelect";
+import SafetyLevel from "./SafetyLevel";
+import axios from "axios";
+import * as Location from "expo-location";
+import { BASE_URL } from "../../../constants";
+import LocationButton from "../../../assets/location.svg";
 
 import MapViewDirections from "react-native-maps-directions";
 
@@ -34,6 +34,13 @@ const GOOGLE_MAPS_APIKEY = process.env.GOOGLE_APIKEY;
 */
 
 //#020617
+function getHeading(coordinate1, coordinate2) {
+    const dy = coordinate2.latitude - coordinate1.latitude
+    const dx = coordinate2.longitude - coordinate1.longitude
+    if (dx == 0) return dy >= 0 ? 90 : -90
+    const angle = 90 - (Math.atan(dy / dx) / (2 * Math.PI)) * 360
+    return angle
+}
 export default function MapScreen() {
   const [walking, setWalking] = useState(true);
   const [markerVisible, setMarkerVisible] = useState(false);
@@ -41,8 +48,8 @@ export default function MapScreen() {
   const [currentRegion, setRegion] = useState(null);
   const [markerStyles, setMarkerStyles] = useState({
     width: 60,
-    height:60,
-    fill: "#FBBF24"
+    height: 60,
+    fill: "#FBBF24",
   });
   const [location, setLocation] = useState({
     latitude: 34.069201,
@@ -71,15 +78,32 @@ export default function MapScreen() {
   };
   const CurrentButton = (actionState) => {
     if (actionState == 0) {
-        return <WalkButton text={"walk with someone"} onPress={setButtonAction} setMarker={setMarkerVisible} setMarkerStyle={setMarkerStyles} markerList={mapMarkerList} setMarkerList={setMapMarkerList} regionCoords={currentRegion} />;
+      return (
+        <WalkButton
+          text={"walk with someone"}
+          onPress={setButtonAction}
+          setMarker={setMarkerVisible}
+          setMarkerStyle={setMarkerStyles}
+          markerList={mapMarkerList}
+          setMarkerList={setMapMarkerList}
+          regionCoords={currentRegion}
+        />
+      );
     } else if (actionState == 1) {
-        return <WalkingPage locationName={data.cityName} walkerFullName={"Carey Nachenberg"} currentTime={currentDateTime} onPress={setButtonAction} />;
+      return (
+        <WalkingPage
+          locationName={data.cityName}
+          walkerFullName={"Carey Nachenberg"}
+          currentTime={currentDateTime}
+          onPress={setButtonAction}
+        />
+      );
     } else if (actionState == 2) {
-        return <PathSelect />
+      return <PathSelect />;
     } else {
-        return null;
+      return null;
     }
-};
+  };
   const fetchData = async () => {
     try {
       let dataCopy = { ...data };
@@ -104,22 +128,44 @@ export default function MapScreen() {
   };
   const handleRegionChange = (region) => {
     setRegion(region);
-  }
+  };
   useEffect(() => {
     const interval = setInterval(fetchData, 1000);
     return () => {
       clearInterval(interval);
     };
   }, []);
-  useEffect(() => {
-    const interval = setInterval(getLocation, 1000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
+  //   useEffect(() => {
+  //     const interval = setInterval(getLocation, 1000);
+  //     return () => {
+  //       clearInterval(interval);
+  //     };
+  //   }, []);
   setInterval(() => {
     setDateTime(moment().format("hh:mm a"));
   }, 2500);
+  const mapRef = useRef(null);
+  function animateToLocation(coords, heading) {
+    mapRef.current.animateCamera(
+        {
+          center: coords,
+          pitch: 60,
+          heading: heading,
+          altitude: 200,
+          zoom: 40,
+        },
+        2000
+      );
+  }
+  useEffect(() => {
+    if (mapRef && path && path.coordinates) {
+    //   const to = setTimeout(() => {
+        animateToLocation(origin, getHeading(path.coordinates[0], path.coordinates[1]))
+    //   }, 5000);
+    //   return clearTimeout(to);
+    }
+  }, [mapRef, path]);
+  
   return (
     <View className="flex-1 justify-center items-center h-full w-full">
       <MapView
@@ -135,6 +181,7 @@ export default function MapScreen() {
           x: 0,
           y: 50,
         }}
+        ref={mapRef}
         showsCompass
       >
         {mapMarkerList}
@@ -148,7 +195,8 @@ export default function MapScreen() {
             lineCap="round"
             mode="WALKING"
             onReady={(res) => {
-                console.log(res)
+              console.log(res);
+              setPath(res)
             }}
           />
         ) : (
@@ -198,7 +246,13 @@ export default function MapScreen() {
       <NumberReports numReports={data.numReports} />
       <SafetyLevel numReports={data.numReports} />
       <View className="w-1/12 h-1/12 absolute m-auto flex justify-center items-center">
-        {markerVisible ? <LocationButton width={markerStyles.width} height={markerStyles.height} fill={markerStyles.fill}/> : null}
+        {markerVisible ? (
+          <LocationButton
+            width={markerStyles.width}
+            height={markerStyles.height}
+            fill={markerStyles.fill}
+          />
+        ) : null}
       </View>
       {CurrentButton(buttonAction)}
     </View>
