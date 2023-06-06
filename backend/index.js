@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-const { mongoose, UserModel, ReportModel } = require("./models.js");
+const { mongoose, UserModel, ReportModel, WalkModel } = require("./models.js");
 
 const express = require("express");
 const ip = require('ip');

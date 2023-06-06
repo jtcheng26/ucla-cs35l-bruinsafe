@@ -40,7 +40,7 @@ export default function ReportScreen() {
     const enterPress = ({ nativeEvent }) => {
         if(nativeEvent.key === 'Enter') Keyboard.dismiss();
     }
-
+    
     const handleSubmit = () => {
         setSubmitPressed(true);
         if( incidentValue.length != 0 && incidentDescription ) {

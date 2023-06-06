@@ -11,7 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function HomeScreen() {
-    const [users, setUsers] = useState([])
+    const [users, setUsers] = useState([]);
     const [reports, setReports] = useState([]);
     const month = {
         "01": "Jan",
@@ -35,7 +35,7 @@ export default function HomeScreen() {
                 setUsers(response.data);
                 let tu = {};
             } catch(e) {
-                console.error(e)
+                console.error(e);
             }
         }
         fetchNearbyUsers();
@@ -62,6 +62,22 @@ export default function HomeScreen() {
         setNewUsers(newArr)
     }
 
+    const handleAccept = async(walkID) => {
+        try {
+            const userID = await AsyncStorage.getItem('@id');
+            const data = {
+                id: walkID,
+                user: userID,
+            }
+        const response = await axios.post(BASE_URL + "/walk/accept", data);
+        console.log(response.data);
+        }
+        catch(error)
+        {
+            console.log(error)
+        }
+    }
+    
     const [userobjs, setUserobjs] = useState([]);
     //to decline
     const [newUsers, setNewUsers] = useState([]);
@@ -98,6 +114,7 @@ export default function HomeScreen() {
                         key={Math.random()}
                         user={f}
                         onDecline={handleDecline}
+                        onAccept={handleAccept}
                         />
                     ))}
                 </ScrollView>

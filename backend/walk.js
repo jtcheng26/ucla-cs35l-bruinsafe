@@ -13,10 +13,13 @@ const walkRequest = async (req, res) => {
   const origin = req.body.origin;
   const dest = req.body.destination;
   const model = await UserModel.findById(user).exec();
+  const check = await WalkModel.find({ user: user }).exec();
   console.log(req.body);
   if (!mongoose.isValidObjectId(user)) {
     res.status(400).send("Invalid ID");
   } else if (!model) res.status(404).send("User not found");
+  else if (check)
+    res.status(400).send("Cannot have multiple walk requests per user")
   else {
     const walk = new WalkModel({
       user: user,
