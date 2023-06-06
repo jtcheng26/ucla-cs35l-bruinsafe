@@ -7,10 +7,12 @@ import { BASE_URL } from '../../../constants';
 import WalkingRequestPanel from './WalkingRequestPanel';
 import { useState, useEffect } from 'react';
 import ReportsPanel from './ReportsPanel';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 export default function HomeScreen() {
-    const [users, setUsers] = useState([])
+    const [users, setUsers] = useState([]);
     const [reports, setReports] = useState([]);
 
     useEffect(() => {
@@ -19,7 +21,7 @@ export default function HomeScreen() {
                 const response = await axios.get(BASE_URL + "/users/nearby");
                 setUsers(response.data);
             } catch(e) {
-                console.error(e)
+                console.error(e);
             }
         }
         fetchNearbyUsers();
@@ -46,6 +48,22 @@ export default function HomeScreen() {
         setUsers(newArr)
     }
 
+    const handleAccept = async(walkID) => {
+        try {
+            const userID = await AsyncStorage.getItem('@id');
+            const data = {
+                id: walkID,
+                user: userID,
+            }
+        const response = await axios.post(BASE_URL + "/walk/accept", data);
+        console.log(response.data);
+        }
+        catch(error)
+        {
+            console.log(error)
+        }
+    }
+
     return (
         <View className="flex-1 bg-sky-950">
             {/* <ProfileHeader /> */}
@@ -62,9 +80,10 @@ export default function HomeScreen() {
                 >
                     {users.map((user) => (
                         <WalkingRequestPanel 
-                        key={user.id}
+                        key={user._id}
                         user={user}
                         onDecline={handleDecline}
+                        onAccept={handleAccept}
                         />
                     ))}
                 </ScrollView>
