@@ -4,10 +4,12 @@ import { useState } from "react"
 import axios from "axios";
 import MainPage from "../home/MainPage";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import PassMeter from "react-native-passmeter"
 
 export const BASE_URL = "http://169.232.214.20:8080";
 
-
+const MIN_LEN = 8,
+    LABELS = ["Too Short", "Weak", "Normal", "Strong", "Secure"]
 
 export default function Login() {
     const styles = {
@@ -183,12 +185,20 @@ export default function Login() {
                 className={styles.inputBox}
                 placeholder="Minimum 8 characters with one special character"
                 placeholderTextColor={"rgb(2 132 199)"}
-                onChangeText={setPW}
+                onChangeText={pw => setPW(pw)}
                 value={pw}
                 />
 
+
                 {(suTxt == "SIGN UP") ?
                 (<>
+                    <PassMeter>
+                        showLabels
+                        password={pw}
+                        minLength={MIN_LEN}
+                        labels={LABELS}
+                    </PassMeter>
+                    
                     <Text
                     className={styles.inputText}
                     >
