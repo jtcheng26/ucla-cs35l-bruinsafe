@@ -5,7 +5,7 @@ import ProfileHeader from '../../overlays/ProfileHeader';
 import axios from 'axios';
 import { BASE_URL } from '../../../constants';
 import WalkingRequestPanel from './WalkingRequestPanel';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import ReportsPanel from './ReportsPanel';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -18,8 +18,9 @@ export default function HomeScreen() {
     useEffect(() => {
         const fetchNearbyUsers = async() => {
             try {
-                const response = await axios.get(BASE_URL + "/users/nearby");
+                const response = await axios.get(BASE_URL + "/walk/get");
                 setUsers(response.data);
+                let tu = {};
             } catch(e) {
                 console.error(e);
             }
@@ -44,24 +45,8 @@ export default function HomeScreen() {
     }, [])
 
     const handleDecline = (id) => {
-        let newArr = users.filter(u => u._id !== id)
-        setUsers(newArr)
-    }
-
-    const handleAccept = async(walkID) => {
-        try {
-            const userID = await AsyncStorage.getItem('@id');
-            const data = {
-                id: walkID,
-                user: userID,
-            }
-        const response = await axios.post(BASE_URL + "/walk/accept", data);
-        console.log(response.data);
-        }
-        catch(error)
-        {
-            console.log(error)
-        }
+        let newArr = newUsers.filter(u => u._id !== id)
+        setNewUsers(newArr)
     }
 
     return (
@@ -78,7 +63,7 @@ export default function HomeScreen() {
                 <ScrollView
                 className="w-10/12"
                 >
-                    {users.map((user) => (
+                    {newUsers.map(f => (
                         <WalkingRequestPanel 
                         key={user._id}
                         user={user}
