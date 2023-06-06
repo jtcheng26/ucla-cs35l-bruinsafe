@@ -6,11 +6,12 @@ import axios from 'axios';
 import { BASE_URL } from '../../../constants';
 import WalkingRequestPanel from './WalkingRequestPanel';
 import { useState, useEffect } from 'react';
-import PreviousWalksPanel from './PreviousWalksPanel';
+import ReportsPanel from './ReportsPanel';
 
 
 export default function HomeScreen() {
     const [users, setUsers] = useState([])
+    const [reports, setReports] = useState([]);
 
     useEffect(() => {
         const fetchNearbyUsers = async() => {
@@ -23,6 +24,22 @@ export default function HomeScreen() {
         }
         fetchNearbyUsers();
     }, []);
+
+    useEffect(() => {
+        const fetchNearbyReports = async() => {
+            try {
+                const cur_loc = {
+                    latitude: 34.068925,
+                    longitude: -118.446629
+                }
+                const response = await axios.post(BASE_URL + "/report/search", cur_loc);
+                setReports(response.data)
+            } catch(e) {
+                console.error(e);
+            }
+        }
+        fetchNearbyReports();
+    }, [])
 
     const handleDecline = (id) => {
         let newArr = users.filter(u => u._id !== id)
@@ -55,7 +72,7 @@ export default function HomeScreen() {
             <Text
             className="text-2xl font-semibold text-blue-200 mt-4 mb-4 ml-8"
             >
-                Previous Walks
+                Nearby Incidents
             </Text>
             <View
             className="w-full h-1/5 items-center justify-center"
@@ -64,9 +81,18 @@ export default function HomeScreen() {
                 className="w-10/12"
                 horizontal
                 >
-                    <PreviousWalksPanel 
-                    
-                    />
+                    {reports.map((report) => (
+                        <ReportsPanel
+                        key={report._id}
+                        type={
+                            (report.types.length > 0) ?
+                            report.types.join(", ") :
+                            report.type
+                        }
+                        desc={report.description}
+                        date={report.timestamp.slice(0,10)}
+                        />
+                    ))}
                 </ScrollView>
             </View>
             
