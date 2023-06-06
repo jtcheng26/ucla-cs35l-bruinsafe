@@ -10,7 +10,7 @@ import useUserId from '../../hooks/useUserId';
 
 export default function walkButton({onPress, text, setMarker, setMarkerStyle, region, markerList, setMarkerList, regionCoords, walkPath, setWalkPath}) {
     const [buttonText, setButtonText] = useState(text);
-    const { id } = useUserId()
+    const { id } = useUserId();
     // useEffect(() => {
     //     if (id)
     //         console.log(id)
@@ -51,9 +51,10 @@ export default function walkButton({onPress, text, setMarker, setMarkerStyle, re
             let copyPath = {...walkPath};
             copyPath.end = regionCoords;
             setWalkPath(copyPath);
-            const pushCoords = await axios.post(BASE_URL + "/walk/request", {origin: copyPath.start, destination: copyPath.end, user: id });
-            console.log(pushCoords.data)
-            setMarkerList([pushCoords.data])
+            //const pushCoords = await axios.post(BASE_URL + "/walk/request", {origin: copyPath.start, destination: copyPath.end, user: id });
+            //console.log("Coords", pushCoords.data)
+            setMarkerList([{...copyPath, user: id}]);
+            onPress(2);
             // console.log(pushCoords)
             // copyMarkerList.push(<Marker coordinate={regionCoords} pinColor="#BA132C"/>);
             // setMarkerList(copyMarkerList);
