@@ -1,20 +1,19 @@
 import { View, Text, ScrollView, SafeAreaView } from 'react-native';
 import { Stack, useRouter } from 'expo-router'
 import MapView from 'react-native-maps'
-
-import NavBar from '../../overlays/NavBar';
+import ProfileHeader from '../../overlays/ProfileHeader';
 
 export default function HomeScreen() {
 
-
-
-
     return (
-        <View className="flex-1 justify-center items-center bg-sky-950">
-            <MapView
+        <View className="flex-1 items-center bg-sky-950">
+            <ProfileHeader />
+            <Text
+            className="text-2xl font-semibold text-sky-300 mt-28"
             >
-            </MapView>
-            <Text className="text-red-600">Home Screen</Text>
+                Active Walking Requests
+            </Text>
+            
         </View>
     );
 }
