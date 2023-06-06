@@ -33,6 +33,14 @@ io.on("connection", (socket) => {
   });
 });
 
+/* ======================= Walk Routes ======================= */
+
+const { walkRequest, walkAccept } = require('./walk.js')
+
+app.post("/walk/request", walkRequest)
+
+app.post("/walk/accept", walkAccept)
+
 /* ======================= User Routes ======================= */
 
 app.get("/user/:id", async (req, res) => {

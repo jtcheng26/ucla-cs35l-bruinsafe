@@ -133,6 +133,9 @@ export default function MapScreen() {
             strokeWidth={6}
             lineCap="round"
             mode="WALKING"
+            onReady={(res) => {
+                console.log(res)
+            }}
           />
         ) : (
           ""
