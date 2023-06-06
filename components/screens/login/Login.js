@@ -1,10 +1,11 @@
-import { View, Text, TextInput } from "react-native";
+import { View, Text, TextInput, Switch } from "react-native";
 import TouchableScale from "react-native-touchable-scale";
 import { useState } from "react"
 import axios from "axios";
 import MainPage from "../home/MainPage";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PassMeter from "react-native-passmeter"
+import { Switch } from "react-native-web";
 
 export const BASE_URL = "http://169.232.214.20:8080";
 
@@ -20,10 +21,11 @@ export default function Login() {
 
     const [email, setEmail] = useState(null);
     const [pw, setPW] = useState(null);
-    const [confirmPW, setConfirmPW] = useState(null)
+    const [confirmPW, setConfirmPW] = useState(null);
     const [logError, setLogError] = useState("");
-    const [signupSuccess, setSignupSuccess] = useState(false)
-    const [suTxt, setSUTxt] = useState("LOGIN")
+    const [signupSuccess, setSignupSuccess] = useState(false);
+    const [suTxt, setSUTxt] = useState("LOGIN");
+    const [showPass, setShowPass] = useState(false);
 
 
     const isEmailValid = (email) => {
@@ -154,11 +156,16 @@ export default function Login() {
         }
     }
     
+    const togglePassVisibility = () => {
+        setShowPass(!showPass);
+    }
+
     if(signupSuccess) {
         return (
             <MainPage />
         );
     }
+
 
     return (
        <View
@@ -192,13 +199,22 @@ export default function Login() {
                     Password:
                 </Text>
                 <TextInput
-                secureTextEntry
+                secureTextEntry={!showPass}
                 className={styles.inputBox}
                 placeholder="Minimum 8 characters with one special character"
                 placeholderTextColor={"rgb(2 132 199)"}
                 onChangeText={pw => setPW(pw)}
                 value={pw}
                 />
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Switch>
+                        value={showPass}
+                        onValueChange={togglePassVisibility}
+                        thumbColor{showPass ? 'blue' : 'yellow'}
+                        trackColor={{false: 'grey', true: 'lightgrey'}}
+                    </Switch>
+                    <Text>Show Password</Text>
+                </View>
 
 
                 {(suTxt == "SIGN UP") ?
@@ -216,7 +232,7 @@ export default function Login() {
                         Confirm Password:
                     </Text>
                     <TextInput
-                    secureTextEntry
+                    secureTextEntry={!showPass}
                     className={styles.inputBox}
                     placeholder=""
                     placeholderTextColor={"rgb(2 132 199)"}
