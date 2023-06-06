@@ -5,7 +5,8 @@ import axios from "axios";
 import MainPage from "../home/MainPage";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const BASE_URL = "http://164.67.215.226:8080";
+export const BASE_URL = "http://169.232.106.104:8080";
+
 
 
 
@@ -110,6 +111,7 @@ export default function Login() {
     const handleSwitch = () => {
         setEmail(null);
         setPW(null);
+        setLogError(null);
         setConfirmPW(null);
         if(suTxt == "SIGN UP") {
             setSUTxt("LOGIN")
@@ -184,7 +186,7 @@ export default function Login() {
 
             </View>
             <TouchableScale 
-                className="border-sky-300 border-2 w-1/3 mt-10 h-10 items-center justify-center bg-sky-300"
+                className="border-sky-300 border-2 w-1/3 mt-10 h-10 items-center justify-center bg-sky-300 rounded-lg"
                 activeScale={0.97}
                 onPress={() => handleLoginAndSignUp()}
                 >
@@ -196,7 +198,7 @@ export default function Login() {
             </TouchableScale>
 
             <TouchableScale
-            className="border-sky-300 border-2 w-1/3 mt-4 h-10 items-center justify-center bg-transparent"
+            className="border-sky-300 border-2 w-1/3 mt-6 h-10 items-center justify-center bg-transparent rounded-lg"
             onPress={() => handleSwitch()}
             activeScale={0.97}
             >
