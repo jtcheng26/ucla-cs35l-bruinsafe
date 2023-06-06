@@ -2,20 +2,21 @@ import { View, Text } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import NavBar from "../../overlays/NavBar";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import ProfileHeader from "../../overlays/ProfileHeader";
 import WalkButton from "./walkButton";
 import WalkingPage from "./WalkingPage";
 import NumberReports from "./numberReports";
 import mapStyle from "./mapStyle.json";
-import moment from "moment";
-import EscortList from "./escortList";
-import PathSelect from "./PathSelect";
-import SafetyLevel from "./SafetyLevel";
-import axios from "axios";
-import * as Location from "expo-location";
-import { BASE_URL } from "../../../constants";
-import LocationButton from "../../../assets/location.svg";
+import moment from 'moment';
+import EscortList from './escortList';
+import PathSelect from './PathSelect';
+import SafetyLevel from './SafetyLevel';
+import axios from 'axios';
+import * as Location from 'expo-location';
+import { BASE_URL } from '../../../constants';
+import LocationButton from '../../../assets/location.svg';
+import useUserId from '../../hooks/useUserId';
 
 import MapViewDirections from "react-native-maps-directions";
 
@@ -42,6 +43,7 @@ function getHeading(coordinate1, coordinate2) {
   return angle;
 }
 export default function MapScreen() {
+  const { id } = useUserId();
   const [walking, setWalking] = useState(true);
   const [markerVisible, setMarkerVisible] = useState(false);
   const [mapMarkerList, setMapMarkerList] = useState([]);
@@ -82,6 +84,23 @@ export default function MapScreen() {
         return;
       }
     }
+  }
+  useEffect(() => {
+    getPermissions();
+  }, []);
+  const fetchMarkers = async () => { 
+    let allMarkers = await axios.get(BASE_URL + "/walk/get");
+    let copyMarkers = allMarkers.data.filter(x => x.user === id);
+    // for (let i = 0; i < allMarkers.data.length; i++) {
+    //   if (allMarkers.data[i].user == id) {
+    //     copyMarkers.push(<Marker coordinate={{latitude: allMarkers.data[i].origin.latitude, longitude: allMarkers.data[i].origin.longitude}} pinColor={'#C9123A'} />)
+    //     copyMarkers.push(<Marker coordinate={{latitude: allMarkers.data[i].destination.latitude, longitude: allMarkers.data[i].destination.longitude}} pinColor={'#FBBF24'} />)
+    //   }
+    // }
+    // console.log(id, allMarkers.data[0].user)
+    // console.log(allMarkers.data)
+    console.log(copyMarkers)
+    setMapMarkerList(copyMarkers);
   };
   const getLocation = async () => {
     try {
@@ -167,14 +186,27 @@ export default function MapScreen() {
     setRegion(region);
   };
   useEffect(() => {
-    const interval = setInterval(fetchData, 1000);
-    return () => {
-      clearInterval(interval);
-    };
+    fetchData()
   }, []);
-  setInterval(() => {
-    setDateTime(moment().format("hh:mm a"));
-  }, 2500);
+    // useEffect(() => {
+    //   const interval = setInterval(getLocation, 1000);
+    //   return () => {
+    //     clearInterval(interval);
+    //   };
+    // }, []);
+    useEffect(() => {
+      if (id)
+        fetchMarkers();
+      // console.log("fetched marers");
+      // const interval = setInterval(fetchMarkers, 1000);
+      // console.log("Placed Markers");
+      // return () => {
+      //   clearInterval(interval);
+      // };
+    }, [id]);
+  // setInterval(() => {
+  //   setDateTime(moment().format("hh:mm a"));
+  // }, 2500);
   const mapRef = useRef(null);
   function animateToLocation(
     coords,
@@ -194,6 +226,8 @@ export default function MapScreen() {
       duration
     );
   }
+  // console.log("render")
+  // console.log(mapMarkerList)
   useEffect(() => {
     if (mapRef && permissionStatus === "granted") {
       //   const to = setTimeout(() => {
@@ -235,7 +269,13 @@ export default function MapScreen() {
         ref={mapRef}
         showsCompass
       >
-        {mapMarkerList}
+        {mapMarkerList && mapMarkerList.length >= 1 ? <>
+          <Marker key={mapMarkerList[0].user + "1"} coordinate={mapMarkerList[0].origin} pinColor="#FBBF24" />
+          <Marker key={mapMarkerList[0].user + "0"} coordinate={mapMarkerList[0].destination} pinColor="#C9123A" />
+        </>: ""}
+        {/* {mapMarkerList.map((x, i) => <Marker key={x.user + i + "1"} coordinate={x.origin} pinColor="#FBBF24" />)[0]}
+        {mapMarkerList.map((x, i) => <Marker key={x.user + i + "0"} coordinate={x.destination} pinColor="#C9123A" />)[0]} */}
+        {/* <Marker coordinate={{latitude: 34.069201, longitude: -118.443515}}/> */}
         {GOOGLE_MAPS_APIKEY && walking ? (
           <MapViewDirections
             origin={origin}
