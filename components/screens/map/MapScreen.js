@@ -19,6 +19,7 @@ import LocationButton from '../../../assets/location.svg';
 import useUserId from '../../hooks/useUserId';
 
 import MapViewDirections from "react-native-maps-directions";
+import { Marker } from "react-native-svg";
 
 const origin = { latitude: 34.070819, longitude: -118.449262 };
 const destination = { latitude: 34.069201, longitude: -118.443515 };
@@ -64,6 +65,7 @@ export default function MapScreen() {
     longitudeDelta: 0.002,
   });
   const [buttonAction, setButtonAction] = useState(0);
+  const [path, setPath] = useState();
   const [data, setData] = useState({
     numReports: 0,
     cityName: "Westwood Plaza",
@@ -87,7 +89,12 @@ export default function MapScreen() {
   }, []);
   const fetchMarkers = async () => { 
     let allMarkers = await axios.get(BASE_URL + "/walk/get");
-    
+    let copyMarkers = [];
+    for (let i = 0; i < allMarkers.data.length; i++) {
+      copyMarkers.push(<Marker coordinate={{latitude: allMarkers.data[i].origin.latitude, longitude: allMarkers.data[i].origin.longitude}} pinColor={'#C9123A'} />)
+      copyMarkers.push(<Marker coordinate={{latitude: allMarkers.data[i].destination.latitude, longitude: allMarkers.data[i].destination.longitude}} pinColor={'#FBBF24'} />)
+    }
+    setMapMarkerList(copyMarkers);
   };
   const getLocation = async () => {
     try {
@@ -155,12 +162,15 @@ export default function MapScreen() {
       clearInterval(interval);
     };
   }, []);
-  //   useEffect(() => {
-  //     const interval = setInterval(getLocation, 1000);
-  //     return () => {
-  //       clearInterval(interval);
-  //     };
-  //   }, []);
+    useEffect(() => {
+      const interval = setInterval(getLocation, 1000);
+      return () => {
+        clearInterval(interval);
+      };
+    }, []);
+    useEffect(() => {
+      fetchMarkers();
+    }, []);
   setInterval(() => {
     setDateTime(moment().format("hh:mm a"));
   }, 2500);
