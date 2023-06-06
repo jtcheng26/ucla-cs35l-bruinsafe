@@ -5,7 +5,7 @@ import axios from "axios";
 import MainPage from "../home/MainPage";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const BASE_URL = "http://169.232.214.20:8080";
+export const BASE_URL = "http://164.67.215.226:8080";
 
 
 

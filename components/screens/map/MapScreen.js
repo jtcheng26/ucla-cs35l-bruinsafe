@@ -11,6 +11,8 @@ import mapStyle from "./mapStyle.json";
 import moment from 'moment';
 import EscortList from './escortList';
 import axios from 'axios';
+import * as Location from 'expo-location';
+import {BASE_URL} from '../login/Login';
 
 import MapViewDirections from "react-native-maps-directions";
 
@@ -30,30 +32,54 @@ const GOOGLE_MAPS_APIKEY = process.env.GOOGLE_APIKEY;
 
 //#020617
 export default function MapScreen() {
-    let location = {
+    const [walking, setWalking] = useState(true);
+    const [location, setLocation] = useState({
         latitude: 34.069201,
         longitude: -118.443515,
-        latitudeDelta: 0.009,
-        longitudeDelta: 0.009
-    };
-    const [walking, setWalking] = useState(false);
-    const [data, setData] = useState({});
+        latitudeDelta: 0.002,
+        longitudeDelta: 0.002
+    });
+    const [data, setData] = useState({
+        numReports: 0,
+        cityName: "Westwood Plaza",
+        stateName: "California"
+    });
     const [currentDateTime, setDateTime] = useState(moment().format("hh:mm a"));
+    const getLocation = async () => {
+        try {
+            let curLocation = await Location.getCurrentPositionAsync({});
+            let locCopy = {...location};
+            locCopy.latitude = curLocation.coords.latitude;
+            locCopy.longitude = curLocation.coords.longitude;
+            setLocation(locCopy);
+        } catch (e) {
+            console.error(e);
+        }
+    };
+    const fetchData = async () => {
+        try {
+            let dataCopy = {...data};
+            let numReports = await axios.post(BASE_URL + "/report/search", {latitude: location.latitude, longitude: location.longitude});
+            let currentLocation = await axios.get("http://api.openweathermap.org/geo/1.0/reverse?lat=" + location.latitude + "&lon=" + location.longitude + "&cnt=1&APPID=1107f09a2cd574c391617612953ada00");
+            dataCopy.cityName = currentLocation.data[0].name;
+            dataCopy.stateName = currentLocation.data[0].state;
+            dataCopy.numReports = parseInt(10);
+            setData(dataCopy);
+        } catch (e) {
+            console.error(e)
+        }
+    };
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                let dataCopy = {...data};
-                let numReports = await axios.post("http://169.232.214.177:8080/report/search", {location:location});
-                let currentLocation = await axios.get("http://api.openweathermap.org/geo/1.0/reverse?lat=" + location.latitude + "&lon=" + location.longitude + "&cnt=1&APPID=1107f09a2cd574c391617612953ada00");
-                dataCopy.cityName = currentLocation.data[0].name;
-                dataCopy.stateName = currentLocation.data[0].state;
-                dataCopy.numReports = parseInt(numReports.data.length);
-                setData(dataCopy);
-            } catch (e) {
-                console.error(e)
-            }
+        const interval = setInterval(fetchData, 1500);
+        return () => {
+            clearInterval(interval);
+        }
+    }, [])
+    useEffect(() => {
+        const interval = setInterval(getLocation, 1500);
+        return () => {
+            clearInterval(interval);
         };
-        fetchData();
     }, []);
     setInterval(() => {
         setDateTime(moment().format("hh:mm a"))}, 2500);
