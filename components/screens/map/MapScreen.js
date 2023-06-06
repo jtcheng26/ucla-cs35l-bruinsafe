@@ -15,6 +15,7 @@ import SafetyLevel from './SafetyLevel';
 import axios from 'axios';
 import * as Location from 'expo-location';
 import { BASE_URL } from '../../../constants';
+import LocationButton from '../../../assets/location.svg';
 
 import MapViewDirections from "react-native-maps-directions";
 
@@ -35,6 +36,14 @@ const GOOGLE_MAPS_APIKEY = process.env.GOOGLE_APIKEY;
 //#020617
 export default function MapScreen() {
   const [walking, setWalking] = useState(true);
+  const [markerVisible, setMarkerVisible] = useState(false);
+  const [mapMarkerList, setMapMarkerList] = useState([]);
+  const [currentRegion, setRegion] = useState(null);
+  const [markerStyles, setMarkerStyles] = useState({
+    width: 60,
+    height:60,
+    fill: "#FBBF24"
+  });
   const [location, setLocation] = useState({
     latitude: 34.069201,
     longitude: -118.443515,
@@ -62,7 +71,7 @@ export default function MapScreen() {
   };
   const CurrentButton = (actionState) => {
     if (actionState == 0) {
-        return <WalkButton text={"walk with someone"} onPress={setButtonAction} />;
+        return <WalkButton text={"walk with someone"} onPress={setButtonAction} setMarker={setMarkerVisible} setMarkerStyle={setMarkerStyles} markerList={mapMarkerList} setMarkerList={setMapMarkerList} regionCoords={currentRegion} />;
     } else if (actionState == 1) {
         return <WalkingPage locationName={data.cityName} walkerFullName={"Carey Nachenberg"} currentTime={currentDateTime} onPress={setButtonAction} />;
     } else if (actionState == 2) {
@@ -93,14 +102,17 @@ export default function MapScreen() {
       console.error(e);
     }
   };
+  const handleRegionChange = (region) => {
+    setRegion(region);
+  }
   useEffect(() => {
-    const interval = setInterval(fetchData, 1500);
+    const interval = setInterval(fetchData, 1000);
     return () => {
       clearInterval(interval);
     };
   }, []);
   useEffect(() => {
-    const interval = setInterval(getLocation, 1500);
+    const interval = setInterval(getLocation, 1000);
     return () => {
       clearInterval(interval);
     };
@@ -116,6 +128,7 @@ export default function MapScreen() {
         className="w-full h-full py-18"
         region={location}
         mapType="standard"
+        onRegionChange={handleRegionChange}
         showsPointsOfInterest={false}
         showsUserLocation
         compassOffset={{
@@ -124,6 +137,7 @@ export default function MapScreen() {
         }}
         showsCompass
       >
+        {mapMarkerList}
         {GOOGLE_MAPS_APIKEY && walking ? (
           <MapViewDirections
             origin={origin}
@@ -180,6 +194,9 @@ export default function MapScreen() {
       <ProfileHeader name={"David Smallberg"} />
       <NumberReports numReports={data.numReports} />
       <SafetyLevel numReports={data.numReports} />
+      <View className="w-1/12 h-1/12 absolute m-auto flex justify-center items-center">
+        {markerVisible ? <LocationButton width={markerStyles.width} height={markerStyles.height} fill={markerStyles.fill}/> : null}
+      </View>
       {CurrentButton(buttonAction)}
     </View>
   );

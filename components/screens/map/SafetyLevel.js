@@ -9,10 +9,10 @@ export default function SafetyLevel({numReports}) {
         styles.textStyle += "text-red-600 font-bold text-lg";
         styles.text = "Dangerous"
     } else if (numReports > 2) {
-        styles.textStyle += "text-amber-400 text-lg";
+        styles.textStyle += "text-amber-400 font-bold text-lg";
         styles.text = "Moderate"
     } else {
-        styles.textStyle += "text-green-400 text-lg";
+        styles.textStyle += "text-green-400 font-bold text-lg";
         styles.text = "Safe"
     }
     return (
