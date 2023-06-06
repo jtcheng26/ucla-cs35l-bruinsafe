@@ -9,8 +9,6 @@ export const BASE_URL = "http://169.232.214.20:8080";
 
 
 
-
-
 export default function Login() {
     const styles = {
         inputField: "w-full h-14 text-sky-200 rounded-full text-md bg-sky-700 px-6 my-4 text-justify",
@@ -25,6 +23,17 @@ export default function Login() {
     const [signupSuccess, setSignupSuccess] = useState(false)
     const [suTxt, setSUTxt] = useState("LOGIN")
 
+
+    const isEmailValid = (email) => {
+        const emailRegex = /^[A-Z0-9+_.-]+@(ucla\.edu|g\.ucla\.edu)$/i;
+        return emailRegex.test(email);
+    }
+
+    const isPwValid = (pw) => {
+        const passRegex = /^(?=.*?[#?!@$%^&*-]).{8,}$/;
+        return passRegex.test(pw);
+    }
+
     const handleSignup = () => {
         if(email && pw && confirmPW) {
             if(!email.includes('@')) {
@@ -36,11 +45,25 @@ export default function Login() {
                 setLogError("Must use a ucla.edu email");
                 return;
             }
+            if(!isPwValid(pw))
+            {
+                if (pw.length() < 8)
+                    setLogError("Must have minimum of 8 characters")
+                else
+                    setLogError("Password must contain atleast one special character(#?!@$%^&*-)")
+            }
 
             if(pw != confirmPW) {
                 setLogError("Passwords must match");
                 return;
             }
+
+            if (!isEmailValid(email)){
+                setLogError("Invalid email")
+                return;
+            }
+
+
 
             setLogError(null);
 
@@ -158,7 +181,7 @@ export default function Login() {
                 <TextInput
                 secureTextEntry
                 className={styles.inputBox}
-                placeholder=""
+                placeholder="Minimum 8 characters with one special character"
                 placeholderTextColor={"rgb(2 132 199)"}
                 onChangeText={setPW}
                 value={pw}
