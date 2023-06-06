@@ -5,7 +5,6 @@ import axios from "axios";
 import MainPage from "../home/MainPage";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL } from "../../../constants";
-import PassMeter from "react-native-passmeter"
 
 
 const MIN_LEN = 8,

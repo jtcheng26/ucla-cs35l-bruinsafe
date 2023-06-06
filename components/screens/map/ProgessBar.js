@@ -16,7 +16,7 @@ export default function ProgressBar() {
     progressStyle += "px-" + String(newStyle);
     return (
         <View className="relative mb-2">
-            <TouchableScale className="absolute ml-3 w-full px-24 py-1 rounded-full bg-yellow-600/40 z-0" activeScale={1}>
+            <TouchableScale className="absolute ml-3 w-full px-24 py-1 rounded-full bg-amber-500/40 z-0" activeScale={1}>
             </TouchableScale>
             <TouchableScale className={progressStyle} activeScale={1}>
             </TouchableScale>

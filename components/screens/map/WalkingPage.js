@@ -6,7 +6,7 @@ import ProgressBar from './ProgessBar';
 export default function WalkingPage({walkerFullName, locationName, currentTime}) {
     const timeLeft = 15;
     return (
-        <View className="absolute bottom-10 mb-20 h-36 w-10/12 rounded-xl bg-cyan-800/90">
+        <View className="absolute bottom-10 mb-20 w-11/12 rounded-2xl px-2 pt-1 pb-3 bg-blue-600 shadow-xl">
             <View className="flex-row items-center align-center justify-between">
                 <Image 
                         source={pfp}
@@ -18,9 +18,9 @@ export default function WalkingPage({walkerFullName, locationName, currentTime})
                             <Svg height="20" width="20">
                                     <Circle cx="10" cy="10" r="4" fill="#FBBF24"/>
                             </Svg>
-                            <Text className="text-gray-400 text-right">{currentTime}</Text>
+                            <Text className="text-amber-400 text-right">{currentTime}</Text>
                         </View>
-                        <Text className="text-gray-400 text-right">{locationName}</Text> 
+                        <Text className="text-slate-300 text-right">{locationName}</Text> 
                     </View>
                 </View>
             </View>
