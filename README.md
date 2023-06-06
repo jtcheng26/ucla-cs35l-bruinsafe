@@ -8,18 +8,13 @@ BruinSafe is a mobile app that aims to enhance the personal safety of UCLA stude
 
 - [BruinSafe](#bruinsafe)
   - [Table of Contents](#table-of-contents)
-  - [Getting Started](#getting-started)
-    - [Prerequisites](#prerequisites)
-    - [Installation](#installation)
-    - [Running](#running)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Running](#running)
   - [Features](#features)
   - [Usage](#usage)
 
-## Getting Started
-
-These instructions will get you a copy of BruinSafe up and running on your local machine for development and testing purposes.
-
-### Prerequisites
+## Prerequisites
 
 - Node.js (>= v18.0.0)
 - npm (>= v8.3.0)
@@ -29,7 +24,7 @@ These instructions will get you a copy of BruinSafe up and running on your local
 
 **Note: Do not use WSL2.0/WSL1.0 functionality**
 
-### Installation
+## Installation
 
 1. Clone the repository:
 
@@ -49,7 +44,7 @@ These instructions will get you a copy of BruinSafe up and running on your local
         yarn install
         ```
 
-### Running
+## Running
 
 - Run:
 
