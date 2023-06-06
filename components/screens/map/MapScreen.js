@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import { useState, useEffect } from "react";
-import { LinearGradient } from 'expo-linear-gradient';
+import { LinearGradient } from "expo-linear-gradient";
 import NavBar from "../../overlays/NavBar";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import ProfileHeader from "../../overlays/ProfileHeader";
@@ -34,45 +34,32 @@ const GOOGLE_MAPS_APIKEY = process.env.GOOGLE_APIKEY;
 
 //#020617
 export default function MapScreen() {
-    const [walking, setWalking] = useState(false);
-    const [buttonAction, setButtonAction] = useState(0);
-    const [location, setLocation] = useState({
-        latitude: 34.069201,
-        longitude: -118.443515,
-        latitudeDelta: 0.002,
-        longitudeDelta: 0.002
-    });
-    const [data, setData] = useState({
-        numReports: 0,
-        cityName: "Westwood Plaza",
-        stateName: "California"
-    });
-    const [currentDateTime, setDateTime] = useState(moment().format("hh:mm a"));
-    const getLocation = async () => {
-        try {
-            let curLocation = await Location.getCurrentPositionAsync({});
-            let locCopy = {...location};
-            locCopy.latitude = curLocation.coords.latitude;
-            locCopy.longitude = curLocation.coords.longitude;
-            setLocation(locCopy);
-        } catch (e) {
-            console.error(e);
-        }
-    };
-    const fetchData = async () => {
-        try {
-            let dataCopy = {...data};
-            let numReports = await axios.post(BASE_URL + "/report/search", {latitude: location.latitude, longitude: location.longitude});
-            let currentLocation = await axios.get("http://api.openweathermap.org/geo/1.0/reverse?lat=" + location.latitude + "&lon=" + location.longitude + "&cnt=1&APPID=1107f09a2cd574c391617612953ada00");
-            dataCopy.cityName = currentLocation.data[0].name;
-            dataCopy.stateName = currentLocation.data[0].state;
-            dataCopy.numReports = parseInt(10);
-            setData(dataCopy);
-        } catch (e) {
-            console.error(e)
-        }
-    };
-    const CurrentButton = (actionState) => {
+  const [walking, setWalking] = useState(true);
+  const [location, setLocation] = useState({
+    latitude: 34.069201,
+    longitude: -118.443515,
+    latitudeDelta: 0.002,
+    longitudeDelta: 0.002,
+  });
+  const [data, setData] = useState({
+    numReports: 0,
+    cityName: "Westwood Plaza",
+    stateName: "California",
+  });
+  const [path, setPath] = useState({});
+  const [currentDateTime, setDateTime] = useState(moment().format("hh:mm a"));
+  const getLocation = async () => {
+    try {
+      let curLocation = await Location.getCurrentPositionAsync({});
+      let locCopy = { ...location };
+      locCopy.latitude = curLocation.coords.latitude;
+      locCopy.longitude = curLocation.coords.longitude;
+      setLocation(locCopy);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+  const CurrentButton = (actionState) => {
         if (actionState == 0) {
             return <WalkButton text={"walk with someone"} onPress={setButtonAction} />;
         } else if (actionState == 1) {
@@ -83,67 +70,115 @@ export default function MapScreen() {
             return null;
         }
     };
-    useEffect(() => {
-        const interval = setInterval(fetchData, 1000);
-        return () => {
-            clearInterval(interval);
-        }
-    }, [])
-    useEffect(() => {
-        const interval = setInterval(getLocation, 1000);
-        return () => {
-            clearInterval(interval);
-        };
-    }, []);
-    setInterval(() => {
-        setDateTime(moment().format("hh:mm a"))}, 2500);
-    return (
-        <View className="bg-sky-950 from-slate-950 flex-1 justify-center items-center h-full w-full">
-            <MapView 
-                provider={PROVIDER_GOOGLE}
-                customMapStyle={mapStyle}
-                className="w-full h-full py-18"
-                region={location}
-            />
-            <View className="absolute top-0 w-full">
-                <LinearGradient
-                    colors={['#020617', 'transparent']}
-                    start={{x : 0.5, y : 0.2}}
-                    end={{x: 0.5, y: 1}}
-                >
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                </LinearGradient>
-            </View>
-            <View className="absolute bottom-0 w-full">
-                <LinearGradient
-                    colors={['transparent', '#020617']}
-                    start={{x: 0.5, y: 0}}
-                    end={{x: 0.5, y: 0.8}}
-                >
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                    <Text> </Text>
-                </LinearGradient>
-            </View>
-            <ProfileHeader name={"David Smallberg"}/>
-            <NumberReports numReports={data.numReports}/>
-            <SafetyLevel numReports={data.numReports} />
-            {CurrentButton(buttonAction)}
-            {/* {walking ? <WalkingPage locationName={data.cityName} walkerFullName={"Carey Nachenberg"} currentTime={currentDateTime}/> : <WalkButton text={"walk with someone"} onPress={setWalking} />} */}
-        </View>
-    )
+  const fetchData = async () => {
+    try {
+      let dataCopy = { ...data };
+      let numReports = await axios.post(BASE_URL + "/report/search", {
+        latitude: location.latitude,
+        longitude: location.longitude,
+      });
+      let currentLocation = await axios.get(
+        "http://api.openweathermap.org/geo/1.0/reverse?lat=" +
+          location.latitude +
+          "&lon=" +
+          location.longitude +
+          "&cnt=1&APPID=1107f09a2cd574c391617612953ada00"
+      );
+      dataCopy.cityName = currentLocation.data[0].name;
+      dataCopy.stateName = currentLocation.data[0].state;
+      dataCopy.numReports = parseInt(10);
+      setData(dataCopy);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+  useEffect(() => {
+    const interval = setInterval(fetchData, 1500);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+  useEffect(() => {
+    const interval = setInterval(getLocation, 1500);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+  setInterval(() => {
+    setDateTime(moment().format("hh:mm a"));
+  }, 2500);
+  return (
+    <View className="flex-1 justify-center items-center h-full w-full">
+      <MapView
+        // provider={PROVIDER_GOOGLE}
+        userInterfaceStyle="dark"
+        className="w-full h-full py-18"
+        region={location}
+        mapType="standard"
+        showsPointsOfInterest={false}
+        showsUserLocation
+        compassOffset={{
+          x: 0,
+          y: 50,
+        }}
+        showsCompass
+      >
+        {GOOGLE_MAPS_APIKEY && walking ? (
+          <MapViewDirections
+            origin={origin}
+            destination={destination}
+            apikey={GOOGLE_MAPS_APIKEY}
+            strokeColor="#fbbf24"
+            strokeWidth={6}
+            lineCap="round"
+            mode="WALKING"
+          />
+        ) : (
+          ""
+        )}
+      </MapView>
+      <View
+        className="absolute top-0 left-0 bottom-0 right-0 bg-blue-700/40"
+        pointerEvents="none"
+      />
+
+      <View className="absolute top-0 w-full">
+        <LinearGradient
+          colors={["rgb(30 58 138)", "transparent"]}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 0.8 }}
+        >
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+        </LinearGradient>
+      </View>
+      <View className="absolute bottom-0 w-full">
+        <LinearGradient
+          colors={["transparent", "rgb(30 58 138)"]}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+        >
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+          <Text> </Text>
+        </LinearGradient>
+      </View>
+      <ProfileHeader name={"David Smallberg"} />
+      <NumberReports numReports={data.numReports} />
+      {CurrentButton(buttonAction)}
+    </View>
+  );
 }

@@ -20,7 +20,7 @@ const UserSchema = new Schema({
 });
 
 const ReportSchema = new Schema({
-  type: String,
+  types: [String],
   timestamp: Date,
   description: String,
   location: {
