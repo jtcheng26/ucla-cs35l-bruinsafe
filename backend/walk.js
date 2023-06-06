@@ -5,6 +5,7 @@ const walkRequest = async (req, res) => {
   const origin = req.body.origin;
   const dest = req.body.destination;
   const model = await UserModel.findById(user).exec();
+  console.log(req.body)
   if (!mongoose.isValidObjectId(user)) {
     res.status(400).send("Invalid ID");
   } else if (!model) res.status(404).send("User not found");

@@ -3,10 +3,8 @@ import { useState } from "react";
 
 export default function useUserId() {
     const [id, setId] = useState("")
-    (async () => {
-        AsyncStorage.getItem("@id", (err, res) => {
-            if (!err) setId(res)
-        })
-    })()
+    AsyncStorage.getItem("@id", (err, res) => {
+        if (!err) setId(res)
+    })
     return { id }
 }
