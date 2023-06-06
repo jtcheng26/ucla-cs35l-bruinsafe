@@ -13,15 +13,14 @@ import { BASE_URL } from "../../constants";
 
 
 
-export default function ProfileHeader({ name, icon }) {
+export default function ProfileHeader({ onLogout }) {
 
     const [screenVisible, setScreenVisible] = useState(false)
-    const [userName, setUserName] = useState(name)
+    const [userName, setUserName] = useState(null)
     const [changedName, setChangedName] = useState(null);
-    const [email, setEmail] = useState(null);
 
     const styles = {
-        inputText: "text-white text-lg align-left mt-4 ml-3",
+        inputText: "text-sky-300 text-lg align-left mt-4 ml-3",
         inputField: "text-white p-2 w-12/12 m-2 justify-start border-b-2 border-sky-300",
     }
 
@@ -78,16 +77,16 @@ export default function ProfileHeader({ name, icon }) {
             className="justify-start m-0"
             >
                 <SafeAreaView
-                className="w-screen h-1/2 bg-sky-950 rounded-3xl flex-col items-center"
+                className="w-screen h-2/5 bg-sky-950 rounded-3xl flex-col items-center"
                 >
                     <Text
-                    className="text-white mt-14 text-4xl font-bold text-center"
+                    className="text-white mt-8 text-4xl font-bold text-center"
                     >
                         Edit Your Profile
                     </Text>
 
                     <View
-                    className="w-11/12 mt-8"
+                    className="w-11/12 mt-4"
                     >
                         <Text
                         className={styles.inputText}
@@ -103,13 +102,24 @@ export default function ProfileHeader({ name, icon }) {
                     </View>
 
                     <View
-                    className="w-full items-center absolute bottom-2"
+                    className="w-full absolute bottom-2"
                     >
                         <View
-                        className="flex-row mb-4"
+                        className="flex-row-reverse"
                         >
                             <TouchableScale
-                            className="bg-red-500 w-10 h-10 m-6 pt-1 rounded-full items-center justify-center"
+                            className="bg-green-500 w-10 h-10 m-4 pt-2 rounded-full items-center justify-center"
+                            activeScale={0.98}
+                            onPress={handleProfileEdit}
+                            >
+                                <Check 
+                                width={45}
+                                height={45}
+                                fill="#FFF"
+                                />
+                            </TouchableScale>
+                            <TouchableScale
+                            className="bg-red-500 w-10 h-10 my-4 mr-4 ml-2 pt-1 rounded-full items-center justify-center"
                             activeScale={0.98}
                             onPress={() => setScreenVisible(false)}
                             >
@@ -119,17 +129,16 @@ export default function ProfileHeader({ name, icon }) {
                                 fill="#FFF"
                                 />
                             </TouchableScale>
-
                             <TouchableScale
-                            className="bg-green-500 w-10 h-10 m-6 pt-2 rounded-full items-center justify-center"
-                            activeScale={0.98}
-                            onPress={() => handleProfileEdit()}
+                            className="items-center justify-center px-2 h-10 border-2 border-sky-300 m-4 rounded-full mr-40"
+                            activeScale={0.95}
+                            onPress={() => onLogout(false)}
                             >
-                                <Check 
-                                width={45}
-                                height={45}
-                                fill="#FFF"
-                                />
+                                <Text
+                                className="text-sky-300 "
+                                >
+                                    Logout
+                                </Text>
                             </TouchableScale>
                         </View>
 

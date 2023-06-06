@@ -1,17 +1,14 @@
-import { View, Text, TextInput } from "react-native";
+import { View, Text, TextInput, Switch } from "react-native";
 import TouchableScale from "react-native-touchable-scale";
 import { useState } from "react"
 import axios from "axios";
 import MainPage from "../home/MainPage";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-export const BASE_URL = "http://169.232.214.20:8080";
-
+import { BASE_URL } from "../../../constants";
 
 
-
-
-
+const MIN_LEN = 8,
+    LABELS = ["Too Short", "Weak", "Normal", "Strong", "Secure"]
 
 export default function Login() {
     const styles = {
@@ -22,10 +19,39 @@ export default function Login() {
 
     const [email, setEmail] = useState(null);
     const [pw, setPW] = useState(null);
-    const [confirmPW, setConfirmPW] = useState(null)
+    const [confirmPW, setConfirmPW] = useState(null);
     const [logError, setLogError] = useState("");
-    const [signupSuccess, setSignupSuccess] = useState(false)
-    const [suTxt, setSUTxt] = useState("LOGIN")
+    const [signupSuccess, setSignupSuccess] = useState(false);
+    const [suTxt, setSUTxt] = useState("LOGIN");
+    const [showPass, setShowPass] = useState(false);
+
+
+    const isEmailValid = (email) => {
+        const emailRegex = /^[A-Z0-9+_.-]+@(ucla\.edu|g\.ucla\.edu)$/i;
+        return emailRegex.test(email);
+    }
+
+    const isPwValid = (pw) => {
+        const passRegex = /^(?=.*?[#?!@$%^&*-]).{8,}$/;
+        return passRegex.test(pw);
+    }
+
+
+    const quickCheck = (email, pw) =>
+    {
+        if (!isEmailValid(email)){
+            setLogError("Invalid email");
+            return;
+        }
+
+        if(!isPwValid(pw))
+            {
+                if (pw.length() < 8)
+                    setLogError("Must have minimum of 8 characters");
+                else
+                    setLogError("Password must contain atleast one special character (#?!@$%^&*-)");
+            }
+    }
 
     const handleSignup = () => {
         if(email && pw && confirmPW) {
@@ -38,6 +64,8 @@ export default function Login() {
                 setLogError("Must use a ucla.edu email");
                 return;
             }
+
+            quickCheck(email, pw);
 
             if(pw != confirmPW) {
                 setLogError("Passwords must match");
@@ -62,13 +90,18 @@ export default function Login() {
                     await AsyncStorage.setItem('@pw', pw).then(() => console.log('ID saved ', pw)).catch(error => console.log('Error saving data: ', error));
                     setPW(null);
                     setEmail(null);
+                    setConfirmPW(null);
+                    setLogError(null);
                     setSignupSuccess(true);
                 } catch(error) {
                     console.error(error)
                 }
             }
+
             sendUser();
-        } else {
+        } 
+        
+        else {
             setLogError("Must fill out all fields");
             return;
         }
@@ -79,6 +112,9 @@ export default function Login() {
             setLogError("Must fill out all fields");
             return;
         }
+
+        quickCheck(email, pw);
+
         try {
             const correctUNPW = async() => {
                 const data = {
@@ -92,6 +128,7 @@ export default function Login() {
                 await AsyncStorage.setItem('@pw', pw).then(() => console.log('ID saved ', pw)).catch(error => console.log('Error saving data: ', error));
                 setPW(null);
                 setEmail(null);
+                setLogError(null);
                 setSignupSuccess(true);
             }   
             correctUNPW();
@@ -121,11 +158,16 @@ export default function Login() {
         }
     }
     
+    const togglePassVisibility = () => {
+        setShowPass(!showPass);
+    }
+
     if(signupSuccess) {
         return (
-            <MainPage />
+            <MainPage onLogout={setSignupSuccess}/>
         );
     }
+
 
     return (
        <View
@@ -146,7 +188,7 @@ export default function Login() {
                 </Text>
                 <TextInput
                 className={styles.inputBox}
-                placeholder=""
+                placeholder="UCLA email"
                 placeholderTextColor={"rgb(2 132 199)"}
                 onChangeText={setEmail}
                 value={email}
@@ -159,23 +201,40 @@ export default function Login() {
                     Password:
                 </Text>
                 <TextInput
-                secureTextEntry
+                secureTextEntry={!showPass}
                 className={styles.inputBox}
-                placeholder=""
+                placeholder="Minimum 8 characters with one special character"
                 placeholderTextColor={"rgb(2 132 199)"}
-                onChangeText={setPW}
+                onChangeText={pw => setPW(pw)}
                 value={pw}
                 />
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Switch>
+                        value={showPass}
+                        onValueChange={togglePassVisibility}
+                        thumbColor{showPass ? 'blue' : 'yellow'}
+                        trackColor={{false: 'grey', true: 'lightgrey'}}
+                    </Switch>
+                    <Text>Show Password</Text>
+                </View>
+
 
                 {(suTxt == "SIGN UP") ?
                 (<>
+                    <PassMeter>
+                        showLabels
+                        password={pw}
+                        minLength={MIN_LEN}
+                        labels={LABELS}
+                    </PassMeter>
+                    
                     <Text
                     className={styles.inputText}
                     >
                         Confirm Password:
                     </Text>
                     <TextInput
-                    secureTextEntry
+                    secureTextEntry={!showPass}
                     className={styles.inputBox}
                     placeholder=""
                     placeholderTextColor={"rgb(2 132 199)"}

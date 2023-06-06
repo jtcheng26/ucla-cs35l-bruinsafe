@@ -4,8 +4,9 @@ import HomeScreen from "./HomeScreen";
 import MapScreen from "../map/MapScreen.js"
 import ReportScreen from "./ReportScreen";
 import NavBar from "../../overlays/NavBar";
+import ProfileHeader from "../../overlays/ProfileHeader";
 
-export default function MainPage() {
+export default function MainPage({ onLogout }) {
     const [screen, setScreen] = useState("map");
     let page = "";
     const updateScreen = (newScreen) => {
@@ -17,6 +18,7 @@ export default function MainPage() {
     return (
         <View className="w-full h-full">
             {page}
+            <ProfileHeader onLogout={onLogout}/>
             <NavBar updateScreen={updateScreen} />
         </View>
     )
