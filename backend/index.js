@@ -17,29 +17,32 @@ function hashpw(string) {
   return createHash('sha256').update(string).digest('hex');
 }
 
-io.on("connection", (socket) => {
-  socket.emit("connect", { message: "a new client connected" });
-  socket.on("chat", (message) => {
-    // console.log('From client: ', message)
-    io.emit("chat", message);
-  });
+/* ======================= Walk Routes ======================= */
 
-  socket.on("chat", (message) => {
-    console.log("From server: ", message);
-  });
+const { walkRequest, walkAccept, getWalks } = require('./walk.js')
+
+io.on("connection", (socket) => {
+  
+  // socket.emit("connect", { message: "a new client connected" });
+  // socket.on("walker_id", (message) => {
+  //   console.log('From client: ', message)
+  //   io.emit("walker_id", message);
+  // });
+
+  // socket.on("walker_id", (message) => {
+  //   console.log("From server: ", message);
+  // });
 
   socket.on("disconnect", function () {
     console.log("user disconnected");
   });
 });
 
-/* ======================= Walk Routes ======================= */
-
-const { walkRequest, walkAccept } = require('./walk.js')
-
 app.post("/walk/request", walkRequest)
 
 app.post("/walk/accept", walkAccept)
+
+app.get("/walk/get", getWalks)
 
 /* ======================= User Routes ======================= */
 

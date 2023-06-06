@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import NavBar from "../../overlays/NavBar";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
@@ -8,14 +8,14 @@ import WalkButton from "./walkButton";
 import WalkingPage from "./WalkingPage";
 import NumberReports from "./numberReports";
 import mapStyle from "./mapStyle.json";
-import moment from 'moment';
-import EscortList from './escortList';
-import PathSelect from './PathSelect';
-import SafetyLevel from './SafetyLevel';
-import axios from 'axios';
-import * as Location from 'expo-location';
-import { BASE_URL } from '../../../constants';
-import LocationButton from '../../../assets/location.svg';
+import moment from "moment";
+import EscortList from "./escortList";
+import PathSelect from "./PathSelect";
+import SafetyLevel from "./SafetyLevel";
+import axios from "axios";
+import * as Location from "expo-location";
+import { BASE_URL } from "../../../constants";
+import LocationButton from "../../../assets/location.svg";
 
 import MapViewDirections from "react-native-maps-directions";
 
@@ -34,19 +34,27 @@ const GOOGLE_MAPS_APIKEY = process.env.GOOGLE_APIKEY;
 */
 
 //#020617
+function getHeading(coordinate1, coordinate2) {
+  const dy = coordinate2.latitude - coordinate1.latitude;
+  const dx = coordinate2.longitude - coordinate1.longitude;
+  if (dx == 0) return dy >= 0 ? 90 : -90;
+  const angle = 90 - (Math.atan(dy / dx) / (2 * Math.PI)) * 360;
+  return angle;
+}
 export default function MapScreen() {
   const [walking, setWalking] = useState(true);
   const [markerVisible, setMarkerVisible] = useState(false);
   const [mapMarkerList, setMapMarkerList] = useState([]);
   const [currentRegion, setRegion] = useState(null);
   const [walkPath, setWalkPath] = useState({
-      start: null,
-      end: null
+    start: null,
+    end: null,
   });
+  const [path, setPath] = useState();
   const [markerStyles, setMarkerStyles] = useState({
     width: 60,
-    height:60,
-    fill: "#FBBF24"
+    height: 60,
+    fill: "#FBBF24",
   });
   const [location, setLocation] = useState({
     latitude: 34.069201,
@@ -62,48 +70,77 @@ export default function MapScreen() {
   });
   const [currentDateTime, setDateTime] = useState(moment().format("hh:mm a"));
   const [permissionStatus, setPermissionStatus] = useState("");
+  const [foundUserLoc, setFoundUserLoc] = useState(false);
+  const [deviceHeading, setDeviceHeading] = useState(0);
   const getPermissions = async () => {
     if (!permissionStatus || permissionStatus != "granted") {
       let { status } = await Location.requestForegroundPermissionsAsync();
       //console.log(status);
       setPermissionStatus(status);
       if (permissionStatus != "granted") {
-          // console.log("Location Permissions Denied!");
-          return;
+        // console.log("Location Permissions Denied!");
+        return;
       }
     }
-  }
-  useEffect(() => {
-    getPermissions();
-  }, []);
+  };
   const getLocation = async () => {
     try {
-        curLocation = {
-          "coords": {
-            latitude:0,
-            longitude:0
-          }
-        };
-        curLocation = await Location.getCurrentPositionAsync({});
-        let locCopy = { ...location };
-        locCopy.latitude = curLocation.coords.latitude;
-        locCopy.longitude = curLocation.coords.longitude;
+      let curLocation = {
+        coords: {
+          latitude: 0,
+          longitude: 0,
+        },
+      };
+      curLocation = await Location.getCurrentPositionAsync({ accuracy: 3 });
+      const heading = await Location.getHeadingAsync();
+      let locCopy = { ...location };
+      locCopy.latitude = curLocation.coords.latitude;
+      locCopy.longitude = curLocation.coords.longitude;
       setLocation(locCopy);
+      setDeviceHeading(heading);
+      setFoundUserLoc(true);
+      return { coords: locCopy, heading: heading.magHeading };
     } catch (e) {
       console.error(e);
     }
   };
+  useEffect(() => {
+    (async () => {
+      await getPermissions();
+      // await getLocation()
+    })();
+  }, []);
+
   const CurrentButton = (actionState) => {
     if (actionState == 0) {
-        return <WalkButton text={"walk with someone"} onPress={setButtonAction} setMarker={setMarkerVisible} setMarkerStyle={setMarkerStyles} markerList={mapMarkerList} setMarkerList={setMapMarkerList} regionCoords={currentRegion} walkPath={walkPath} setWalkPath={setWalkPath} />;
+      return (
+        <WalkButton
+          text={"walk with someone"}
+          onPress={setButtonAction}
+          setMarker={setMarkerVisible}
+          setMarkerStyle={setMarkerStyles}
+          markerList={mapMarkerList}
+          setMarkerList={setMapMarkerList}
+          regionCoords={currentRegion}
+          walkPath={walkPath}
+          setWalkPath={setWalkPath}
+        />
+      );
     } else if (actionState == 1) {
-        return <WalkingPage locationName={data.cityName} walkerFullName={"Carey Nachenberg"} currentTime={currentDateTime} onPress={setButtonAction} />;
+      return (
+        <WalkingPage
+          locationName={data.cityName}
+          walkerFullName={"Carey Nachenberg"}
+          currentTime={currentDateTime}
+          onPress={setButtonAction}
+        />
+      );
     } else if (actionState == 2) {
-        return <PathSelect />
+      return <PathSelect />;
     } else {
-        return null;
+      return null;
     }
-};
+  };
   const fetchData = async () => {
     try {
       let dataCopy = { ...data };
@@ -128,15 +165,9 @@ export default function MapScreen() {
   };
   const handleRegionChange = (region) => {
     setRegion(region);
-  }
+  };
   useEffect(() => {
     const interval = setInterval(fetchData, 1000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
-  useEffect(() => {
-    const interval = setInterval(getLocation, 1000);
     return () => {
       clearInterval(interval);
     };
@@ -144,21 +175,64 @@ export default function MapScreen() {
   setInterval(() => {
     setDateTime(moment().format("hh:mm a"));
   }, 2500);
+  const mapRef = useRef(null);
+  function animateToLocation(
+    coords,
+    heading,
+    altitude = 200,
+    pitch = 60,
+    duration = 3000
+  ) {
+    mapRef.current.animateCamera(
+      {
+        center: coords,
+        pitch: pitch,
+        heading: heading,
+        altitude: altitude,
+        zoom: 40,
+      },
+      duration
+    );
+  }
+  useEffect(() => {
+    if (mapRef && permissionStatus === "granted") {
+      //   const to = setTimeout(() => {
+      // const h = getHeading(path.coordinates[0], path.coordinates[1])
+      // const si = setInterval(() => {
+      //     animateToLocation(origin, mapRef.current.heading)
+      // }, 2000)
+      (async () => {
+        const { coords, heading } = await getLocation();
+        animateToLocation(coords, heading, 700, 50, 500);
+      })();
+
+      // animateToLocation(origin, h)
+      // return () => clearTimeout(si)
+      //   }, 5000);
+      //   return clearTimeout(to);
+    }
+  }, [mapRef, permissionStatus]);
+
   return (
     <View className="flex-1 justify-center items-center h-full w-full">
       <MapView
         // provider={PROVIDER_GOOGLE}
         userInterfaceStyle="dark"
         className="w-full h-full py-18"
-        region={location}
+        // region={location}
         mapType="standard"
         onRegionChange={handleRegionChange}
         showsPointsOfInterest={false}
         showsUserLocation
+        onUserLocationChange={(e) => {
+          // if (e.coordinate)
+          //   console.log(e.coordinate)
+        }}
         compassOffset={{
           x: 0,
           y: 50,
         }}
+        ref={mapRef}
         showsCompass
       >
         {mapMarkerList}
@@ -172,7 +246,7 @@ export default function MapScreen() {
             lineCap="round"
             mode="WALKING"
             onReady={(res) => {
-                //console.log(res)
+              setPath(res);
             }}
           />
         ) : (
@@ -222,7 +296,13 @@ export default function MapScreen() {
       <NumberReports numReports={data.numReports} />
       <SafetyLevel numReports={data.numReports} />
       <View className="w-1/12 h-1/12 absolute m-auto flex justify-center items-center">
-        {markerVisible ? <LocationButton width={markerStyles.width} height={markerStyles.height} fill={markerStyles.fill}/> : null}
+        {markerVisible ? (
+          <LocationButton
+            width={markerStyles.width}
+            height={markerStyles.height}
+            fill={markerStyles.fill}
+          />
+        ) : null}
       </View>
       {CurrentButton(buttonAction)}
     </View>
