@@ -139,7 +139,7 @@ export default function ProfileHeader({ name, icon }) {
                 </SafeAreaView>
             </Modal>
             <SafeAreaView
-            className="absolute top-12 left-2"
+            className="absolute top-14 left-2"
             >
                 <TouchableScale
                 className="flex-row w h-12 items-center"
