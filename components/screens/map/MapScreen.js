@@ -20,8 +20,8 @@ import useUserId from '../../hooks/useUserId';
 
 import MapViewDirections from "react-native-maps-directions";
 
-const origin = { latitude: 34.070819, longitude: -118.449262 };
-const destination = { latitude: 34.069201, longitude: -118.443515 };
+// const origin = { latitude: 34.070819, longitude: -118.449262 };
+// const destination = { latitude: 34.069201, longitude: -118.443515 };
 
 const GOOGLE_MAPS_APIKEY = process.env.GOOGLE_APIKEY;
 /*
