@@ -10,9 +10,11 @@ import NumberReports from "./numberReports";
 import mapStyle from "./mapStyle.json";
 import moment from 'moment';
 import EscortList from './escortList';
+import PathSelect from './PathSelect';
+import SafetyLevel from './SafetyLevel';
 import axios from 'axios';
 import * as Location from 'expo-location';
-import {BASE_URL} from '../login/Login';
+import { BASE_URL } from '../login/Login';
 
 import MapViewDirections from "react-native-maps-directions";
 
@@ -32,7 +34,8 @@ const GOOGLE_MAPS_APIKEY = process.env.GOOGLE_APIKEY;
 
 //#020617
 export default function MapScreen() {
-    const [walking, setWalking] = useState(true);
+    const [walking, setWalking] = useState(false);
+    const [buttonAction, setButtonAction] = useState(0);
     const [location, setLocation] = useState({
         latitude: 34.069201,
         longitude: -118.443515,
@@ -69,14 +72,25 @@ export default function MapScreen() {
             console.error(e)
         }
     };
+    const CurrentButton = (actionState) => {
+        if (actionState == 0) {
+            return <WalkButton text={"walk with someone"} onPress={setButtonAction} />;
+        } else if (actionState == 1) {
+            return <WalkingPage locationName={data.cityName} walkerFullName={"Carey Nachenberg"} currentTime={currentDateTime} onPress={setButtonAction} />;
+        } else if (actionState == 2) {
+            return <PathSelect />
+        } else {
+            return null;
+        }
+    };
     useEffect(() => {
-        const interval = setInterval(fetchData, 1500);
+        const interval = setInterval(fetchData, 1000);
         return () => {
             clearInterval(interval);
         }
     }, [])
     useEffect(() => {
-        const interval = setInterval(getLocation, 1500);
+        const interval = setInterval(getLocation, 1000);
         return () => {
             clearInterval(interval);
         };
@@ -127,7 +141,9 @@ export default function MapScreen() {
             </View>
             <ProfileHeader name={"David Smallberg"}/>
             <NumberReports numReports={data.numReports}/>
-            {walking ? <WalkingPage locationName={data.cityName} walkerFullName={"Carey Nachenberg"} currentTime={currentDateTime}/> : <WalkButton text={"walk with someone"} onPress={setWalking} />}
+            <SafetyLevel numReports={data.numReports} />
+            {CurrentButton(buttonAction)}
+            {/* {walking ? <WalkingPage locationName={data.cityName} walkerFullName={"Carey Nachenberg"} currentTime={currentDateTime}/> : <WalkButton text={"walk with someone"} onPress={setWalking} />} */}
         </View>
     )
 }
