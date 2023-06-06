@@ -39,6 +39,10 @@ export default function MapScreen() {
   const [markerVisible, setMarkerVisible] = useState(false);
   const [mapMarkerList, setMapMarkerList] = useState([]);
   const [currentRegion, setRegion] = useState(null);
+  const [walkPath, setWalkPath] = useState({
+      start: null,
+      end: null
+  });
   const [markerStyles, setMarkerStyles] = useState({
     width: 60,
     height:60,
@@ -56,14 +60,34 @@ export default function MapScreen() {
     cityName: "Westwood Plaza",
     stateName: "California",
   });
-  const [path, setPath] = useState({});
   const [currentDateTime, setDateTime] = useState(moment().format("hh:mm a"));
+  const [permissionStatus, setPermissionStatus] = useState("");
+  const getPermissions = async () => {
+    if (!permissionStatus || permissionStatus != "granted") {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      //console.log(status);
+      setPermissionStatus(status);
+      if (permissionStatus != "granted") {
+          // console.log("Location Permissions Denied!");
+          return;
+      }
+    }
+  }
+  useEffect(() => {
+    getPermissions();
+  }, []);
   const getLocation = async () => {
     try {
-      let curLocation = await Location.getCurrentPositionAsync({});
-      let locCopy = { ...location };
-      locCopy.latitude = curLocation.coords.latitude;
-      locCopy.longitude = curLocation.coords.longitude;
+        curLocation = {
+          "coords": {
+            latitude:0,
+            longitude:0
+          }
+        };
+        curLocation = await Location.getCurrentPositionAsync({});
+        let locCopy = { ...location };
+        locCopy.latitude = curLocation.coords.latitude;
+        locCopy.longitude = curLocation.coords.longitude;
       setLocation(locCopy);
     } catch (e) {
       console.error(e);
@@ -71,7 +95,7 @@ export default function MapScreen() {
   };
   const CurrentButton = (actionState) => {
     if (actionState == 0) {
-        return <WalkButton text={"walk with someone"} onPress={setButtonAction} setMarker={setMarkerVisible} setMarkerStyle={setMarkerStyles} markerList={mapMarkerList} setMarkerList={setMapMarkerList} regionCoords={currentRegion} />;
+        return <WalkButton text={"walk with someone"} onPress={setButtonAction} setMarker={setMarkerVisible} setMarkerStyle={setMarkerStyles} markerList={mapMarkerList} setMarkerList={setMapMarkerList} regionCoords={currentRegion} walkPath={walkPath} setWalkPath={setWalkPath} />;
     } else if (actionState == 1) {
         return <WalkingPage locationName={data.cityName} walkerFullName={"Carey Nachenberg"} currentTime={currentDateTime} onPress={setButtonAction} />;
     } else if (actionState == 2) {
@@ -148,7 +172,7 @@ export default function MapScreen() {
             lineCap="round"
             mode="WALKING"
             onReady={(res) => {
-                console.log(res)
+                //console.log(res)
             }}
           />
         ) : (
