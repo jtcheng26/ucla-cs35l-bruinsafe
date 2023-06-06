@@ -44,7 +44,7 @@ export default function MapScreen() {
     cityName: "Westwood Plaza",
     stateName: "California",
   });
-  const [path, setPath] = useState({})
+  const [path, setPath] = useState({});
   const [currentDateTime, setDateTime] = useState(moment().format("hh:mm a"));
   const getLocation = async () => {
     try {
@@ -96,7 +96,6 @@ export default function MapScreen() {
   }, 2500);
   return (
     <View className="flex-1 justify-center items-center h-full w-full">
-     
       <MapView
         // provider={PROVIDER_GOOGLE}
         userInterfaceStyle="dark"
@@ -106,8 +105,8 @@ export default function MapScreen() {
         showsPointsOfInterest={false}
         showsUserLocation
         compassOffset={{
-            x: 0,
-            y: 50
+          x: 0,
+          y: 50,
         }}
         showsCompass
       >
@@ -116,7 +115,7 @@ export default function MapScreen() {
             origin={origin}
             destination={destination}
             apikey={GOOGLE_MAPS_APIKEY}
-            strokeColor="#FBBF24"
+            strokeColor="#fbbf24"
             strokeWidth={6}
             lineCap="round"
             mode="WALKING"
@@ -124,9 +123,11 @@ export default function MapScreen() {
         ) : (
           ""
         )}
-              
       </MapView>
-      <View className="absolute top-0 left-0 bottom-0 right-0 bg-blue-700/50" pointerEvents="none"  />
+      <View
+        className="absolute top-0 left-0 bottom-0 right-0 bg-blue-700/40"
+        pointerEvents="none"
+      />
 
       <View className="absolute top-0 w-full">
         <LinearGradient
