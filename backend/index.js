@@ -17,29 +17,32 @@ function hashpw(string) {
   return createHash('sha256').update(string).digest('hex');
 }
 
-io.on("connection", (socket) => {
-  socket.emit("connect", { message: "a new client connected" });
-  socket.on("chat", (message) => {
-    // console.log('From client: ', message)
-    io.emit("chat", message);
-  });
+/* ======================= Walk Routes ======================= */
 
-  socket.on("chat", (message) => {
-    console.log("From server: ", message);
-  });
+const { walkRequest, walkAccept, getWalks } = require('./walk.js')
+
+io.on("connection", (socket) => {
+  
+  // socket.emit("connect", { message: "a new client connected" });
+  // socket.on("walker_id", (message) => {
+  //   console.log('From client: ', message)
+  //   io.emit("walker_id", message);
+  // });
+
+  // socket.on("walker_id", (message) => {
+  //   console.log("From server: ", message);
+  // });
 
   socket.on("disconnect", function () {
     console.log("user disconnected");
   });
 });
 
-/* ======================= Walk Routes ======================= */
-
-const { walkRequest, walkAccept } = require('./walk.js')
-
 app.post("/walk/request", walkRequest)
 
 app.post("/walk/accept", walkAccept)
+
+app.get("/walk/get", getWalks)
 
 /* ======================= User Routes ======================= */
 
@@ -153,9 +156,9 @@ app.post("/report/search", async (req, res) => {
   res.send(all);
 });
 
-const REPORT_TYPES = ["theft", "assault", "rape", "abuse", "kidnapping", 
-                    "stalking", "hate crime", "indecent exposure", "drug distribution", 
-                    "vandalism", "solicitation"];
+const REPORT_TYPES = ["Theft", "Assault", "Rape", "Abuse", "Kidnapping", 
+                    "Stalking", "Hate Crime", "Indecent Exposure", "Drug Distribution", 
+                    "Vandalism", "Solicitation", "Speeding"];
 app.post("/report/create", (req, res) => {
   const types = req.body.types;
   const timestamp = new Date();

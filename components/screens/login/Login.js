@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Switch } from "react-native";
+import { View, Text, TextInput } from "react-native";
 import TouchableScale from "react-native-touchable-scale";
 import { useState } from "react"
 import axios from "axios";
@@ -7,8 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL } from "../../../constants";
 
 
-const MIN_LEN = 8,
-    LABELS = ["Too Short", "Weak", "Normal", "Strong", "Secure"]
+
 
 export default function Login() {
     const styles = {
@@ -19,11 +18,10 @@ export default function Login() {
 
     const [email, setEmail] = useState(null);
     const [pw, setPW] = useState(null);
-    const [confirmPW, setConfirmPW] = useState(null);
+    const [confirmPW, setConfirmPW] = useState(null)
     const [logError, setLogError] = useState("");
-    const [signupSuccess, setSignupSuccess] = useState(false);
-    const [suTxt, setSUTxt] = useState("LOGIN");
-    const [showPass, setShowPass] = useState(false);
+    const [signupSuccess, setSignupSuccess] = useState(false)
+    const [suTxt, setSUTxt] = useState("LOGIN")
 
 
     const isEmailValid = (email) => {
@@ -65,7 +63,7 @@ export default function Login() {
                 return;
             }
 
-            quickCheck(email, pw);
+            // quickCheck(email, pw);
 
             if(pw != confirmPW) {
                 setLogError("Passwords must match");
@@ -113,7 +111,7 @@ export default function Login() {
             return;
         }
 
-        quickCheck(email, pw);
+        // quickCheck(email, pw);
 
         try {
             const correctUNPW = async() => {
@@ -158,16 +156,11 @@ export default function Login() {
         }
     }
     
-    const togglePassVisibility = () => {
-        setShowPass(!showPass);
-    }
-
     if(signupSuccess) {
         return (
             <MainPage onLogout={setSignupSuccess}/>
         );
     }
-
 
     return (
        <View
@@ -188,7 +181,7 @@ export default function Login() {
                 </Text>
                 <TextInput
                 className={styles.inputBox}
-                placeholder="UCLA email"
+                // placeholder="UCLA email"
                 placeholderTextColor={"rgb(2 132 199)"}
                 onChangeText={setEmail}
                 value={email}
@@ -201,40 +194,23 @@ export default function Login() {
                     Password:
                 </Text>
                 <TextInput
-                secureTextEntry={!showPass}
+                secureTextEntry
                 className={styles.inputBox}
-                placeholder="Minimum 8 characters with one special character"
+                // placeholder="Minimum 8 characters with one special character"
                 placeholderTextColor={"rgb(2 132 199)"}
-                onChangeText={pw => setPW(pw)}
+                onChangeText={setPW}
                 value={pw}
                 />
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Switch>
-                        value={showPass}
-                        onValueChange={togglePassVisibility}
-                        thumbColor{showPass ? 'blue' : 'yellow'}
-                        trackColor={{false: 'grey', true: 'lightgrey'}}
-                    </Switch>
-                    <Text>Show Password</Text>
-                </View>
-
 
                 {(suTxt == "SIGN UP") ?
                 (<>
-                    <PassMeter>
-                        showLabels
-                        password={pw}
-                        minLength={MIN_LEN}
-                        labels={LABELS}
-                    </PassMeter>
-                    
                     <Text
                     className={styles.inputText}
                     >
                         Confirm Password:
                     </Text>
                     <TextInput
-                    secureTextEntry={!showPass}
+                    secureTextEntry
                     className={styles.inputBox}
                     placeholder=""
                     placeholderTextColor={"rgb(2 132 199)"}
