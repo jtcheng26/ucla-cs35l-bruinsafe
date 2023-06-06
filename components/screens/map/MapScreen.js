@@ -14,7 +14,7 @@ import PathSelect from './PathSelect';
 import SafetyLevel from './SafetyLevel';
 import axios from 'axios';
 import * as Location from 'expo-location';
-import { BASE_URL } from '../login/Login';
+import { BASE_URL } from '../../../constants';
 
 import MapViewDirections from "react-native-maps-directions";
 
@@ -41,6 +41,7 @@ export default function MapScreen() {
     latitudeDelta: 0.002,
     longitudeDelta: 0.002,
   });
+  const [buttonAction, setButtonAction] = useState(0);
   const [data, setData] = useState({
     numReports: 0,
     cityName: "Westwood Plaza",
@@ -60,16 +61,16 @@ export default function MapScreen() {
     }
   };
   const CurrentButton = (actionState) => {
-        if (actionState == 0) {
-            return <WalkButton text={"walk with someone"} onPress={setButtonAction} />;
-        } else if (actionState == 1) {
-            return <WalkingPage locationName={data.cityName} walkerFullName={"Carey Nachenberg"} currentTime={currentDateTime} onPress={setButtonAction} />;
-        } else if (actionState == 2) {
-            return <PathSelect />
-        } else {
-            return null;
-        }
-    };
+    if (actionState == 0) {
+        return <WalkButton text={"walk with someone"} onPress={setButtonAction} />;
+    } else if (actionState == 1) {
+        return <WalkingPage locationName={data.cityName} walkerFullName={"Carey Nachenberg"} currentTime={currentDateTime} onPress={setButtonAction} />;
+    } else if (actionState == 2) {
+        return <PathSelect />
+    } else {
+        return null;
+    }
+};
   const fetchData = async () => {
     try {
       let dataCopy = { ...data };
@@ -178,6 +179,7 @@ export default function MapScreen() {
       </View>
       <ProfileHeader name={"David Smallberg"} />
       <NumberReports numReports={data.numReports} />
+      <SafetyLevel numReports={data.numReports} />
       {CurrentButton(buttonAction)}
     </View>
   );
