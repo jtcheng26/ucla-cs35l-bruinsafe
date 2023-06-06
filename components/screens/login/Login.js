@@ -36,6 +36,23 @@ export default function Login() {
         return passRegex.test(pw);
     }
 
+
+    const quickCheck = (email, pw) =>
+    {
+        if (!isEmailValid(email)){
+            setLogError("Invalid email");
+            return;
+        }
+
+        if(!isPwValid(pw))
+            {
+                if (pw.length() < 8)
+                    setLogError("Must have minimum of 8 characters");
+                else
+                    setLogError("Password must contain atleast one special character (#?!@$%^&*-)");
+            }
+    }
+
     const handleSignup = () => {
         if(email && pw && confirmPW) {
             if(!email.includes('@')) {
@@ -47,25 +64,13 @@ export default function Login() {
                 setLogError("Must use a ucla.edu email");
                 return;
             }
-            if(!isPwValid(pw))
-            {
-                if (pw.length() < 8)
-                    setLogError("Must have minimum of 8 characters")
-                else
-                    setLogError("Password must contain atleast one special character(#?!@$%^&*-)")
-            }
+
+            quickCheck(email, pw);
 
             if(pw != confirmPW) {
                 setLogError("Passwords must match");
                 return;
             }
-
-            if (!isEmailValid(email)){
-                setLogError("Invalid email")
-                return;
-            }
-
-
 
             setLogError(null);
 
@@ -90,8 +95,11 @@ export default function Login() {
                     console.error(error)
                 }
             }
+
             sendUser();
-        } else {
+        } 
+        
+        else {
             setLogError("Must fill out all fields");
             return;
         }
@@ -102,6 +110,9 @@ export default function Login() {
             setLogError("Must fill out all fields");
             return;
         }
+
+        quickCheck(email, pw);
+
         try {
             const correctUNPW = async() => {
                 const data = {
