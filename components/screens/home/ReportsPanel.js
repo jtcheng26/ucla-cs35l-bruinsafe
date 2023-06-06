@@ -20,15 +20,15 @@ export default function ReportsPanel({
             </Text>
 
             <View
-            className="rounded-xl bg-sky-700 h-5/6 w-11/12 px-1 items-center"
+            className="rounded-xl bg-sky-700 h-5/6 w-11/12 p-1 items-center"
             >
                 <Text
-                className="my-2 text-md text-white font-semibold text"
+                className="my-2text-md text-white font-semibold text"
                 >
                     {type}
                 </Text>
                 <Text
-                className="font-bold text-xs text-amber-300"
+                className="font-bold mx-1 text-xs text-amber-300"
                 >
                     {desc}
                 </Text>

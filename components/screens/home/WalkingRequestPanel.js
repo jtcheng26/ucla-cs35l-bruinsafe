@@ -10,6 +10,8 @@ export default function WalkingRequestPanel({
     time=parseInt(Math.random()*20),
     onDecline,
     onAccept,
+    origin, 
+    dest
 }) {
 
     return (
