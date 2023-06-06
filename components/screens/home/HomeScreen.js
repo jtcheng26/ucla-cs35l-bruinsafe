@@ -49,6 +49,37 @@ export default function HomeScreen() {
         setNewUsers(newArr)
     }
 
+    const handleAccept = async(walkID) => {
+        try {
+            const userID = await AsyncStorage.getItem('@id');
+            const data = {
+                id: walkID,
+                user: userID,
+            }
+        const response = await axios.post(BASE_URL + "/walk/accept", data);
+        console.log(response.data);
+        }
+        catch(error)
+        {
+            console.log(error)
+        }
+    }
+    
+    const [userobjs, setUserobjs] = useState([]);
+    //to decline
+    const [newUsers, setNewUsers] = useState([]);
+
+    useEffect(() => {
+        if (!users) return [];
+        (async () => {
+            const fetched = await Promise.all(users.map(u => axios.get(BASE_URL + "/user/" + u.user)))
+            setNewUsers(fetched.map(f =>
+                f.data
+            ))
+        })()
+        
+    }, [users])
+
     return (
         <View className="flex-1 bg-sky-950">
             {/* <ProfileHeader /> */}
@@ -65,8 +96,8 @@ export default function HomeScreen() {
                 >
                     {newUsers.map(f => (
                         <WalkingRequestPanel 
-                        key={user._id}
-                        user={user}
+                        key={f._id}
+                        user={f}
                         onDecline={handleDecline}
                         onAccept={handleAccept}
                         />
