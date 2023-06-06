@@ -41,9 +41,9 @@ useEffect(() => {
             className="flex-row mt-6"
             >
                 <Text
-                className="ml-6 font-bold text-md text-amber-300"
+                className="ml-6 font-bold text-md text-amber-400"
                 >
-                    {time + "min"}
+                    {time + " min"}
                 </Text>
                 <Text
                 className="ml-1 text-md text-sky-300"
