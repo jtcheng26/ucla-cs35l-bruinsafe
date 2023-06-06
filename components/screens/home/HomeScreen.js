@@ -31,7 +31,7 @@ export default function HomeScreen() {
 
     return (
         <View className="flex-1 bg-sky-950">
-            <ProfileHeader />
+            {/* <ProfileHeader /> */}
             <Text
             className="text-2xl font-semibold text-amber-400 mt-28 mb-2 ml-8"
             >
@@ -45,6 +45,7 @@ export default function HomeScreen() {
                 >
                     {users.map((user) => (
                         <WalkingRequestPanel 
+                        key={user.id}
                         user={user}
                         onDecline={handleDecline}
                         />

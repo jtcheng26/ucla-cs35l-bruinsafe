@@ -177,7 +177,7 @@ export default function MapScreen() {
           <Text> </Text>
         </LinearGradient>
       </View>
-      <ProfileHeader name={"David Smallberg"} />
+      {/* <ProfileHeader name={"David Smallberg"} /> */}
       <NumberReports numReports={data.numReports} />
       <SafetyLevel numReports={data.numReports} />
       {CurrentButton(buttonAction)}
