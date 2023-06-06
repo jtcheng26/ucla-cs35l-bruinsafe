@@ -4,10 +4,8 @@ import { useState } from "react"
 import axios from "axios";
 import MainPage from "../home/MainPage";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { BASE_URL } from "../../../constants";
 import PassMeter from "react-native-passmeter"
-import { Switch } from "react-native-web";
-
-export const BASE_URL = "http://169.232.106.104:8080";
 
 
 const MIN_LEN = 8,
@@ -93,6 +91,8 @@ export default function Login() {
                     await AsyncStorage.setItem('@pw', pw).then(() => console.log('ID saved ', pw)).catch(error => console.log('Error saving data: ', error));
                     setPW(null);
                     setEmail(null);
+                    setConfirmPW(null);
+                    setLogError(null);
                     setSignupSuccess(true);
                 } catch(error) {
                     console.error(error)
@@ -129,6 +129,7 @@ export default function Login() {
                 await AsyncStorage.setItem('@pw', pw).then(() => console.log('ID saved ', pw)).catch(error => console.log('Error saving data: ', error));
                 setPW(null);
                 setEmail(null);
+                setLogError(null);
                 setSignupSuccess(true);
             }   
             correctUNPW();
@@ -164,7 +165,7 @@ export default function Login() {
 
     if(signupSuccess) {
         return (
-            <MainPage />
+            <MainPage onLogout={setSignupSuccess}/>
         );
     }
 
