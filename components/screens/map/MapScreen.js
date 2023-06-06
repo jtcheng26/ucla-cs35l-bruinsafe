@@ -35,11 +35,11 @@ const GOOGLE_MAPS_APIKEY = process.env.GOOGLE_APIKEY;
 
 //#020617
 function getHeading(coordinate1, coordinate2) {
-    const dy = coordinate2.latitude - coordinate1.latitude
-    const dx = coordinate2.longitude - coordinate1.longitude
-    if (dx == 0) return dy >= 0 ? 90 : -90
-    const angle = 90 - (Math.atan(dy / dx) / (2 * Math.PI)) * 360
-    return angle
+  const dy = coordinate2.latitude - coordinate1.latitude;
+  const dx = coordinate2.longitude - coordinate1.longitude;
+  if (dx == 0) return dy >= 0 ? 90 : -90;
+  const angle = 90 - (Math.atan(dy / dx) / (2 * Math.PI)) * 360;
+  return angle;
 }
 export default function MapScreen() {
   const [walking, setWalking] = useState(true);
@@ -47,9 +47,10 @@ export default function MapScreen() {
   const [mapMarkerList, setMapMarkerList] = useState([]);
   const [currentRegion, setRegion] = useState(null);
   const [walkPath, setWalkPath] = useState({
-      start: null,
-      end: null
+    start: null,
+    end: null,
   });
+  const [path, setPath] = useState();
   const [markerStyles, setMarkerStyles] = useState({
     width: 60,
     height: 60,
@@ -69,40 +70,62 @@ export default function MapScreen() {
   });
   const [currentDateTime, setDateTime] = useState(moment().format("hh:mm a"));
   const [permissionStatus, setPermissionStatus] = useState("");
+  const [foundUserLoc, setFoundUserLoc] = useState(false);
+  const [deviceHeading, setDeviceHeading] = useState(0);
   const getPermissions = async () => {
     if (!permissionStatus || permissionStatus != "granted") {
       let { status } = await Location.requestForegroundPermissionsAsync();
       //console.log(status);
       setPermissionStatus(status);
       if (permissionStatus != "granted") {
-          // console.log("Location Permissions Denied!");
-          return;
+        // console.log("Location Permissions Denied!");
+        return;
       }
     }
-  }
-  useEffect(() => {
-    getPermissions();
-  }, []);
+  };
   const getLocation = async () => {
     try {
-        curLocation = {
-          "coords": {
-            latitude:0,
-            longitude:0
-          }
-        };
-        curLocation = await Location.getCurrentPositionAsync({});
-        let locCopy = { ...location };
-        locCopy.latitude = curLocation.coords.latitude;
-        locCopy.longitude = curLocation.coords.longitude;
+      let curLocation = {
+        coords: {
+          latitude: 0,
+          longitude: 0,
+        },
+      };
+      curLocation = await Location.getCurrentPositionAsync({ accuracy: 3 });
+      const heading = await Location.getHeadingAsync();
+      let locCopy = { ...location };
+      locCopy.latitude = curLocation.coords.latitude;
+      locCopy.longitude = curLocation.coords.longitude;
       setLocation(locCopy);
+      setDeviceHeading(heading);
+      setFoundUserLoc(true);
+      return { coords: locCopy, heading: heading.magHeading };
     } catch (e) {
       console.error(e);
     }
   };
+  useEffect(() => {
+    (async () => {
+      await getPermissions();
+      // await getLocation()
+    })();
+  }, []);
+
   const CurrentButton = (actionState) => {
     if (actionState == 0) {
-        return <WalkButton text={"walk with someone"} onPress={setButtonAction} setMarker={setMarkerVisible} setMarkerStyle={setMarkerStyles} markerList={mapMarkerList} setMarkerList={setMapMarkerList} regionCoords={currentRegion} walkPath={walkPath} setWalkPath={setWalkPath} />;
+      return (
+        <WalkButton
+          text={"walk with someone"}
+          onPress={setButtonAction}
+          setMarker={setMarkerVisible}
+          setMarkerStyle={setMarkerStyles}
+          markerList={mapMarkerList}
+          setMarkerList={setMapMarkerList}
+          regionCoords={currentRegion}
+          walkPath={walkPath}
+          setWalkPath={setWalkPath}
+        />
+      );
     } else if (actionState == 1) {
       return (
         <WalkingPage
@@ -149,48 +172,62 @@ export default function MapScreen() {
       clearInterval(interval);
     };
   }, []);
-  //   useEffect(() => {
-  //     const interval = setInterval(getLocation, 1000);
-  //     return () => {
-  //       clearInterval(interval);
-  //     };
-  //   }, []);
   setInterval(() => {
     setDateTime(moment().format("hh:mm a"));
   }, 2500);
   const mapRef = useRef(null);
-  function animateToLocation(coords, heading) {
+  function animateToLocation(
+    coords,
+    heading,
+    altitude = 200,
+    pitch = 60,
+    duration = 3000
+  ) {
     mapRef.current.animateCamera(
-        {
-          center: coords,
-          pitch: 60,
-          heading: heading,
-          altitude: 200,
-          zoom: 40,
-        },
-        2000
-      );
+      {
+        center: coords,
+        pitch: pitch,
+        heading: heading,
+        altitude: altitude,
+        zoom: 40,
+      },
+      duration
+    );
   }
   useEffect(() => {
-    if (mapRef && path && path.coordinates) {
-    //   const to = setTimeout(() => {
-        animateToLocation(origin, getHeading(path.coordinates[0], path.coordinates[1]))
-    //   }, 5000);
-    //   return clearTimeout(to);
+    if (mapRef && permissionStatus === "granted") {
+      //   const to = setTimeout(() => {
+      // const h = getHeading(path.coordinates[0], path.coordinates[1])
+      // const si = setInterval(() => {
+      //     animateToLocation(origin, mapRef.current.heading)
+      // }, 2000)
+      (async () => {
+        const { coords, heading } = await getLocation();
+        animateToLocation(coords, heading, 700, 50, 500);
+      })();
+
+      // animateToLocation(origin, h)
+      // return () => clearTimeout(si)
+      //   }, 5000);
+      //   return clearTimeout(to);
     }
-  }, [mapRef, path]);
-  
+  }, [mapRef, permissionStatus]);
+
   return (
     <View className="flex-1 justify-center items-center h-full w-full">
       <MapView
         // provider={PROVIDER_GOOGLE}
         userInterfaceStyle="dark"
         className="w-full h-full py-18"
-        region={location}
+        // region={location}
         mapType="standard"
         onRegionChange={handleRegionChange}
         showsPointsOfInterest={false}
         showsUserLocation
+        onUserLocationChange={(e) => {
+          // if (e.coordinate)
+          //   console.log(e.coordinate)
+        }}
         compassOffset={{
           x: 0,
           y: 50,
@@ -209,8 +246,7 @@ export default function MapScreen() {
             lineCap="round"
             mode="WALKING"
             onReady={(res) => {
-              console.log(res);
-              setPath(res)
+              setPath(res);
             }}
           />
         ) : (
