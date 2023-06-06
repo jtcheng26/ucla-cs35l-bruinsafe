@@ -52,6 +52,8 @@ export default function walkButton({onPress, text, setMarker, setMarkerStyle, re
             copyPath.end = regionCoords;
             setWalkPath(copyPath);
             const pushCoords = await axios.post(BASE_URL + "/walk/request", {origin: copyPath.start, destination: copyPath.end, user: id });
+            console.log(pushCoords.data)
+            setMarkerList([pushCoords.data])
             // console.log(pushCoords)
             // copyMarkerList.push(<Marker coordinate={regionCoords} pinColor="#BA132C"/>);
             // setMarkerList(copyMarkerList);
