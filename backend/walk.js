@@ -12,7 +12,7 @@ const walkRequest = async (req, res) => {
   const user = req.body.user;
   const origin = req.body.origin;
   const dest = req.body.destination;
-  const timeLeft = req.body.timeLeft ? 0 : req.body.timeLeft;
+  const timeLeft = req.body.timeLeft ? req.body.timeLeft : 0;
   const model = await UserModel.findById(user).exec(); //check if user making walkRequest exists
   console.log(req.body);
   if (!mongoose.isValidObjectId(user)) {
