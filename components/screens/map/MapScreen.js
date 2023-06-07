@@ -57,7 +57,7 @@ function getHeading(coordinate1, coordinate2) {
   return brng;
 }
 export default function MapScreen() {
-  const { id } = useUserId();
+  const { id } = useUserId(); //current usersid -- maintains session state
   const [walking, setWalking] = useState(false);
   const [markerVisible, setMarkerVisible] = useState(false);
   const [mapMarkerList, setMapMarkerList] = useState([]);
@@ -107,7 +107,7 @@ export default function MapScreen() {
   const findWalkPath = async () => {
     if (id) {
       const result = await axios.get(BASE_URL + '/walk/get');
-      let filtered = result.data.filter(w => w.user == id);
+      let filtered = result.data.filter(w => w.user == id); //filter for the current user's walk
       if (filtered.length > 0) {
         setButtonAction(1);
       }

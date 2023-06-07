@@ -6,10 +6,11 @@ import ReportScreen from "./ReportScreen";
 import NavBar from "../../overlays/NavBar";
 import ProfileHeader from "../../overlays/ProfileHeader";
 
+//After Login Render
 export default function MainPage({ onLogout }) {
   const [screen, setScreen] = useState("map");
   let page = "";
-  const updateScreen = (newScreen) => {
+  const updateScreen = (newScreen) => { //callback function for Navbar to update screen
     setScreen(newScreen);
   };
   return (

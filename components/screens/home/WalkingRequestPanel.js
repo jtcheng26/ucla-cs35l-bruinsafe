@@ -63,7 +63,7 @@ useEffect(() => {
                 <TouchableScale
                 className="rounded-full px-6 h-8 bg-sky-200 justify-center items-center"
                 activeScale={0.95}
-                onPress={() => onAccept(walkID)}
+                onPress={() => onAccept(walkID)} //ISSUE: isn't being passed into function currently
                 >
                     <Text
                     className="text-sky-900"
