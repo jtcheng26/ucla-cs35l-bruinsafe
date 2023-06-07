@@ -4,7 +4,7 @@ import TouchableScale from 'react-native-touchable-scale';
 
 
 export default function ProgressBar() {
-    const [progress, setProgress] = useState(0.9);
+    const [progress, setProgress] = useState(0.9); //potential issue: setProgress needs to update progress for bar to move. Component should take in current location, and destination and check for distance.
     let progressStyle = "absolute ml-3 w-full py-1 rounded-full bg-amber-400/100 z-0 ";
     const padArray = new Array(2,3,4,5,6,7,8,9,10,11,12,14,16,20,24);
     var newStyle = 0;

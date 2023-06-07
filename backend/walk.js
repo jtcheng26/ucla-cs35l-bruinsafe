@@ -12,7 +12,7 @@ const walkRequest = async (req, res) => {
   const user = req.body.user;
   const origin = req.body.origin;
   const dest = req.body.destination;
-  const model = await UserModel.findById(user).exec();
+  const model = await UserModel.findById(user).exec(); //check if user making walkRequest exists
   console.log(req.body);
   if (!mongoose.isValidObjectId(user)) {
     res.status(400).send("Invalid ID");
@@ -59,8 +59,28 @@ const walkAccept = async (req, res) => {
   }
 };
 
+
+/*Potential ISSUE: We should create a walk route for when the walk is finished because otherwise one user can map to multiple walks
+  Use this as a base point if you want
+
+const endWalk = async (req, res) => {
+
+  const walkID = req.body.id;
+  const deleteRes = await WalkModel.findByIdAndDelete(walkId).exec();
+
+  if (deleteRes)
+  {
+    res.send("Walk deleted successfully");
+  }
+  else
+    res.status(400).send("Cannot delete nonexistent walk");
+  
+}
+
+*/
+
 const getWalks = async (req, res) => {
-  const walks = await WalkModel.find({});
+  const walks = await WalkModel.find({}); //array of all WalkModels
   res.send(walks.map((w) => w.toJSON()));
 };
 

@@ -30,16 +30,16 @@ export default function ProfileHeader({ onLogout }) {
 
         const retrieveUser = async() => {
             try {
-                const r_id = await AsyncStorage.getItem("@id")
+                const r_id = await AsyncStorage.getItem("@id") //get current userid and password
                 const r_pw = await AsyncStorage.getItem("@pw")
                 const data = {
                     name: changedName, 
                     id: r_id,
                     password: r_pw
                 }
-                const response = await axios.put(BASE_URL + '/user/edit', data);
+                const response = await axios.put(BASE_URL + '/user/edit', data); //edit current user's UserModel
                 console.log(response.data);
-                AsyncStorage.setItem('@name', changedName)
+                AsyncStorage.setItem('@name', changedName) //change user's session name
                 setUserName(changedName)
             } catch(error) {
                 console.error(error)
@@ -49,9 +49,11 @@ export default function ProfileHeader({ onLogout }) {
         if(!(changedName == "" || !changedName)) retrieveUser();
     }
 
+    //run when component first renders
     useEffect(() => {
         const getName = async() => {
             try {
+                //username state updated to "about to change" name 
                 const cur_name = await AsyncStorage.getItem("@name")
                 setUserName(cur_name)
             } catch(error) {

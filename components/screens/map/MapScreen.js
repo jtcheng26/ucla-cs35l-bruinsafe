@@ -17,9 +17,13 @@ import * as Location from "expo-location";
 import { BASE_URL } from "../../../constants";
 import LocationButton from "../../../assets/location.svg";
 import useUserId from "../../hooks/useUserId";
-import ConfirmPath from './confirmPath';
+import ConfirmPath from "./confirmPath";
 
 import MapViewDirections from "react-native-maps-directions";
+import useSockets from "../../hooks/useSockets";
+import isOutsidePath from "../../utils/isOutsidePath";
+import isDoneWalk from "../../utils/isDoneWalk";
+import timeToDestination from "../../utils/timeToDestination";
 
 // const origin = { latitude: 34.070819, longitude: -118.449262 };
 // const destination = { latitude: 34.069201, longitude: -118.443515 };
@@ -42,7 +46,7 @@ function getHeading(coordinate1, coordinate2) {
   const lat2 = coordinate2.latitude;
   const lon1 = coordinate1.longitude;
   const lon2 = coordinate2.longitude;
-  const π = Math.PI
+  const π = Math.PI;
   const φ1 = (lat1 * π) / 180; // φ, λ in radians
   const φ2 = (lat2 * π) / 180;
   const Δφ = ((lat2 - lat1) * π) / 180;
@@ -50,14 +54,13 @@ function getHeading(coordinate1, coordinate2) {
 
   const y = Math.sin(Δλ) * Math.cos(φ2);
   const x =
-    Math.cos(φ1) * Math.sin(φ2) -
-    Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+    Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
   const θ = Math.atan2(y, x);
   const brng = ((θ * 180) / π + 360) % 360; // in degrees
   return brng;
 }
 export default function MapScreen() {
-  const { id } = useUserId();
+  const { id } = useUserId(); //current usersid -- maintains session state
   const [walking, setWalking] = useState(false);
   const [markerVisible, setMarkerVisible] = useState(false);
   const [mapMarkerList, setMapMarkerList] = useState([]);
@@ -106,10 +109,11 @@ export default function MapScreen() {
   };
   const findWalkPath = async () => {
     if (id) {
-      const result = await axios.get(BASE_URL + '/walk/get');
-      let filtered = result.data.filter(w => w.user == id);
+      const result = await axios.get(BASE_URL + "/walk/get");
+      let filtered = result.data.filter((w) => w.user._id == id);
       if (filtered.length > 0) {
         setButtonAction(1);
+        setCurrentWalker(filtered[0].guardian.name);
       }
     }
   };
@@ -117,11 +121,15 @@ export default function MapScreen() {
     getPermissions();
   }, []);
   useEffect(() => {
+    const hrs = timeToDestination(location, path)
+    console.log("TIME LEFT: " + Math.floor(hrs));
+  }, [path]);
+  useEffect(() => {
     if (id) findWalkPath();
   }, [id]);
   const fetchMarkers = async () => {
     let allMarkers = await axios.get(BASE_URL + "/walk/get");
-    let copyMarkers = allMarkers.data.filter((x) => x.user === id);
+    let copyMarkers = allMarkers.data.filter((x) => x.user._id === id);
     // for (let i = 0; i < allMarkers.data.length; i++) {
     //   if (allMarkers.data[i].user == id) {
     //     copyMarkers.push(<Marker coordinate={{latitude: allMarkers.data[i].origin.latitude, longitude: allMarkers.data[i].origin.longitude}} pinColor={'#C9123A'} />)
@@ -132,8 +140,11 @@ export default function MapScreen() {
     // console.log(allMarkers.data)
     // console.log(copyMarkers);
     setMapMarkerList(copyMarkers);
+    if (copyMarkers.length) {
+      setWalking(true);
+    }
   };
-  const getLocation = async () => {
+  const getLocation = async (accuracy = 3) => {
     try {
       let curLocation = {
         coords: {
@@ -141,7 +152,9 @@ export default function MapScreen() {
           longitude: 0,
         },
       };
-      curLocation = await Location.getCurrentPositionAsync({ accuracy: 3 });
+      curLocation = await Location.getCurrentPositionAsync({
+        accuracy: accuracy,
+      });
       const heading = await Location.getHeadingAsync();
       let locCopy = { ...location };
       locCopy.latitude = curLocation.coords.latitude;
@@ -182,13 +195,26 @@ export default function MapScreen() {
       return (
         <WalkingPage
           locationName={data.cityName}
-          walkerFullName={"Carey Nachenberg"}
+          walkerFullName={currentWalker}
           currentTime={currentDateTime}
+          timeLeft={timeToDestination(location, path)}
           onPress={setButtonAction}
         />
       );
     } else if (actionState == 2) {
-      return <ConfirmPath onPress={setButtonAction} coordinates={mapMarkerList[0]} setMarkerList={setMapMarkerList} setThePath={setWalkPath} copyPath={walkPath} setWalking={setWalking} setWaiting={setWaiting} waiting={waiting} setCurrentWalker={setCurrentWalker} />
+      return (
+        <ConfirmPath
+          onPress={setButtonAction}
+          coordinates={mapMarkerList[0]}
+          setMarkerList={setMapMarkerList}
+          setThePath={setWalkPath}
+          copyPath={walkPath}
+          setWalking={setWalking}
+          setWaiting={setWaiting}
+          waiting={waiting}
+          setCurrentWalker={setCurrentWalker}
+        />
+      );
     } else {
       return null;
     }
@@ -281,15 +307,50 @@ export default function MapScreen() {
   }, [mapRef, permissionStatus]);
 
   useEffect(() => {
-    console.log("WalkingMarkerList", mapMarkerList);
-    if (walking) {
+    // console.log("WalkingMarkerList", mapMarkerList);
+    if (walking && path) {
       animateToLocation(
         mapMarkerList[0].origin,
         getHeading(path.coordinates[0], path.coordinates[1])
       );
     }
-  }, [walking]);
+  }, [walking, path]);
 
+  const {
+    socket,
+    connected,
+    createRoom,
+    joinRoom,
+    endRoom,
+    shareLoc,
+    walkerLoc,
+    roomId,
+  } = useSockets();
+  useEffect(() => {
+    if (currentWalker && connected && !roomId && id) joinRoom(id);
+    else if (currentWalker && connected && roomId && path) {
+      const stream = setInterval(async () => {
+        if (!roomId) clearInterval(stream);
+        const { coords } = await getLocation(5);
+        if (isOutsidePath(coords, path)) {
+          // TODO: alert user
+          console.log("User is leaving path!");
+        } else if (isDoneWalk(coords, path)) {
+          console.log("User is finished walk.");
+          endRoom(roomId);
+          setMapMarkerList([]);
+          setWalking(false);
+          setCurrentWalker("");
+          clearInterval(stream);
+        }
+        shareLoc(coords);
+      }, 1000);
+      return () => {
+        endRoom(roomId);
+        clearInterval(stream);
+      };
+    }
+  }, [currentWalker, connected, roomId, id, path]);
 
   return (
     <View className="flex-1 justify-center items-center h-full w-full">
@@ -330,15 +391,17 @@ export default function MapScreen() {
           ""
         )}
         {walkPath.start && (
-         <Marker key={"start1"} coordinate={walkPath.start} pinColor="#FBBF24" />
-       ) }
+          <Marker
+            key={"start1"}
+            coordinate={walkPath.start}
+            pinColor="#FBBF24"
+          />
+        )}
 
-      {walkPath.end && (
-        <Marker key={"end1"} coordinate={walkPath.end} pinColor="#BA132C" />
-       ) }
+        {walkPath.end && (
+          <Marker key={"end1"} coordinate={walkPath.end} pinColor="#BA132C" />
+        )}
 
-
-        
         {/* {mapMarkerList.map((x, i) => <Marker key={x.user + i + "1"} coordinate={x.origin} pinColor="#FBBF24" />)[0]}
         {mapMarkerList.map((x, i) => <Marker key={x.user + i + "0"} coordinate={x.destination} pinColor="#C9123A" />)[0]} */}
         {/* <Marker coordinate={{latitude: 34.069201, longitude: -118.443515}}/> */}
@@ -352,6 +415,7 @@ export default function MapScreen() {
             lineCap="round"
             mode="WALKING"
             onReady={(res) => {
+              console.log(res);
               setPath(res);
               //setWalking(false);
             }}
