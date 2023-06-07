@@ -1,11 +1,11 @@
-import { View, Text, ScrollView, SafeAreaView, TextInput } from 'react-native';
+import { View, Text, ScrollView, SafeAreaView, TextInput, RefreshControl } from 'react-native';
 import { Stack, useRouter } from 'expo-router'
 import MapView from 'react-native-maps'
 import ProfileHeader from '../../overlays/ProfileHeader';
 import axios from 'axios';
 import { BASE_URL } from '../../../constants';
 import WalkingRequestPanel from './WalkingRequestPanel';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import ReportsPanel from './ReportsPanel';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useUserId from '../../hooks/useUserId';
@@ -19,6 +19,8 @@ export default function HomeScreen({updateScreen}) {
     const [reports, setReports] = useState([]);
     const {id} = useUserId();
     const [walkAccepted, setWalkAccepted] = useState(false)
+    const [refreshWalks, setRefreshWalks] = useState(false);
+    // const [refreshReports, setRefreshReports] = useState(false);
     const month = {
         "01": "Jan",
         "02": "Feb",
@@ -33,6 +35,44 @@ export default function HomeScreen({updateScreen}) {
         "11": "Nov",
         "12": "Dec",
     }
+
+    const onRefreshWalks = useCallback(() => {
+        setRefreshWalks(true);
+        const fetchNearbyUsers = async() => {
+            try {
+                const response = await axios.get(BASE_URL + "/walk/get");
+                setWalks(response.data.filter(u => u.user._id !== id).filter(u => u.state === 0));
+                setFullWalks(response.data.filter(u => u.user._id !== id).filter(u => u.state === 0));
+                setTimeout(() => {
+                    setRefreshWalks(false);
+                  }, (Math.random()*2000 + 100));
+            } catch(e) {
+                console.error(e)
+            }
+        }
+        fetchNearbyUsers();
+    }, [refreshWalks])
+
+    // const onRefreshReports = useCallback(() => {
+    //     setRefreshReports(true);
+    //     const fetchNearbyReports = async() => {
+    //         try {
+    //             const cur_loc = {
+    //                 latitude: 34.068925,
+    //                 longitude: -118.446629
+    //             }
+    //             const response = await axios.post(BASE_URL + "/report/search", cur_loc); //All reports not nearby (possibly unintentional)
+    //             setReports((response.data).reverse())
+    //             setTimeout(() => {
+    //                 setRefreshReports(false);
+    //               }, (Math.random()*2000 + 100));
+    //         } catch(e) {
+    //             console.error(e);
+    //         }
+    //     }
+    //     fetchNearbyReports();
+    // }, [refreshReports])
+
     //ran once when component is first rendered
     useEffect(() => {
         const fetchNearbyUsers = async() => {
@@ -109,19 +149,20 @@ export default function HomeScreen({updateScreen}) {
             <View
             className="w-full h-2/5 items-center justify-center"
             >
+                <TextInput
+                className="w-11/12 h-10 my-4 bg-gray-300 rounded-xl p-1 px-4"
+                placeholder='Search for a Walk by Name'
+                onChangeText={(query) => search(query)}
+                />
                 <ScrollView
                 className="w-11/12"
-                contentContainerStyle={{
-
-                }}
+                refreshControl={
+                    <RefreshControl 
+                    onRefresh={onRefreshWalks}
+                    refreshing={refreshWalks}
+                    />
+                }
                 >
-                    <TextInput
-                    className="w-full h-10 my-4 bg-gray-300 rounded-xl p-1 px-4"
-                    placeholder='Search for a Walk by Name'
-                    onChangeText={(query) => search(query)}
-                    >
-
-                    </TextInput>
                     {(walks.length > 0) ? 
                         (walks.map(walk => ( //All nondeclined walks
                         <WalkingRequestPanel 
@@ -151,6 +192,12 @@ export default function HomeScreen({updateScreen}) {
                 <ScrollView
                 className="w-11/12"
                 horizontal
+                // refreshControl={
+                //     <RefreshControl 
+                //     onRefresh={onRefreshReports}
+                //     refreshing={refreshReports}
+                //     />
+                // }
                 >
                     {(reports.length > 0) ? 
                         (reports.map((report) => ( //All reports

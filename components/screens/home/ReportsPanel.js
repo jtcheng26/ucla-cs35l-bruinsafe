@@ -28,7 +28,7 @@ export default function ReportsPanel({
                     {type}
                 </Text>
                 <Text
-                className="font-bold mx-1 text-xs text-white"
+                className="font-bold mx-1 text-xs text-zinc-200/80"
                 >
                     {desc}
                 </Text>
