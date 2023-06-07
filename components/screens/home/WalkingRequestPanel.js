@@ -9,7 +9,6 @@ export default function WalkingRequestPanel({
     user,
     src={pfp},
     time=parseInt(Math.random()*20),
-    onDecline,
     onAccept,
     walk_id,
 }) {
@@ -67,18 +66,6 @@ export default function WalkingRequestPanel({
                     className="text-sky-900"
                     >
                         accept
-                    </Text>
-                </TouchableScale>
-
-                <TouchableScale
-                className="ml-4 rounded-full px-6 h-8 bg-sky-900 justify-center items-center"
-                activeScale={0.95}
-                onPress={() => onDecline(walk_id)}
-                >
-                    <Text
-                    className="text-sky-200"
-                    >
-                        decline
                     </Text>
                 </TouchableScale>
             </View>
