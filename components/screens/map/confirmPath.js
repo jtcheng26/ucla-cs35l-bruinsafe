@@ -7,29 +7,20 @@ import axios from 'axios';
 
 export default function confirmPath({onPress, coordinates}) {
     const { id } = useUserId();
-    const isMatched = async () => {
-        console.log("Polling...");
-        const allWalks = await axios.get(BASE_URL + "/walk/get");
-        const result = allWalks.filter(walk => (walk.user == id && walk.state == 1));
-        if (result.length > 0) {
-            clearInterval(interval);
-            onPress(1);
-        }
-    }
     const handleClick = async (confirmed) => {
         if (confirmed) {
             const pushCoords = await axios.post(BASE_URL + "/walk/request", {origin: coordinates.start, destination: coordinates.end, user: id });
+            console.log("Polling")
             // console.log("Pushed data to database!");
-            const interval = setInterval(async () => {
-                console.log("Polling...");
-                const allWalks = await axios.get(BASE_URL + "/walk/get");
-                const result = allWalks.filter(walk => (walk.user == id && walk.state == 1));
-                if (result.length > 0) {
-                    clearInterval(interval);
-                    onPress(1);
-                }
-            }, 1500);
-            clearInterval(interval);
+            // const interval = setInterval(async () => {
+            //     console.log("Polling...");
+            //     const allWalks = await axios.get(BASE_URL + "/walk/get");
+            //     const result = allWalks.filter(walk => (walk.user == id && walk.state == 1));
+            //     if (result.length > 0) {
+            //         clearInterval(interval);
+            //         onPress(1);
+            //     }
+            // }, 1500);
         } else {
             onPress(0);
         }
