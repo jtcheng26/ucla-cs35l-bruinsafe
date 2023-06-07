@@ -40,18 +40,18 @@ function getHeading(coordinate1, coordinate2) {
   const lat2 = coordinate2.latitude;
   const lon1 = coordinate1.longitude;
   const lon2 = coordinate2.longitude;
-
-  const φ1 = (lat1 * Math.PI) / 180; // φ, λ in radians
-  const φ2 = (lat2 * Math.PI) / 180;
-  const Δφ = ((lat2 - lat1) * Math.PI) / 180;
-  const Δλ = ((lon2 - lon1) * Math.PI) / 180;
+  const π = Math.PI
+  const φ1 = (lat1 * π) / 180; // φ, λ in radians
+  const φ2 = (lat2 * π) / 180;
+  const Δφ = ((lat2 - lat1) * π) / 180;
+  const Δλ = ((lon2 - lon1) * π) / 180;
 
   const y = Math.sin(Δλ) * Math.cos(φ2);
   const x =
     Math.cos(φ1) * Math.sin(φ2) -
     Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
   const θ = Math.atan2(y, x);
-  const brng = ((θ * 180) / Math.PI + 360) % 360; // in degrees
+  const brng = ((θ * 180) / π + 360) % 360; // in degrees
   return brng;
 }
 export default function MapScreen() {
