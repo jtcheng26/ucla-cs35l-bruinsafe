@@ -59,7 +59,7 @@ function getHeading(coordinate1, coordinate2) {
   return brng;
 }
 export default function MapScreen() {
-  const { id } = useUserId();
+  const { id } = useUserId(); //current usersid -- maintains session state
   const [walking, setWalking] = useState(false);
   const [markerVisible, setMarkerVisible] = useState(false);
   const [mapMarkerList, setMapMarkerList] = useState([]);

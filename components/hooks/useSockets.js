@@ -3,6 +3,7 @@ import { io } from "socket.io-client";
 import { BASE_URL } from "../../constants";
 import useUserId from "./useUserId";
 
+//session management
 export default function useSockets() {
   const { id } = useUserId();
   const [socket, setSocket] = useState();
@@ -14,14 +15,14 @@ export default function useSockets() {
   }, [socket, id]);
   const joinRoom = useCallback(
     (room_id) => {
-      socket.emit("join", room_id);
+      socket.emit("join", room_id); //join event, room is initalized
       setRoomId(room_id)
     },
     [socket]
   );
   const endRoom = useCallback(
     (room_id) => {
-      socket.emit("end", room_id);
+      socket.emit("end", room_id); //end event, session is null
       setRoomId(null)
     },
     [socket]
