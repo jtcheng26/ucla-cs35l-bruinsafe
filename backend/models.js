@@ -40,7 +40,8 @@ const WalkSchema = new Schema({
   },
   user: UserSchema,
   state: Number, // 0 = started, 1 = in progress, 2 = finished
-  guardian: UserSchema
+  guardian: UserSchema,
+  time_left: Number
 })
 
 const UserModel = mongoose.model("User", UserSchema);

@@ -24,11 +24,13 @@ function hashpw(string) {
 
 /* ======================= Walk Routes ======================= */
 
-const { walkRequest, walkAccept, getWalks } = require("./walk.js");
+const { walkRequest, walkAccept, getWalks, walkEnd } = require("./walk.js");
 
 app.post("/walk/request", walkRequest);
 
 app.post("/walk/accept", walkAccept);
+
+app.post("/walk/end", walkEnd);
 
 app.get("/walk/get", getWalks);
 
@@ -65,8 +67,8 @@ app.post("/user/login", async (req, res) => {
 app.post("/user/create", (req, res) => {
   const email = req.body.email;
   const name = req.body.name;
-  if (!req.body.password) res.send("Invalid password", 400)
-  const pw = hashpw(req.body.password)
+  if (!req.body.password) res.send("Invalid password", 400);
+  const pw = hashpw(req.body.password);
   const model = new UserModel({ email: email, name: name, password: pw });
   model.save();
   res.send(model.toJSON());
@@ -92,7 +94,6 @@ app.post("/user/create", (req, res) => {
   //       res.status(200).json(model.toJSON());
   //     }
   //   })
-
 });
 
 app.put("/user/edit", async (req, res) => {
@@ -137,7 +138,8 @@ app.post("/report/search", async (req, res) => {
   };
   // optimize this for larger datasets in the future
   const all = await ReportModel.find({});
-  const nearby = all.filter((report) => { //filter "nearby" report using distance formula per each report
+  const nearby = all.filter((report) => {
+    //filter "nearby" report using distance formula per each report
     const reportLoc = report.get("location");
     const dx = Math.abs(myLoc.latitude - reportLoc.latitude);
     const dy = Math.abs(myLoc.longitude - reportLoc.longitude);

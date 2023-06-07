@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, SafeAreaView } from 'react-native';
+import { View, Text, ScrollView, SafeAreaView, TextInput } from 'react-native';
 import { Stack, useRouter } from 'expo-router'
 import MapView from 'react-native-maps'
 import ProfileHeader from '../../overlays/ProfileHeader';
@@ -13,8 +13,9 @@ import MapScreen from '../map/MapScreen';
 
 
 
-export default function HomeScreen() {
-    const [walks, setWalks] = useState([])
+export default function HomeScreen({updateScreen}) {
+    const [walks, setWalks] = useState([]);
+    const [fullWalks, setFullWalks] = useState([]);
     const [reports, setReports] = useState([]);
     const {id} = useUserId();
     const [walkAccepted, setWalkAccepted] = useState(false)
@@ -37,8 +38,8 @@ export default function HomeScreen() {
         const fetchNearbyUsers = async() => {
             try {
                 const response = await axios.get(BASE_URL + "/walk/get");
-                console.log(response.data)
-                setWalks(response.data.filter(u => u.user._id !== id));
+                setWalks(response.data.filter(u => u.user._id !== id).filter(u => u.state === 0));
+                setFullWalks(response.data.filter(u => u.user._id !== id).filter(u => u.state === 0));
             } catch(e) {
                 console.error(e)
             }
@@ -62,17 +63,6 @@ export default function HomeScreen() {
         fetchNearbyReports();
     }, [])
 
-    // useEffect(() => {
-    //     let newArr = walks.filter(u => u.state === 0);
-    //     setWalks(newArr)
-    // }, [walks])
-
-  //callback function for declining a walk request 
-    const handleDecline = (id) => {
-        let newArr = walks.filter(u => u._id !== id)
-        setWalks(newArr)
-    }
-
     const handleAccept = (walk_id) => {
         const connectWalk = async() => {
             try {
@@ -92,21 +82,25 @@ export default function HomeScreen() {
         setWalkAccepted(true);
         let newArr = walks.filter(u => u.state === 0);
         setWalks(newArr)
+        newArr = fullWalks.filter(u => u.state === 0);
+        setFullWalks(newArr)
     }
 
-    // useEffect(() => {
-    //     let newArr = walks.filter(u => u.user._id !== id);
-    //     setWalks(newArr)
-    // }, [id, walks])
-    if(walkAccepted) {
-        return (
-            <MapScreen />
-        )
+    const search = (query) => {
+        if(query == "" || query == null) setWalks(fullWalks);
+        let newArr = [];
+        for(let i = 0; i < fullWalks.length; i++) {
+            if(fullWalks[i].user.name.toLowerCase().includes(query.toLowerCase())) newArr.push(fullWalks[i])
+        }
+        setWalks(newArr)
     }
+
+    useEffect(() => {
+        if(walkAccepted) updateScreen("map")
+    }, [walkAccepted])
 
     return (
         <View className="flex-1 bg-sky-950">
-            {/* <ProfileHeader /> */}
             <Text
             className="text-2xl font-semibold text-amber-400 mt-28 mb-2 ml-8"
             >
@@ -121,13 +115,19 @@ export default function HomeScreen() {
 
                 }}
                 >
+                    <TextInput
+                    className="w-full h-10 my-4 bg-gray-300 rounded-xl p-1 px-4"
+                    placeholder='Search for a Walk by Name'
+                    onChangeText={(query) => search(query)}
+                    >
+
+                    </TextInput>
                     {(walks.length > 0) ? 
                         (walks.map(walk => ( //All nondeclined walks
                         <WalkingRequestPanel 
                         key={walk._id}
                         user={walk.user}
                         walk_id={walk._id}
-                        onDecline={handleDecline}
                         onAccept={handleAccept}
                         />
                         ))) : 
@@ -148,7 +148,7 @@ export default function HomeScreen() {
             className="w-full h-1/5 items-center justify-center"
             >
                 <ScrollView
-                className="w-10/12"
+                className="w-11/12"
                 horizontal
                 >
                     {(reports.length > 0) ? 
