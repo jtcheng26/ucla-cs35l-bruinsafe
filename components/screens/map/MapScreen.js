@@ -62,6 +62,7 @@ export default function MapScreen() {
   const [markerVisible, setMarkerVisible] = useState(false);
   const [mapMarkerList, setMapMarkerList] = useState([]);
   const [currentRegion, setRegion] = useState(null);
+  const [waiting, setWaiting] = useState(false);
   const [walkPath, setWalkPath] = useState({
     start: null,
     end: null,
@@ -185,7 +186,7 @@ export default function MapScreen() {
         />
       );
     } else if (actionState == 2) {
-      return <ConfirmPath onPress={setButtonAction} coordinates={mapMarkerList[0]} setMarkerList={setMapMarkerList} setThePath={setWalkPath} copyPath={walkPath} setWalking={setWalking} />
+      return <ConfirmPath onPress={setButtonAction} coordinates={mapMarkerList[0]} setMarkerList={setMapMarkerList} setThePath={setWalkPath} copyPath={walkPath} setWalking={setWalking} setWaiting={setWaiting} waiting={waiting} />
     } else {
       return null;
     }

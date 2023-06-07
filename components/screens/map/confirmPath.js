@@ -4,23 +4,39 @@ import { TouchableOpacity } from 'react-native';
 import useUserId from '../../hooks/useUserId';
 import { BASE_URL } from '../../../constants';
 import axios from 'axios';
+import { useEffect } from 'react';
 
-export default function confirmPath({onPress, coordinates, setMarkerList, setThePath, copyPath, setWalking}) {
+export default function confirmPath({onPress, coordinates, setMarkerList, setThePath, copyPath, setWalking, setWaiting, waiting}) {
     const { id } = useUserId();
     const isMatched = async () => {
         console.log("Polling...");
         const allWalks = await axios.get(BASE_URL + "/walk/get");
         const result = allWalks.filter(walk => (walk.user == id && walk.state == 1));
         if (result.length > 0) {
-            clearInterval(interval);
             onPress(1);
         }
     }
+    useEffect(() => {
+        if (waiting) {
+            const interval = setInterval(async () => {
+                console.log("Polling...");
+                const allWalks = await axios.get(BASE_URL + "/walk/get");
+                const result = allWalks.filter(walk => (walk.user == id && walk.state == 1));
+                if (result.length > 0) {
+                    setWaiting(false)
+                    setWalking(true)
+                    clearInterval(interval)
+                }
+            }, 1000)
+            return () => clearInterval(interval)
+        }
+    }, [waiting])
     const handleClick = async (confirmed) => {
         if (confirmed) {
             setWalking(true);
             const pushCoords = await axios.post(BASE_URL + "/walk/request", {origin: copyPath.start, destination: copyPath.end, user: id });
-            onPress(1);
+            // set interval for isMatched
+
         } else {
             onPress(0);
             setMarkerList([]);
