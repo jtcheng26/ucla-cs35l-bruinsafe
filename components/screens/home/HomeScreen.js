@@ -100,9 +100,9 @@ export default function HomeScreen({updateScreen}) {
     }, [walkAccepted])
 
     return (
-        <View className="flex-1 bg-sky-950">
+        <View className="flex-1 bg-blue-900/90">
             <Text
-            className="text-2xl font-semibold text-amber-400 mt-28 mb-2 ml-8"
+            className="text-2xl font-semibold text-amber-400 mt-28 ml-8"
             >
                 Walk Requests
             </Text>

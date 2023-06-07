@@ -10,15 +10,17 @@ import ProfileHeader from "../../overlays/ProfileHeader";
 export default function MainPage({ onLogout }) {
   const [screen, setScreen] = useState("map");
   let page = "";
-  const updateScreen = (newScreen) => { //callback function for Navbar to update screen
+  const updateScreen = (newScreen) => {
+    //callback function for Navbar to update screen
     setScreen(newScreen);
   };
   return (
     <View className="w-full h-full">
-      <View className={screen === "map" ? "w-full h-full" : "hidden"}>
+      {/* <View className={screen === "map" ? "w-full h-full" : "hidden"}>
         <MapScreen />
-      </View>
-      {screen === "home" && <HomeScreen updateScreen={updateScreen}/>}
+      </View> */}
+      {screen === "map" && <MapScreen />}
+      {screen === "home" && <HomeScreen updateScreen={updateScreen} />}
       {screen === "report" && <ReportScreen />}
       <ProfileHeader onLogout={onLogout} />
       <NavBar updateScreen={updateScreen} />
