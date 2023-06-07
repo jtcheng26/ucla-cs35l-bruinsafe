@@ -53,6 +53,7 @@
     "react-native-vector-icons": "^9.2.0",
     "react-native-web": "~0.18.10",
     "react-redux": "^8.0.5",
+    "socket.io-client": "^4.6.2",
     "tailwind-react-native-classnames": "^1.5.1",
     "yarn": "^1.22.19"
   },
