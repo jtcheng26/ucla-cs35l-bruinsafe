@@ -23,7 +23,7 @@ export default function MainPage({ onLogout }) {
       {screen === "home" && <HomeScreen updateScreen={updateScreen} />}
       {screen === "report" && <ReportScreen />}
       <ProfileHeader onLogout={onLogout} />
-      <NavBar updateScreen={updateScreen} />
+      <NavBar screen={screen} updateScreen={updateScreen} />
     </View>
   );
 }

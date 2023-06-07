@@ -8,8 +8,9 @@ import Svg, { Path, SvgXml, SvgUri, Circle } from 'react-native-svg';
 import Location from '../../assets/location.svg';
 import Home from '../../assets/home.svg';
 import Megaphone from '../../assets/megaphone.svg';
+import {useEffect} from 'react';
 
-export default function NavBar({ updateScreen }) {
+export default function NavBar({ screen, updateScreen }) {
     const [buttonToggle, setButtonToggle] = useState([0, 1, 0]);
 
     const styles = {
@@ -35,6 +36,15 @@ export default function NavBar({ updateScreen }) {
             setButtonToggle([0, 0, 0]);
         }
     }
+    useEffect(() => {
+        if (screen == "map") {
+            setButtonToggle([0, 1, 0]);
+        } else if (screen == "report") {
+            setButtonToggle([0, 0, 1]);
+        } else {
+            setButtonToggle([1, 0, 0]);
+        }
+    }, [screen])
     return (
         <View className="absolute w-full bottom-0 pb-0 items-center align-center">
             <View className="flex flex-row space-x-5 mb-7">
