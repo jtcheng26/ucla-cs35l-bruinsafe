@@ -60,7 +60,7 @@ export default function HomeScreen({updateScreen}) {
     //             const cur_loc = {
     //                 latitude: 34.068925,
     //                 longitude: -118.446629
-    //             }
+    //             }a
     //             const response = await axios.post(BASE_URL + "/report/search", cur_loc); //All reports not nearby (possibly unintentional)
     //             setReports((response.data).reverse())
     //             setTimeout(() => {

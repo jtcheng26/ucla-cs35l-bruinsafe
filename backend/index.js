@@ -55,7 +55,7 @@ app.post("/user/login", async (req, res) => {
     res.status(400).json({ error: "User not found" });
   } else {
     if (!req.body.password) res.send("Invalid password", 400);
-    const pw = hashpw(req.body.password);
+    const pw = hashpw(req.body.password); 
     if (model.password != pw) {
       res.status(400).json({ error: "Wrong password" });
     } else {
@@ -68,7 +68,7 @@ app.post("/user/create", (req, res) => {
   const email = req.body.email;
   const name = req.body.name;
   if (!req.body.password) res.send("Invalid password", 400);
-  const pw = hashpw(req.body.password);
+  const pw = hashpw(req.body.password); //sha-256 hash applied to password => secure password storage
   const model = new UserModel({ email: email, name: name, password: pw });
   model.save();
   res.send(model.toJSON());
@@ -137,13 +137,47 @@ app.post("/report/search", async (req, res) => {
     longitude: req.body.longitude,
   };
   // optimize this for larger datasets in the future
-  const all = await ReportModel.find({});
+  const all = await ReportModel.find({}); //potential issue: perhaps we should sort reports when sending b/c recent is more pressing
+  /*potential fix: if you want use as a base to work off of
+
+  const all = await ReportMode.find({}).sort({timestamp: -1}) ///should sort by Date (timestamp field in ReportModel);
+
+  
+  /* potential change: perhaps we should only display reports <= 3 days old 
+  if you want add this to below nearby filtering or use as base to work off of
+
+  const currDate = new Date();
+  const cutOff = new Date();
+  cutOff.setDate(currDate.getDate()-3); //our cutoff modify the -3 as you wish
+  
+  const recent = all.filter(async (report) => { //async b/c using await
+    const reportDate = report.timestamp;
+    if (reportDate < cutOff) //delete any older than 3 day comments
+    {
+      const repID = report._id;
+      try {
+      const response = await axios.delete(BASE_URL + "/report/" + repID); //calls api endpoint currently in comments
+      console.log("Report w/ ID:" + repID + " deleted successfully");
+      } catch (error)
+      {
+        console.error("Error deleting report - ID: " + repID + error.message);
+      }
+
+    }
+    return reportDate >= cutOff
+  })
+
+  */
+
   const nearby = all.filter((report) => {
     //filter "nearby" report using distance formula per each report
     const reportLoc = report.get("location");
     const dx = Math.abs(myLoc.latitude - reportLoc.latitude);
     const dy = Math.abs(myLoc.longitude - reportLoc.longitude);
     return dx * dx + dy * dy <= MAX_RADIUS; //ISSUE: Need to square root of dx^2 + dy^2 to check radius
+    /* potential fix:
+    return Math.sqrt(dx * dx + dy * dy) <= MAX_RADIUS
+    */
   });
   res.send(all); //ISSUE: Returns all Reports not nearby reports, Not sure if this is intended functionality
 });
@@ -173,6 +207,7 @@ app.post("/report/create", (req, res) => {
       return;
     }
   }
+
   const model = new ReportModel({
     types: types,
     timestamp: timestamp,
@@ -182,6 +217,33 @@ app.post("/report/create", (req, res) => {
   model.save();
   res.send(model.toJSON());
 });
+
+  //potential ISSUE: perhaps we should be able to resolve reports once the "danger" is gone. Lest we have reports from days ago floating around.
+  /* use this as a base if you want
+  
+
+  app.delete("/report/:id", async (req, res) => {
+  const reportID = req.params.id;
+
+  try {
+  const toDel = await ReportModel.findByIDAndDelete(reportID);
+
+  if (!toDel)
+  {
+    res.status(400).send("Report not found");
+  }
+  else
+  {
+    res.status(200).send("Report deleted successfully");
+  }
+}
+catch (e){
+  res.status(400).send("Server Error");
+}
+  });
+
+  
+  */
 
 /* ======================= Run App ======================= */
 
