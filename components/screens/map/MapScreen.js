@@ -114,6 +114,9 @@ export default function MapScreen() {
     if (id) {
       const result = await axios.get(BASE_URL + "/walk/get");
       let filtered = result.data.filter((w) => w.user._id == id);
+      let guard = result.data.filter((w) =>
+        w.guardian ? w.guardian._id == id : false
+      );
       if (filtered.length > 0) {
         if (filtered[0].state) {
           setButtonAction(1);
@@ -122,8 +125,13 @@ export default function MapScreen() {
         } else {
           setButtonAction(3);
           setWaiting(true);
-          setConfirmed(true);
         }
+      } else if (guard.length > 0) {
+        setMapMarkerList(guard);
+        setIsGuardian(true);
+        setButtonAction(1);
+        setCurrentWalkId(guard[0]._id);
+        setCurrentWalker(guard[0].user.name);
       }
     }
   };
@@ -131,7 +139,7 @@ export default function MapScreen() {
     getPermissions();
   }, []);
   useEffect(() => {
-    const hrs = timeToDestination(location, path)
+    const hrs = timeToDestination(location, path);
     console.log("TIME LEFT: " + Math.floor(hrs));
   }, [path]);
   useEffect(() => {
@@ -161,7 +169,11 @@ export default function MapScreen() {
       }
     } else if (guardMarkers.length) {
       setMapMarkerList(guardMarkers);
+      setMapMarkerList(guardMarkers);
       setIsGuardian(true);
+      setCurrentWalkId(guardMarkers[0]._id);
+      setCurrentWalker(guardMarkers[0].user.name);
+      setButtonAction(1);
     }
   };
   const getLocation = async (accuracy = 3) => {
@@ -327,8 +339,10 @@ export default function MapScreen() {
       //     animateToLocation(origin, mapRef.current.heading)
       // }, 2000)
       (async () => {
-        const { coords, heading } = await getLocation();
-        animateToLocation(coords, heading, 700, 50, 500);
+        if (!isGuardian) {
+          const { coords, heading } = await getLocation();
+          animateToLocation(coords, heading, 700, 50, 500);
+        }
       })();
 
       // animateToLocation(origin, h)
@@ -336,17 +350,17 @@ export default function MapScreen() {
       //   }, 5000);
       //   return clearTimeout(to);
     }
-  }, [mapRef, permissionStatus]);
+  }, [mapRef, isGuardian, permissionStatus]);
 
   useEffect(() => {
     // console.log("WalkingMarkerList", mapMarkerList);
-    if (walking && path) {
+    if ((walking || isGuardian) && path) {
       animateToLocation(
         mapMarkerList[0].origin,
         getHeading(path.coordinates[0], path.coordinates[1])
       );
     }
-  }, [walking, path]);
+  }, [walking, path, isGuardian]);
 
   const {
     socket,
@@ -369,7 +383,7 @@ export default function MapScreen() {
     setWalking(false);
     setCurrentWalker("");
     setButtonAction(0);
-    console.log(currentWalkId)
+    console.log(currentWalkId);
     axios.post(BASE_URL + "/walk/end", { id: currentWalkId });
     setCurrentWalkId(null);
   }
@@ -419,6 +433,7 @@ export default function MapScreen() {
         ref={mapRef}
         showsCompass
       >
+        {walkerLoc && <Marker coordinate={walkerLoc} pinColor="#FFFFFF" />}
         {mapMarkerList && mapMarkerList.length >= 1 ? (
           <>
             <Marker
