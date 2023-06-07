@@ -10,7 +10,6 @@ export default function useSockets() {
   const [roomId, setRoomId] = useState(null);
   const createRoom = useCallback(() => {
     socket.emit("start", id);
-    socket.emit("start", 1);
     setRoomId(id)
   }, [socket, id]);
   const joinRoom = useCallback(
