@@ -6,7 +6,7 @@ import ProgressBar from './ProgessBar';
 export default function WalkingPage({walkerFullName, locationName, currentTime}) {
     const timeLeft = 15;
     return (
-        <View className="absolute bottom-10 mb-20 w-11/12 rounded-2xl px-2 pt-1 pb-3 bg-blue-600 shadow-xl">
+        <View className="absolute bottom-10 mb-20 w-11/12 rounded-2xl px-2 pt-1 pb-3 bg-sky-600 shadow-xl">
             <View className="flex-row items-center align-center justify-between">
                 <Image 
                         source={pfp}

@@ -8,7 +8,7 @@ import axios from 'axios';
 import {BASE_URL} from '../../../constants';
 import useUserId from '../../hooks/useUserId';
 
-export default function walkButton({onPress, text, setMarker, setMarkerStyle, region, markerList, setMarkerList, regionCoords, walkPath, setWalkPath}) {
+export default function walkButton({onPress, text, setMarker, setMarkerStyle, region, markerList, setMarkerList, regionCoords, walkPath, setWalkPath, curLocation}) {
     const [buttonText, setButtonText] = useState(text);
     const { id } = useUserId()
     // useEffect(() => {
@@ -18,7 +18,7 @@ export default function walkButton({onPress, text, setMarker, setMarkerStyle, re
     const handleClick = async () => {
         if (buttonText === "walk with someone") {
             //console.log(regionCoords);
-            setButtonText("set start");
+            setButtonText("set end");
             setMarker(true);
             setMarkerStyle({
                 width: 60,
@@ -49,11 +49,14 @@ export default function walkButton({onPress, text, setMarker, setMarkerStyle, re
             });
             let copyMarkerList = markerList.slice();
             let copyPath = {...walkPath};
+            copyPath.start = curLocation;
             copyPath.end = regionCoords;
             setWalkPath(copyPath);
-            const pushCoords = await axios.post(BASE_URL + "/walk/request", {origin: copyPath.start, destination: copyPath.end, user: id });
-            console.log(pushCoords.data)
-            setMarkerList([pushCoords.data])
+            setMarkerList([ {origin: copyPath.start, destination: copyPath.end, user: id }]);
+            //const pushCoords = await axios.post(BASE_URL + "/walk/request", {origin: copyPath.start, destination: copyPath.end, user: id });
+            //console.log(pushCoords.data)
+            // setMarkerList([{...copyPath, user: id}]);
+            onPress(2);
             // console.log(pushCoords)
             // copyMarkerList.push(<Marker coordinate={regionCoords} pinColor="#BA132C"/>);
             // setMarkerList(copyMarkerList);
