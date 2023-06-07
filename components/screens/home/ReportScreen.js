@@ -153,10 +153,11 @@ export default function ReportScreen() {
                 className={styles.inputField + " h-1/2 pt-3"}
                 textAlignVertical="bottom"
                 placeholderTextColor="#ffffff"
+                maxLength={100}
                 onChangeText={setDescription}
                 onKeyPress={enterPress}
                 multiline={true}
-                placeholder="Ex: 5'7 man wearing a blue hoodie..."
+                placeholder="100 character maximum"
                 value={(incidentDescription) ? incidentDescription.replace('\n', '') : null}
                 />  
 
