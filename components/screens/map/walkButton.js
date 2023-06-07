@@ -66,8 +66,8 @@ export default function walkButton({onPress, text, setMarker, setMarkerStyle, re
         }
     };
     return (
-        <TouchableScale className="absolute bottom-24 mb-5 bg-cyan-800/90 w-5/6 py-5 rounded-full items-center justify-center" activeScale={0.97} onPress={handleClick}>
-            <Text className="font-bold text-cyan-400 text-xl">{buttonText}</Text>
+        <TouchableScale className="absolute bottom-24 mb-5 bg-blue-500/90 w-5/6 py-5 rounded-full items-center justify-center" activeScale={0.97} onPress={handleClick}>
+            <Text className="font-bold text-zinc-200 text-xl">{buttonText}</Text>
         </TouchableScale>
     );
 }
