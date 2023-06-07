@@ -7,22 +7,20 @@ import { BASE_URL } from '../../../constants';
 import WalkingRequestPanel from './WalkingRequestPanel';
 import { useState, useEffect, useMemo } from 'react';
 import ReportsPanel from './ReportsPanel';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 
 
 export default function HomeScreen() {
-    const [users, setUsers] = useState([]);
+    const [newUsers, setNewUsers] = useState([])
     const [reports, setReports] = useState([]);
 
     useEffect(() => {
         const fetchNearbyUsers = async() => {
             try {
                 const response = await axios.get(BASE_URL + "/walk/get");
-                setUsers(response.data);
+                setNewUsers(response.data);
                 let tu = {};
             } catch(e) {
-                console.error(e);
+                console.error(e)
             }
         }
         fetchNearbyUsers();
@@ -45,8 +43,8 @@ export default function HomeScreen() {
     }, [])
 
     const handleDecline = (id) => {
-        let newArr = newUsers.filter(u => u._id !== id)
-        setNewUsers(newArr)
+        let newArr = users.filter(u => u._id !== id)
+        setUsers(newArr)
     }
 
     return (
@@ -63,12 +61,11 @@ export default function HomeScreen() {
                 <ScrollView
                 className="w-10/12"
                 >
-                    {newUsers.map(f => (
+                    {newUsers.map(user => (
                         <WalkingRequestPanel 
-                        key={user._id}
+                        key={user.id}
                         user={user}
                         onDecline={handleDecline}
-                        onAccept={handleAccept}
                         />
                     ))}
                 </ScrollView>

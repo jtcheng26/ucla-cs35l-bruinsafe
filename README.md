@@ -15,18 +15,17 @@ BruinSafe is a mobile app that aims to enhance the personal safety of UCLA stude
 
 - [BruinSafe](#bruinsafe)
   - [Table of Contents](#table-of-contents)
-  - [Getting Started](#getting-started)
-    - [Prerequisites](#prerequisites)
-    - [Installation](#installation)
-    - [Running](#running)
-  - [Features](#features)
-  - [Usage](#usage)
+    - [Getting Started](#getting-started)
+      - [Prerequisites](#prerequisites)
+      - [Installation](#installation)
+      - [Running](#running)
+    - [Features](#features)
 
-## Getting Started
+### Getting Started
 
 These instructions will get you a copy of BruinSafe up and running on your local machine for development and testing purposes.
 
-### Prerequisites
+#### Prerequisites
 
 - Node.js (>= v18.0.0)
 - npm (>= v8.3.0)
@@ -36,7 +35,7 @@ These instructions will get you a copy of BruinSafe up and running on your local
 
 **Note: Do not use WSL2.0/WSL1.0 functionality**
 
-### Installation
+#### Installation
 
 1. Clone the repository:
 
@@ -56,7 +55,7 @@ These instructions will get you a copy of BruinSafe up and running on your local
         yarn install
         ```
 
-### Running
+#### Running
 
 - Run:
 
@@ -78,15 +77,9 @@ These instructions will get you a copy of BruinSafe up and running on your local
 
     - Repeat above steps
 
-## Features
+### Features
 
 - **Crime Report:** Alert users of nearby crimes in real-time. Users can report crimes via a simple report tab.
 - **Walk Requests:** Allow users to send walk requests to designated contacts who can monitor their safety and progress.
 - **Built-in Navigation:** Provide navigation functionality so that users never have to switch applications, allowing continous safety.
-- **Authenticated Login:** Authenticate users for secure access to the app, as well as preventing illegitimate reports. Uses SHA-256 hash for password protection.
-
-## Usage
-
-- **Navigation:** Use navigation bar to navigate to pages.
-- **Sign Up:** Sign up for a BruinSafe account with email and password.
-- **Walk Around:** Notice real-time location tracking.
+- **Authenticated Login:** Authenticate users for secure access to the app, as well as preventing illegitimate reports.
