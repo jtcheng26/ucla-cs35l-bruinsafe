@@ -234,6 +234,7 @@ export default function MapScreen() {
           waiting={waiting}
           setCurrentWalker={setCurrentWalker}
           setCurrentWalkId={setCurrentWalkId}
+          timeLeft={timeToDestination(location, path)}
         />
       );
     } else if (actionState == 3) {

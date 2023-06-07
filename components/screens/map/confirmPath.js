@@ -7,7 +7,8 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useEffect } from 'react';
 
-export default function confirmPath({onPress, coordinates, setMarkerList, setThePath, copyPath, setWalking, setWaiting, waiting, setCurrentWalker, setCurrentWalkId}) {
+
+export default function confirmPath({onPress, coordinates, setMarkerList, setThePath, copyPath, setWalking, setWaiting, waiting, setCurrentWalker, setCurrentWalkId, timeLeft}) {
     const { id } = useUserId(); 
     const [confirmed, setConfirmed] = useState(false);
 
@@ -42,8 +43,8 @@ export default function confirmPath({onPress, coordinates, setMarkerList, setThe
 
     const handleClick = async (confirm) => {
         if (confirm) {
-            setWaiting(true);
-            const pushCoords = await axios.post(BASE_URL + "/walk/request", {origin: copyPath.start, destination: copyPath.end, user: id }); //Create walk request
+            setWalking(true);
+            const pushCoords = await axios.post(BASE_URL + "/walk/request", {origin: copyPath.start, destination: copyPath.end, user: id, timeLeft: timeLeft }); //Create walk request
             setConfirmed(true);
             onPress(3)
         } else {
