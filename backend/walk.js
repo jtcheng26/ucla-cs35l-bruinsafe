@@ -18,13 +18,17 @@ const walkRequest = async (req, res) => {
     res.status(400).send("Invalid ID");
   } else if (!model) res.status(404).send("User not found");
   else {
-    const walk = new WalkModel({
-      user: model,
-      origin: origin,
-      destination: dest,
-      state: 0,
-    });
-    walk.save();
+    WalkModel.create;
+    const walk = await WalkModel.findOneAndUpdate(
+      { "user._id": user },
+      {
+        user: model,
+        origin: origin,
+        destination: dest,
+        state: 0,
+      },
+      { upsert: true }
+    );
     res.status(200).send(walk);
   }
 };
@@ -57,7 +61,7 @@ const walkAccept = async (req, res) => {
 
 const getWalks = async (req, res) => {
   const walks = await WalkModel.find({});
-  res.send(walks.map(w => w.toJSON()));
+  res.send(walks.map((w) => w.toJSON()));
 };
 
 module.exports = { walkRequest, walkAccept, getWalks };
