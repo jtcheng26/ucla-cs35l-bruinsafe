@@ -28,9 +28,9 @@ export default function useSockets() {
     [socket]
   );
   const shareLoc = useCallback(
-    (loc) => {
+    (loc, room_id=id) => {
         // if (roomId)
-            socket.emit("update", id, loc);
+            socket.emit("update", room_id, loc);
     },
     [socket, roomId]
   );

@@ -379,20 +379,18 @@ export default function MapScreen() {
     }
   }, [isGuardian, walkerLoc]);
   function endWalk() {
-    endRoom(roomId);
     setMapMarkerList([]);
     setWalking(false);
     setCurrentWalker("");
     setButtonAction(0);
-    console.log(currentWalkId);
     axios.post(BASE_URL + "/walk/end", { id: currentWalkId });
     setCurrentWalkId(null);
   }
   useEffect(() => {
-    if (currentWalker && connected && !roomId && id) joinRoom(id);
-    else if (currentWalker && connected && roomId && path) {
+    if (currentWalker && connected && path && currentWalkId) {
+      joinRoom(currentWalkId);
       const stream = setInterval(async () => {
-        if (!roomId) clearInterval(stream);
+        if (!currentWalkId) clearInterval(stream);
         if (isGuardian) return;
         const { coords } = await getLocation(5);
         if (isOutsidePath(coords, path)) {
@@ -400,17 +398,18 @@ export default function MapScreen() {
           console.log("User is leaving path!");
         } else if (isDoneWalk(coords, path)) {
           console.log("User is finished walk.");
+          endRoom(currentWalkId);
           endWalk();
           clearInterval(stream);
         }
-        shareLoc(coords);
+        shareLoc(coords, currentWalkId);
       }, 1000);
       return () => {
-        endRoom(roomId);
+        endRoom(currentWalkId);
         clearInterval(stream);
       };
     }
-  }, [currentWalker, isGuardian, connected, roomId, id, path]);
+  }, [currentWalker, currentWalkId, isGuardian, connected, path]);
 
   return (
     <View className="flex-1 justify-center items-center h-full w-full">
@@ -434,7 +433,9 @@ export default function MapScreen() {
         ref={mapRef}
         showsCompass
       >
-        {walkerLoc && <Marker coordinate={walkerLoc} pinColor="#FFFFFF" />}
+        {isGuardian && walkerLoc && (
+          <Marker coordinate={walkerLoc} pinColor="#FFFFFF" />
+        )}
         {mapMarkerList && mapMarkerList.length >= 1 ? (
           <>
             <Marker
