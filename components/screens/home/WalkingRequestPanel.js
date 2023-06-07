@@ -11,6 +11,7 @@ export default function WalkingRequestPanel({
     time=parseInt(Math.random()*20),
     onAccept,
     walk_id,
+    walk_obj
 }) {
 
     const [walkID, setWalkID] = useState(null);
@@ -39,7 +40,7 @@ export default function WalkingRequestPanel({
                 <Text
                 className="ml-6 font-bold text-md text-amber-400"
                 >
-                    {time + " min"}
+                    {walk_obj.time_left + " min"}
                 </Text>
                 <Text
                 className="ml-1 text-md text-sky-300"
