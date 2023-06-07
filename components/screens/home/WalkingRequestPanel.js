@@ -8,7 +8,7 @@ import pfp from "../../../assets/Default_pfp.svg.png"
 export default function WalkingRequestPanel({
     user,
     src={pfp},
-    time=parseInt(Math.random()*20),
+    time,
     onAccept,
     walk_id,
 }) {
@@ -31,7 +31,7 @@ export default function WalkingRequestPanel({
 
     return (
         <View
-        className="rounded-3xl mt-6 mb-2 bg-sky-700 py-2"
+        className="rounded-3xl mt-6 mb-2 bg-blue-950 py-2"
         >
             <View
             className="flex-row mt-6"
@@ -42,7 +42,7 @@ export default function WalkingRequestPanel({
                     {time + " min"}
                 </Text>
                 <Text
-                className="ml-1 text-md text-sky-300"
+                className="ml-1 text-md text-blue-300"
                 >
                     Virtual Walk with 
                 </Text>
@@ -58,12 +58,12 @@ export default function WalkingRequestPanel({
             className="items-center my-2 flex-row px-6"
             >
                 <TouchableScale
-                className="rounded-full px-6 h-8 bg-sky-200 justify-center items-center"
+                className="rounded-full px-6 h-8 bg-violet-300/60 justify-center items-center"
                 activeScale={0.95}
                 onPress={() => onAccept(walk_id)}
                 >
                     <Text
-                    className="text-sky-900"
+                    className="text-white"
                     >
                         accept
                     </Text>
