@@ -11,26 +11,24 @@ export default function WalkingRequestPanel({
     time=parseInt(Math.random()*20),
     onDecline,
     onAccept,
+    walk_id,
 }) {
 
-const [walkID, setWalkID] = useState(null);
+    const [walkID, setWalkID] = useState(null);
 
-useEffect(() => {
-    const fetchWalks = async() => { //Determines which walk object is being displayed for acceptance or rejection
-        try {
-            const response = await axios.get(BASE_URL + "/walk/get");
-            walks = response.data;
-        } catch(e) {
-            console.error(e);
-        }
-        const foundWalk = walks.find(walk => walk.user === key); //ISSUE: Key is now being used to maintain each WalkingRequestPanel's state => Replaced 'key' w/ 'user.id' => not changing in case on purpose
-        setWalkID(foundWalk._id);
-    }
-    fetchWalks();
-}, []);
-
-
-
+    // useEffect(() => {
+    //     const fetchWalks = async() => {
+    //         try {
+    //             const response = await axios.get(BASE_URL + "/walk/get");
+    //             walks = response.data;
+    //         } catch(e) {
+    //             console.error(e);
+    //         }
+    //         const foundWalk = walks.find(walk => walk.user === key);
+    //         setWalkID(foundWalk._id);
+    //     }
+    //     fetchWalks();
+    // }, []);
 
     return (
         <View
@@ -63,24 +61,24 @@ useEffect(() => {
                 <TouchableScale
                 className="rounded-full px-6 h-8 bg-sky-200 justify-center items-center"
                 activeScale={0.95}
-                onPress={() => onAccept(walkID)}
+                onPress={() => onAccept(walk_id)}
                 >
                     <Text
                     className="text-sky-900"
                     >
-                        Accept
+                        accept
                     </Text>
                 </TouchableScale>
 
                 <TouchableScale
                 className="ml-4 rounded-full px-6 h-8 bg-sky-900 justify-center items-center"
                 activeScale={0.95}
-                onPress={() => onDecline(user._id)}
+                onPress={() => onDecline(walk_id)}
                 >
                     <Text
                     className="text-sky-200"
                     >
-                        Decline
+                        decline
                     </Text>
                 </TouchableScale>
             </View>

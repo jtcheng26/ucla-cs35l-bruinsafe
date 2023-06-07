@@ -8,13 +8,16 @@ import WalkingRequestPanel from './WalkingRequestPanel';
 import { useState, useEffect, useMemo } from 'react';
 import ReportsPanel from './ReportsPanel';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import useUserId from '../../hooks/useUserId';
+import MapScreen from '../map/MapScreen';
 
 
 
 export default function HomeScreen() {
-    const [users, setUsers] = useState([])
-    const [newUsers, setNewUsers] = useState([]);
+    const [walks, setWalks] = useState([])
     const [reports, setReports] = useState([]);
+    const {id} = useUserId();
+    const [walkAccepted, setWalkAccepted] = useState(false)
     const month = {
         "01": "Jan",
         "02": "Feb",
@@ -33,8 +36,9 @@ export default function HomeScreen() {
     useEffect(() => {
         const fetchNearbyUsers = async() => {
             try {
-                const response = await axios.get(BASE_URL + "/walk/get"); //list of all users - TOFIX: currently all walks someone change to /users/nearby assuming its like this for testing purposes
-                setUsers(response.data);
+                const response = await axios.get(BASE_URL + "/walk/get");
+                console.log(response.data)
+                setWalks(response.data.filter(u => u.user._id !== id));
             } catch(e) {
                 console.error(e)
             }
@@ -57,44 +61,48 @@ export default function HomeScreen() {
         }
         fetchNearbyReports();
     }, [])
-    //callback function for declining a walk request 
+
+    // useEffect(() => {
+    //     let newArr = walks.filter(u => u.state === 0);
+    //     setWalks(newArr)
+    // }, [walks])
+
+  //callback function for declining a walk request 
     const handleDecline = (id) => {
-        let newArr = newUsers.filter(u => u._id !== id) //If a user's walk request is declined, do not display their walk request anymore
-        setUsers(newArr)
+        let newArr = walks.filter(u => u._id !== id)
+        setWalks(newArr)
     }
 
-    /*Likely Need handleAccept callback to accept a walk. Use the following if you want as a base to work off of.
-        const handleAccept = async(walkID) => {
-        try {
-            const userID = await AsyncStorage.getItem('@id'); //Receives current user's ID
-            const data = { //data for api endpoint
-                id: walkID,
-                user: userID,
+    const handleAccept = (walk_id) => {
+        const connectWalk = async() => {
+            try {
+                const data = {
+                    user: id,
+                    id: walk_id
+                }
+
+                const response = await axios.post(BASE_URL + "/walk/accept", data);
+                console.log(response.data)
+            } catch(e) {
+                console.error(e)
             }
-        const response = await axios.post(BASE_URL + "/walk/accept", data);
-        console.log(response.data);
         }
-        catch(error)
-        {
-            console.log(error)
-        }
+
+        connectWalk();
+        setWalkAccepted(true);
+        let newArr = walks.filter(u => u.state === 0);
+        setWalks(newArr)
     }
-    */
 
-    //ran for every modification to users state
-    useEffect(() => {
-        if (!users) return [];
-
-        (async () => {
-            const cur_user_id = await AsyncStorage.getItem("@id");
-            let newArr = users.filter(u => u.user !== cur_user_id); //all nondeclined users except curr user
-            const fetched = await Promise.all(newArr.map(u => axios.get(BASE_URL + "/user/" + u.user))); //fetching all nondeclined user data in parallel
-            setNewUsers(fetched.map(f => //setNewUsers to be array of all nondeclined users json
-                f.data
-            ))
-        })()
-        
-    }, [users])
+    // useEffect(() => {
+    //     let newArr = walks.filter(u => u.user._id !== id);
+    //     setWalks(newArr)
+    // }, [id, walks])
+    if(walkAccepted) {
+        return (
+            <MapScreen />
+        )
+    }
 
     return (
         <View className="flex-1 bg-sky-950">
@@ -108,15 +116,27 @@ export default function HomeScreen() {
             className="w-full h-2/5 items-center justify-center"
             >
                 <ScrollView
-                className="w-10/12"
+                className="w-11/12"
+                contentContainerStyle={{
+
+                }}
                 >
-                    {newUsers.map(user => ( //All nondeclined walks
+                    {(walks.length > 0) ? 
+                        (walks.map(walk => ( //All nondeclined walks
                         <WalkingRequestPanel 
-                        key={Math.random()}
-                        user={user}
-                        onDecline={handleDecline} //Likely want a onAccept callback to be passed in as well
+                        key={walk._id}
+                        user={walk.user}
+                        walk_id={walk._id}
+                        onDecline={handleDecline}
+                        onAccept={handleAccept}
                         />
-                    ))}
+                        ))) : 
+                            (<Text
+                            className="text-sky-200 font-semibold top-full ml-4"
+                            >
+                                No Current Walking Requests
+                            </Text>)
+                    }
                 </ScrollView>
             </View>
             <Text
@@ -131,7 +151,8 @@ export default function HomeScreen() {
                 className="w-10/12"
                 horizontal
                 >
-                    {reports.map((report) => ( //All reports
+                    {(reports.length > 0) ? 
+                        (reports.map((report) => ( //All reports
                         <ReportsPanel
                         key={report._id}
                         type={report.types.join(", ")}
@@ -140,8 +161,15 @@ export default function HomeScreen() {
                             report.timestamp.slice(8,10) + 
                             ", " + report.timestamp.slice(0,4)
                         }
-                        />
-                    ))}
+                        />))) : 
+                        (
+                            <Text
+                            className="text-sky-200 font-semibold"
+                            >
+                                No Current Incidents Reported
+                            </Text>
+                        )
+                    }
                 </ScrollView>
             </View>
             
