@@ -24,6 +24,7 @@ import MapViewDirections from "react-native-maps-directions";
 import useSockets from "../../hooks/useSockets";
 import isOutsidePath from "../../utils/isOutsidePath";
 import isDoneWalk from "../../utils/isDoneWalk";
+import timeToDestination from "../../utils/timeToDestination";
 
 // const origin = { latitude: 34.070819, longitude: -118.449262 };
 // const destination = { latitude: 34.069201, longitude: -118.443515 };
@@ -130,6 +131,10 @@ export default function MapScreen() {
     getPermissions();
   }, []);
   useEffect(() => {
+    const hrs = timeToDestination(location, path)
+    console.log("TIME LEFT: " + Math.floor(hrs));
+  }, [path]);
+  useEffect(() => {
     if (id) findWalkPath();
   }, [id]);
   const fetchMarkers = async () => {
@@ -212,6 +217,7 @@ export default function MapScreen() {
           locationName={data.cityName}
           walkerFullName={currentWalker}
           currentTime={currentDateTime}
+          timeLeft={timeToDestination(location, path)}
           onPress={setButtonAction}
         />
       );
@@ -333,7 +339,7 @@ export default function MapScreen() {
   }, [mapRef, permissionStatus]);
 
   useEffect(() => {
-    console.log("WalkingMarkerList", mapMarkerList);
+    // console.log("WalkingMarkerList", mapMarkerList);
     if (walking && path) {
       animateToLocation(
         mapMarkerList[0].origin,

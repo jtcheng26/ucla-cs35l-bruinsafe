@@ -18,7 +18,7 @@ export default function MainPage({ onLogout }) {
       <View className={screen === "map" ? "w-full h-full" : "hidden"}>
         <MapScreen />
       </View>
-      {screen === "home" && <HomeScreen />}
+      {screen === "home" && <HomeScreen updateScreen={updateScreen}/>}
       {screen === "report" && <ReportScreen />}
       <ProfileHeader onLogout={onLogout} />
       <NavBar updateScreen={updateScreen} />
