@@ -129,6 +129,7 @@ export default function HomeScreen({updateScreen}) {
                         user={walk.user}
                         walk_id={walk._id}
                         onAccept={handleAccept}
+                        walk_obj={walk}
                         />
                         ))) : 
                             (<Text
