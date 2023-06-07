@@ -3,40 +3,43 @@ import TouchableScale from 'react-native-touchable-scale';
 import { TouchableOpacity } from 'react-native';
 import useUserId from '../../hooks/useUserId';
 import { BASE_URL } from '../../../constants';
+import { useState } from 'react';
 import axios from 'axios';
 import { useEffect } from 'react';
 
-export default function confirmPath({onPress, coordinates, setMarkerList, setThePath, copyPath, setWalking, setWaiting, waiting}) {
+export default function confirmPath({onPress, coordinates, setMarkerList, setThePath, copyPath, setWalking, setWaiting, waiting, setCurrentWalker}) {
     const { id } = useUserId();
-    const isMatched = async () => {
-        console.log("Polling...");
-        const allWalks = await axios.get(BASE_URL + "/walk/get");
-        const result = allWalks.filter(walk => (walk.user == id && walk.state == 1));
-        if (result.length > 0) {
-            onPress(1);
-        }
-    }
+    const [confirmed, setConfirmed] = useState(false);
+
+    // const isMatched = async () => {
+    //     console.log("Polling..");
+    //     const allWalks = await axios.get(BASE_URL + "/walk/get");
+    //     const result = allWalks.filter(walk => (walk.user == id && walk.state == 1));
+    //     if (result.length > 0) {
+    //         onPress(1);
+    //     }
+    // }
     useEffect(() => {
-        if (waiting) {
+        if (waiting && confirmed) {
             const interval = setInterval(async () => {
                 console.log("Polling...");
-                const allWalks = await axios.get(BASE_URL + "/walk/get");
-                const result = allWalks.filter(walk => (walk.user == id && walk.state == 1));
+                let allWalks = (await axios.get(BASE_URL + "/walk/get")).data;
+                let result = allWalks.filter(walk => (walk.user._id == id && walk.state == 1));
                 if (result.length > 0) {
-                    setWaiting(false)
-                    setWalking(true)
-                    clearInterval(interval)
+                    setCurrentWalker(result[0].guardian.id)
+                    setWaiting(false);
+                    clearInterval(interval);
+                    onPress(1);
                 }
             }, 1000)
             return () => clearInterval(interval)
         }
-    }, [waiting])
-    const handleClick = async (confirmed) => {
-        if (confirmed) {
+    }, [waiting, confirmed])
+    const handleClick = async (confirm) => {
+        if (confirm) {
             setWalking(true);
             const pushCoords = await axios.post(BASE_URL + "/walk/request", {origin: copyPath.start, destination: copyPath.end, user: id });
-            // set interval for isMatched
-
+            setConfirmed(true);
         } else {
             onPress(0);
             setMarkerList([]);

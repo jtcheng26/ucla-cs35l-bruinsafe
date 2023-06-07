@@ -63,6 +63,7 @@ export default function MapScreen() {
   const [mapMarkerList, setMapMarkerList] = useState([]);
   const [currentRegion, setRegion] = useState(null);
   const [waiting, setWaiting] = useState(false);
+  const [currentWalker, setCurrentWalker] = useState("");
   const [walkPath, setWalkPath] = useState({
     start: null,
     end: null,
@@ -174,6 +175,7 @@ export default function MapScreen() {
           walkPath={walkPath}
           setWalkPath={setWalkPath}
           curLocation={location}
+          setWaiting={setWaiting}
         />
       );
     } else if (actionState == 1) {
@@ -186,7 +188,7 @@ export default function MapScreen() {
         />
       );
     } else if (actionState == 2) {
-      return <ConfirmPath onPress={setButtonAction} coordinates={mapMarkerList[0]} setMarkerList={setMapMarkerList} setThePath={setWalkPath} copyPath={walkPath} setWalking={setWalking} setWaiting={setWaiting} waiting={waiting} />
+      return <ConfirmPath onPress={setButtonAction} coordinates={mapMarkerList[0]} setMarkerList={setMapMarkerList} setThePath={setWalkPath} copyPath={walkPath} setWalking={setWalking} setWaiting={setWaiting} waiting={waiting} setCurrentWalker={setCurrentWalker} />
     } else {
       return null;
     }
@@ -279,7 +281,7 @@ export default function MapScreen() {
   }, [mapRef, permissionStatus]);
 
   useEffect(() => {
-    console.log("Walking", walking);
+    console.log("WalkingMarkerList", mapMarkerList);
     if (walking) {
       animateToLocation(
         mapMarkerList[0].origin,
