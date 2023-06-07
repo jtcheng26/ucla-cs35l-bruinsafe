@@ -131,12 +131,15 @@ export default function ReportScreen() {
                     color: "#0369a1"
                 }}
                 selectedItemContainerStyle={{
-                    backgroundColor: "rgb(166 210 250)"
+                    backgroundColor: "#0369a1"
+                }}
+                selectedItemLabelStyle={{
+                    color: "rgb(186 230 253)"
                 }}
                 badgeTextStyle={{
-                    color: "#075985"
+                    color: "rgb(186 230 253)"
                 }}
-                badgeColors="rgb(166 210 250)"
+                badgeColors="#0369a1"
                 />
 
                 <Text
