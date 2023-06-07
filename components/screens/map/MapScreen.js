@@ -213,6 +213,7 @@ export default function MapScreen() {
           setWaiting={setWaiting}
           waiting={waiting}
           setCurrentWalker={setCurrentWalker}
+          timeLeft={timeToDestination(location, path)}
         />
       );
     } else {
