@@ -38,9 +38,9 @@ const WalkSchema = new Schema({
     latitude: Number,
     longitude: Number
   },
-  user: ObjectId,
+  user: UserSchema,
   state: Number, // 0 = started, 1 = in progress, 2 = finished
-  guardian: ObjectId
+  guardian: UserSchema
 })
 
 const UserModel = mongoose.model("User", UserSchema);
