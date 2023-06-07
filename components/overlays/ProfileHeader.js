@@ -20,8 +20,8 @@ export default function ProfileHeader({ onLogout }) {
     const [changedName, setChangedName] = useState(null);
 
     const styles = {
-        inputText: "text-sky-300 text-lg align-left mt-4 ml-3",
-        inputField: "text-white p-2 w-12/12 m-2 justify-start border-b-2 border-sky-300",
+        inputText: "text-blue-200 text-lg align-left mt-4 ml-3",
+        inputField: "text-white p-2 w-12/12 m-2 justify-start border-b-2 border-blue-200",
     }
 
 
@@ -79,7 +79,7 @@ export default function ProfileHeader({ onLogout }) {
             className="justify-start m-0"
             >
                 <SafeAreaView
-                className="w-screen h-2/5 bg-sky-950 rounded-3xl flex-col items-center"
+                className="w-screen h-2/5 bg-blue-900 rounded-3xl flex-col items-center"
                 >
                     <Text
                     className="text-white mt-8 text-4xl font-bold text-center"
@@ -97,7 +97,7 @@ export default function ProfileHeader({ onLogout }) {
                         </Text>
                         <TextInput
                         className={styles.inputField + " h-10"}
-                        placeholderTextColor="#0284BE"
+                        placeholderTextColor="rgb(59 130 246)"
                         placeholder={"Currently: " + userName}
                         onChangeText={setChangedName}
                         />
@@ -110,7 +110,7 @@ export default function ProfileHeader({ onLogout }) {
                         className="flex-row-reverse"
                         >
                             <TouchableScale
-                            className="bg-green-500 w-10 h-10 m-4 pt-2 rounded-full items-center justify-center"
+                            className="bg-blue-400/70 w-10 h-10 m-4 pt-2 rounded-full items-center justify-center"
                             activeScale={0.98}
                             onPress={handleProfileEdit}
                             >
@@ -121,7 +121,7 @@ export default function ProfileHeader({ onLogout }) {
                                 />
                             </TouchableScale>
                             <TouchableScale
-                            className="bg-red-500 w-10 h-10 my-4 mr-4 ml-2 pt-1 rounded-full items-center justify-center"
+                            className="bg-zinc-300/70 w-10 h-10 my-4 mr-4 ml-2 pt-1 rounded-full items-center justify-center"
                             activeScale={0.98}
                             onPress={() => setScreenVisible(false)}
                             >
@@ -132,12 +132,12 @@ export default function ProfileHeader({ onLogout }) {
                                 />
                             </TouchableScale>
                             <TouchableScale
-                            className="items-center justify-center px-2 h-10 border-2 border-sky-300 m-4 rounded-full mr-40"
+                            className="items-center justify-center px-2 h-10 border-2 border-blue-300 m-4 rounded-full mr-40"
                             activeScale={0.95}
                             onPress={() => onLogout(false)}
                             >
                                 <Text
-                                className="text-sky-300 "
+                                className="text-blue-300 "
                                 >
                                     Logout
                                 </Text>

@@ -11,9 +11,9 @@ import { BASE_URL } from "../../../constants";
 
 export default function Login() {
     const styles = {
-        inputField: "w-full h-14 text-sky-200 rounded-full text-md bg-sky-700 px-6 my-4 text-justify",
-        inputBox: "text-sky-200 pb-2 pt-1 w-full text-lg mb-4 justify-start border-b-2 border-sky-300",
-        inputText: "text-sky-400 text-md align-left mt-6"
+        inputField: "w-full h-14 text-blue-200 rounded-full text-md bg-blue-700 px-6 my-4 text-justify",
+        inputBox: "text-blue-200 pb-2 pt-1 w-full text-lg mb-4 justify-start border-b-2 border-blue-200",
+        inputText: "text-blue-300 text-md align-left mt-6"
     }
 
     const [email, setEmail] = useState(null);
@@ -170,7 +170,7 @@ export default function Login() {
 
     return (
        <View
-       className="w-full h-full bg-sky-950 items-center justify-center pt-20"
+       className="w-full h-full bg-blue-900/90 items-center justify-center pt-20"
        >
             <Text
             className="text-5xl text-amber-400 font-extrabold mb-10"
@@ -228,24 +228,24 @@ export default function Login() {
 
             </View>
             <TouchableScale 
-                className="border-sky-300 border-2 w-1/3 mt-10 h-10 items-center justify-center bg-sky-300 rounded-lg"
+                className="border-blue-300 border-2 w-1/3 mt-10 h-10 items-center justify-center bg-blue-300 rounded-lg"
                 activeScale={0.97}
                 onPress={() => handleLoginAndSignUp()}
                 >
                     <Text
-                    className="text-sky-950 text-md font-semibold"
+                    className="text-blue-900/90 text-md font-semibold"
                     >
                         {suTxt}
                     </Text>
             </TouchableScale>
 
             <TouchableScale
-            className="border-sky-300 border-2 w-1/3 mt-6 h-10 items-center justify-center bg-transparent rounded-lg"
+            className="border-blue-300 border-2 w-1/3 mt-6 h-10 items-center justify-center bg-transparent rounded-lg"
             onPress={() => handleSwitch()}
             activeScale={0.97}
             >
                 <Text
-                className="text-sky-300 text-md font-semibold"
+                className="text-blue-300 text-md font-semibold"
                 >
                     {(suTxt == "SIGN UP") ?
                     "BACK":

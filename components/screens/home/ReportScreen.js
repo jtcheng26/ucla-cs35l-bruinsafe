@@ -12,7 +12,7 @@ import { BASE_URL } from "../../../constants";
 export default function ReportScreen() {
     const styles = {
         inputField: "p-2 text-white rounded-xl w-12/12 m-2 bg-violet-300/60 justify-start",
-        inputText: "text-white text-md align-left mt-6 mb-1 ml-3"
+        inputText: "text-blue-200 text-md align-left mt-6 mb-1 ml-3"
     }
 
     const [incidentDescription, setDescription] = useState(null);
@@ -82,7 +82,7 @@ export default function ReportScreen() {
         >
             {/* <ProfileHeader name={"David Smalberg"}/> */}
             <Text
-            className="font-bold text-white text-center text-3xl"
+            className="font-bold text-amber-400 text-center text-3xl"
             >
                 Report an Incident
             </Text>
@@ -134,10 +134,10 @@ export default function ReportScreen() {
                     backgroundColor: "#6d64ed"
                 }}
                 selectedItemLabelStyle={{
-                    color: "rgb(146 141 227)"
+                    color: "#FFF"
                 }}
                 badgeTextStyle={{
-                    color: "rgb(146 141 227)"
+                    color: "#FFF"
                 }}
                 badgeColors="#4f46e5"
                 />
@@ -208,12 +208,12 @@ export default function ReportScreen() {
 
 
             <TouchableScale
-            className="rounded-lg mt-16 h-10 w-40 justify-center items-center bg-zinc-300/80"
+            className="rounded-lg mt-16 h-10 w-40 justify-center items-center bg-zinc-300/70"
             activeScale={0.95}
             onPress={handleSubmit}
             >
                 <Text
-                className="text-black font-bold"
+                className="text-black font-semibold"
                 >
                 Submit Incident
                 </Text>
