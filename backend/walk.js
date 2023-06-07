@@ -49,7 +49,7 @@ const walkAccept = async (req, res) => {
     res.status(400).send("User not found");
   } else if (!walk) {
     res.status(400).send("Walk not found");
-  } else if (userId == walk.user) {
+  } else if (userId == walk.user.id) {
     res.status(401).send("Guardian cannot be same as walker.");
   } else {
     walk.guardian = findUser;
