@@ -24,17 +24,19 @@ export default function Login() {
     const [suTxt, setSUTxt] = useState("LOGIN")
 
 
+    //Tests email req w/ regex
     const isEmailValid = (email) => {
-        const emailRegex = /^[A-Z0-9+_.-]+@(ucla\.edu|g\.ucla\.edu)$/i;
+        const emailRegex = /^[A-Z0-9+_.-]+@(ucla\.edu|g\.ucla\.edu)$/i; 
         return emailRegex.test(email);
     }
 
+    //Tests password req w/ regex
     const isPwValid = (pw) => {
         const passRegex = /^(?=.*?[#?!@$%^&*-]).{8,}$/;
         return passRegex.test(pw);
     }
 
-
+    //Identify issue within email/pw before sending to DB => saves time
     const quickCheck = (email, pw) =>
     {
         if (!isEmailValid(email)){
@@ -48,10 +50,12 @@ export default function Login() {
                     setLogError("Must have minimum of 8 characters");
                 else
                     setLogError("Password must contain atleast one special character (#?!@$%^&*-)");
+                return;
             }
     }
 
     const handleSignup = () => {
+        //Email and Password processing logic
         if(email && pw && confirmPW) {
             if(!email.includes('@')) {
                 setLogError("Must use an email");
@@ -76,13 +80,14 @@ export default function Login() {
                 try {
                     const at = email.indexOf("@")
                     const userName = email.slice(0, at)
-                    const data = {
+                    const data = { //json to send to API endpoint
                         name: userName,
                         email: email,
                         password: pw
                     }
-                    const response = await axios.post(BASE_URL + '/user/create', data);
+                    const response = await axios.post(BASE_URL + '/user/create', data); //Sent user info to api endpoint to create UserModel in DB
                     console.log(response.data);
+                    //Allows Session Maintanence => App caches user info => can identify which specific user is querying or using app.
                     await AsyncStorage.setItem('@name', response.data.name).then(() => console.log('Name saved ', response.data.name)).catch(error => console.log('Error saving data: ', error));
                     await AsyncStorage.setItem('@id', response.data._id).then(() => console.log('ID saved ', response.data._id)).catch(error => console.log('Error saving data: ', error));
                     await AsyncStorage.setItem('@pw', pw).then(() => console.log('PW saved ', pw)).catch(error => console.log('Error saving data: ', error));
@@ -115,12 +120,13 @@ export default function Login() {
 
         try {
             const correctUNPW = async() => {
-                const data = {
+                const data = { //JSON data to send to endpoint
                     email: email,
                     password: pw
                 }
-                const response = await axios.post(BASE_URL + '/user/login', data);
+                const response = await axios.post(BASE_URL + '/user/login', data); //Create user endpoint
                 console.log(response.data._id)
+                //Allows Session Maintanence => App caches user info => can identify which specific user is querying or using app.
                 await AsyncStorage.setItem('@name', response.data.name).then(() => console.log('Name saved ', response.data.name)).catch(error => console.log('Error saving data: ', error));
                 await AsyncStorage.setItem('@id', response.data._id).then(() => console.log('ID saved ', response.data._id)).catch(error => console.log('Error saving data: ', error));
                 await AsyncStorage.setItem('@pw', pw).then(() => console.log('PW saved ', pw)).catch(error => console.log('Error saving data: ', error));
@@ -135,7 +141,7 @@ export default function Login() {
             setLogError("Incorrect Email or Password");
         }
     }
-
+    //Determine whether to use Signup/Logic logic
     const handleLoginAndSignUp = () => {
         if(suTxt == "SIGN UP") {
             handleSignup()
@@ -156,7 +162,7 @@ export default function Login() {
         }
     }
     
-    if(signupSuccess) {
+    if(signupSuccess) { //on sign in/log in send to main page
         return (
             <MainPage onLogout={setSignupSuccess}/>
         );

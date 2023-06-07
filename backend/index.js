@@ -137,13 +137,13 @@ app.post("/report/search", async (req, res) => {
   };
   // optimize this for larger datasets in the future
   const all = await ReportModel.find({});
-  const nearby = all.filter((report) => {
+  const nearby = all.filter((report) => { //filter "nearby" report using distance formula per each report
     const reportLoc = report.get("location");
     const dx = Math.abs(myLoc.latitude - reportLoc.latitude);
     const dy = Math.abs(myLoc.longitude - reportLoc.longitude);
-    return dx * dx + dy * dy <= MAX_RADIUS;
+    return dx * dx + dy * dy <= MAX_RADIUS; //ISSUE: Need to square root of dx^2 + dy^2 to check radius
   });
-  res.send(all);
+  res.send(all); //ISSUE: Returns all Reports not nearby reports, Not sure if this is intended functionality
 });
 
 const REPORT_TYPES = [

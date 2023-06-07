@@ -32,7 +32,7 @@ export default function HomeScreen() {
         "11": "Nov",
         "12": "Dec",
     }
-
+    //ran once when component is first rendered
     useEffect(() => {
         const fetchNearbyUsers = async() => {
             try {
@@ -53,7 +53,7 @@ export default function HomeScreen() {
                     latitude: 34.068925,
                     longitude: -118.446629
                 }
-                const response = await axios.post(BASE_URL + "/report/search", cur_loc);
+                const response = await axios.post(BASE_URL + "/report/search", cur_loc); //All reports not nearby (possibly unintentional)
                 setReports((response.data).reverse())
             } catch(e) {
                 console.error(e);
@@ -67,6 +67,7 @@ export default function HomeScreen() {
     //     setWalks(newArr)
     // }, [walks])
 
+  //callback function for declining a walk request 
     const handleDecline = (id) => {
         let newArr = walks.filter(u => u._id !== id)
         setWalks(newArr)
@@ -121,7 +122,7 @@ export default function HomeScreen() {
                 }}
                 >
                     {(walks.length > 0) ? 
-                        (walks.map(walk => (
+                        (walks.map(walk => ( //All nondeclined walks
                         <WalkingRequestPanel 
                         key={walk._id}
                         user={walk.user}
@@ -151,7 +152,7 @@ export default function HomeScreen() {
                 horizontal
                 >
                     {(reports.length > 0) ? 
-                        (reports.map((report) => (
+                        (reports.map((report) => ( //All reports
                         <ReportsPanel
                         key={report._id}
                         type={report.types.join(", ")}
