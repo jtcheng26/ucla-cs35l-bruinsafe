@@ -396,6 +396,7 @@ export default function MapScreen() {
     roomId,
   } = useSockets();
   useEffect(() => {
+    console.log(walkerLoc)
     if (isGuardian && walkerLoc) {
       console.log("Received location from walker", walkerLoc);
     }
