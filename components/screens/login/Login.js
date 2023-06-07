@@ -85,7 +85,7 @@ export default function Login() {
                     console.log(response.data);
                     await AsyncStorage.setItem('@name', response.data.name).then(() => console.log('Name saved ', response.data.name)).catch(error => console.log('Error saving data: ', error));
                     await AsyncStorage.setItem('@id', response.data._id).then(() => console.log('ID saved ', response.data._id)).catch(error => console.log('Error saving data: ', error));
-                    await AsyncStorage.setItem('@pw', pw).then(() => console.log('Password saved ', pw)).catch(error => console.log('Error saving data: ', error));
+                    await AsyncStorage.setItem('@pw', pw).then(() => console.log('ID saved ', pw)).catch(error => console.log('Error saving data: ', error));
                     setPW(null);
                     setEmail(null);
                     setConfirmPW(null);
@@ -133,11 +133,6 @@ export default function Login() {
         } catch(e) {
             console.error(e)
             setLogError("Incorrect Email or Password");
-        }
-
-        if (signupSuccess)
-        {
-
         }
     }
 

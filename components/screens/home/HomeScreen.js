@@ -7,35 +7,20 @@ import { BASE_URL } from '../../../constants';
 import WalkingRequestPanel from './WalkingRequestPanel';
 import { useState, useEffect, useMemo } from 'react';
 import ReportsPanel from './ReportsPanel';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function HomeScreen() {
-    const [users, setUsers] = useState([]);
+    const [newUsers, setNewUsers] = useState([])
     const [reports, setReports] = useState([]);
-    const month = {
-        "01": "Jan",
-        "02": "Feb",
-        "03": "Mar",
-        "04": "Apr",
-        "05": "May",
-        "06": "Jun",
-        "07": "Jul",
-        "08": "Aug",
-        "09": "Sep",
-        "10": "Oct",
-        "11": "Nov",
-        "12": "Dec",
-    }
 
     useEffect(() => {
         const fetchNearbyUsers = async() => {
             try {
                 const response = await axios.get(BASE_URL + "/walk/get");
-                setUsers(response.data);
+                setNewUsers(response.data);
                 let tu = {};
             } catch(e) {
-                console.error(e);
+                console.error(e)
             }
         }
         fetchNearbyUsers();
@@ -58,42 +43,9 @@ export default function HomeScreen() {
     }, [])
 
     const handleDecline = (id) => {
-        let newArr = newUsers.filter(u => u._id !== id)
-        setNewUsers(newArr)
+        let newArr = users.filter(u => u._id !== id)
+        setUsers(newArr)
     }
-
-    const handleAccept = async(walkID) => {
-        try {
-            const userID = await AsyncStorage.getItem('@id');
-            const data = {
-                id: walkID,
-                user: userID,
-            }
-        const response = await axios.post(BASE_URL + "/walk/accept", data);
-        console.log(response.data);
-        }
-        catch(error)
-        {
-            console.log(error)
-        }
-    }
-    
-    const [userobjs, setUserobjs] = useState([]);
-    //to decline
-    const [newUsers, setNewUsers] = useState([]);
-
-    useEffect(() => {
-        if (!users) return [];
-        (async () => {
-            const cur_user_id = await AsyncStorage.getItem("@id");
-            let newArr = users.filter(u => u.user !== cur_user_id);
-            const fetched = await Promise.all(newArr.map(u => axios.get(BASE_URL + "/user/" + u.user)));
-            setNewUsers(fetched.map(f =>
-                f.data
-            ))
-        })()
-        
-    }, [users])
 
     return (
         <View className="flex-1 bg-sky-950">
@@ -101,7 +53,7 @@ export default function HomeScreen() {
             <Text
             className="text-2xl font-semibold text-amber-400 mt-28 mb-2 ml-8"
             >
-                Nearby Walk Requests
+                Walk Requests
             </Text>
             <View
             className="w-full h-2/5 items-center justify-center"
@@ -109,12 +61,11 @@ export default function HomeScreen() {
                 <ScrollView
                 className="w-10/12"
                 >
-                    {newUsers.map(f => (
+                    {newUsers.map(user => (
                         <WalkingRequestPanel 
-                        key={Math.random()}
-                        user={f}
+                        key={user.id}
+                        user={user}
                         onDecline={handleDecline}
-                        onAccept={handleAccept}
                         />
                     ))}
                 </ScrollView>
@@ -134,12 +85,13 @@ export default function HomeScreen() {
                     {reports.map((report) => (
                         <ReportsPanel
                         key={report._id}
-                        type={report.types.join(", ")}
-                        desc={report.description}
-                        date={month[report.timestamp.slice(5,7)] + " " +
-                            report.timestamp.slice(8,10) + 
-                            ", " + report.timestamp.slice(0,4)
+                        type={
+                            (report.types.length > 0) ?
+                            report.types.join(", ") :
+                            report.type
                         }
+                        desc={report.description}
+                        date={report.timestamp.slice(0,10)}
                         />
                     ))}
                 </ScrollView>

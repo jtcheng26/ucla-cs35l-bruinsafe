@@ -3,9 +3,9 @@ import { View, Text } from "react-native";
 
 
 export default function ReportsPanel({
-    type,
-    desc,
-    date
+    type="Assault",
+    desc="Pranav beat me",
+    date="Jan. 1"
 
 }) {
 
@@ -14,7 +14,7 @@ export default function ReportsPanel({
         className="h-full items-center w-48"
         >   
             <Text
-            className="text-white text-sm mb-1 font-semibold"
+            className="text-white text-sm font-semibold"
             >
                 {date}
             </Text>
@@ -23,12 +23,12 @@ export default function ReportsPanel({
             className="rounded-xl bg-sky-700 h-5/6 w-11/12 p-1 items-center"
             >
                 <Text
-                className="my-1 text-md text-sky-200 font-semibold text"
+                className="my-2text-md text-white font-semibold text"
                 >
                     {type}
                 </Text>
                 <Text
-                className="font-bold mx-1 text-xs text-amber-400"
+                className="font-bold mx-1 text-xs text-amber-300"
                 >
                     {desc}
                 </Text>
