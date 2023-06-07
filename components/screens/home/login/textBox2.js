@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
 
-const TextBox = ({ placeholder, style }) => {
+const TextBox = ({ placeholder, style, value, onChangeText}) => {
   const [inputValue, setInputValue] = useState('');
 
   const handleInputChange = (text) => {
@@ -11,11 +11,12 @@ const TextBox = ({ placeholder, style }) => {
   return (
     <View style={[styles.container, style]}>
       <TextInput
-        value={inputValue}
-        onChangeText={handleInputChange}
+        value={value}
+        onChangeText={onChangeText}
         style={styles.input}
         placeholder={placeholder}
         placeholderTextColor="#0EA5E9" 
+        autoCapitalize='none'
       />
     </View>
   );
