@@ -374,6 +374,7 @@ export default function MapScreen() {
     roomId,
   } = useSockets();
   useEffect(() => {
+    console.log(walkerLoc)
     if (isGuardian && walkerLoc) {
       console.log("Received location from walker", walkerLoc);
     }
@@ -388,6 +389,7 @@ export default function MapScreen() {
   }
   useEffect(() => {
     if (currentWalker && connected && path && currentWalkId) {
+      console.log("joined", currentWalkId)
       joinRoom(currentWalkId);
       const stream = setInterval(async () => {
         if (!currentWalkId) clearInterval(stream);
