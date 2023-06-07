@@ -19,7 +19,7 @@ const walkRequest = async (req, res) => {
   } else if (!model) res.status(404).send("User not found");
   else {
     const walk = new WalkModel({
-      user: user,
+      user: model,
       origin: origin,
       destination: dest,
       state: 0,
@@ -48,7 +48,7 @@ const walkAccept = async (req, res) => {
   } else if (userId == walk.user) {
     res.status(401).send("Guardian cannot be same as walker.");
   } else {
-    walk.guardian = userId;
+    walk.guardian = findUser;
     walk.state = 1;
     walk.save();
     res.send(walk.toJSON());
