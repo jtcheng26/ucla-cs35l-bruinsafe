@@ -16,14 +16,14 @@ export default function WalkingRequestPanel({
 const [walkID, setWalkID] = useState(null);
 
 useEffect(() => {
-    const fetchWalks = async() => {
+    const fetchWalks = async() => { //Determines which walk object is being displayed for acceptance or rejection
         try {
             const response = await axios.get(BASE_URL + "/walk/get");
             walks = response.data;
         } catch(e) {
             console.error(e);
         }
-        const foundWalk = walks.find(walk => walk.user === key);
+        const foundWalk = walks.find(walk => walk.user === key); //ISSUE: Key is now being used to maintain each WalkingRequestPanel's state => Replaced 'key' w/ 'user.id' => not changing in case on purpose
         setWalkID(foundWalk._id);
     }
     fetchWalks();
