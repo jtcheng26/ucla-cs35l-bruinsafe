@@ -184,6 +184,10 @@ app.post("/report/create", (req, res) => {
 });
 
 /* ======================= Run App ======================= */
+
+app.get("/healthz", (req, res) => {
+  res.status(200).send("good");
+});
 server.listen(port, function () {
   console.log(`Listening on port ${port}`);
   console.log(`Network access via: ${ipAddress}:${port}!`);
