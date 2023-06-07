@@ -1,22 +1,105 @@
-import React from 'react';
+import React, { useState } from 'react';
 import personImage from "../../../../assets/User_alt_fill.png";
 import lock from "../../../../assets/lock.png";
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
 import TextBox from './textBox2';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword} from "firebase/auth";
+import { create } from 'tailwind-react-native-classnames';
+// Import the functions you need from the SDKs you need
+import firebaseConfig from './firebaseConfig';
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const auth = getAuth(app);
+
 
 const Login2 = () => {
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  
+  const handleEmailChange = (text) => {
+    setEmail(text);
+  };
+
+
+  const handlePasswordChange = (text) => {
+    setPassword(text);
+  };
+
+
+
+
+  
+
+  const handleSignUp = () => {
+
+
+    createUserWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+
+    const user = userCredential.user;
+    // ...
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    console.log("signup error:", errorCode, errorMessage);
+    // ..
+  });
+
+  };
+
+  const handleLogin = () => {
+   // const auth = getAuth();
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+     // console.log("logged in");
+      // Signed in 
+      const user = userCredential.user;
+      // ...
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log("login error:", errorCode, errorMessage);
+    });
+
+
+  };
+
+
+
+
     return (
       <View style={styles.loginContainer}>
         <Text style={styles.loginLogo}>BruinSafe</Text>
-        <TextBox placeholder="username" style={styles.loginBox1}/>
+        <TextBox 
+          placeholder="username" 
+          style={styles.loginBox1}
+          value={email}
+          onChangeText={handleEmailChange}
+        />
           <Image source={personImage} style={styles.loginPerson} />
 
-        <TextBox placeholder="password" style={styles.loginBox2}/>
+        <TextBox 
+          placeholder="password" 
+          style={styles.loginBox2}
+          value={password}
+          onChangeText={handlePasswordChange}
+        />
           <Image source={lock} style={styles.loginLock} />
 
 
-        <TouchableOpacity style={styles.loginSubmit}>
-          <Text style={styles.loginSubmitText}>submit</Text>
+        <TouchableOpacity style={styles.signup} onPress={handleSignUp}>
+          <Text style={styles.buttonText}>signup</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.login} onPress={handleLogin}>
+          <Text style={styles.buttonText}>login</Text>
         </TouchableOpacity>
       </View>
     );
@@ -95,7 +178,27 @@ const styles = StyleSheet.create({
     color: '#0ea5e9',
     border: 'none',
   },
-  loginSubmit: {
+  login: {
+    position: 'absolute',
+    width: 110,
+    height: 30,
+    left: 140,
+    top: 550,
+    backgroundColor: '#0ea5e9',
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonText: {
+    fontFamily: 'Source Sans 3',
+    fontStyle: 'normal',
+    fontWeight: '700',
+    fontSize: 14,
+    lineHeight: 20,
+    color: '#ffffff',
+  },
+
+  signup: {
     position: 'absolute',
     width: 110,
     height: 30,
@@ -106,14 +209,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  loginSubmitText: {
-    fontFamily: 'Source Sans 3',
-    fontStyle: 'normal',
-    fontWeight: '700',
-    fontSize: 14,
-    lineHeight: 20,
-    color: '#ffffff',
-  },
 });
+
 
 export default Login2;
