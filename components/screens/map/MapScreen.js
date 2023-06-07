@@ -264,6 +264,26 @@ export default function MapScreen() {
       return null;
     }
   };
+
+  useEffect(() => {
+    if (waiting) {
+      const interval = setInterval(async () => {
+        console.log("Polling...");
+        let allWalks = (await axios.get(BASE_URL + "/walk/get")).data; //array of all WalkModels in DB
+        let result = allWalks.filter(
+          (walk) => walk.user._id == id && walk.state == 1
+        ); //filter for the WalkModel that pertains to User and has been accepted
+        if (result.length > 0) {
+          setCurrentWalkId(result[0]._id);
+          setCurrentWalker(result[0].guardian.name); //if there is such a walkmodel, setCurrentWalker to guardian of Walk
+          setWaiting(false);
+          setButtonAction(1)
+          clearInterval(interval);
+        }
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [waiting]);
   const fetchData = async () => {
     try {
       let dataCopy = { ...data };
@@ -387,7 +407,9 @@ export default function MapScreen() {
     setCurrentWalkId(null);
   }
   useEffect(() => {
+    console.log(currentWalker, currentWalkId, isGuardian, connected)
     if (currentWalker && connected && path && currentWalkId) {
+      console.log("joined", currentWalkId)
       joinRoom(currentWalkId);
       const stream = setInterval(async () => {
         if (!currentWalkId) clearInterval(stream);

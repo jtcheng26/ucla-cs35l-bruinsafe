@@ -22,28 +22,12 @@ export default function confirmPath({onPress, coordinates, setMarkerList, setThe
     // }
 
     //run whenever waiting or confirmed changed
-    useEffect(() => {
-        if (waiting && confirmed) { 
-            const interval = setInterval(async () => {
-                console.log("Polling...");
-                let allWalks = (await axios.get(BASE_URL + "/walk/get")).data; //array of all WalkModels in DB
-                let result = allWalks.filter(walk => (walk.user._id == id && walk.state == 1)); //filter for the WalkModel that pertains to User and has been accepted
-                if (result.length > 0) {
-                    setCurrentWalkId(result._id)
-                    setCurrentWalker(result[0].guardian.name) //if there is such a walkmodel, setCurrentWalker to guardian of Walk
-                    setWaiting(false);
-                    onPress(1);
-                    clearInterval(interval);
-                }
-            }, 1000)
-            return () => clearInterval(interval)
-        }
-    }, [waiting, confirmed])
 
 
     const handleClick = async (confirm) => {
         if (confirm) {
             setWalking(true);
+            setWaiting(true)
             const pushCoords = await axios.post(BASE_URL + "/walk/request", {origin: copyPath.start, destination: copyPath.end, user: id, timeLeft: timeLeft }); //Create walk request
             setConfirmed(true);
             onPress(3)
