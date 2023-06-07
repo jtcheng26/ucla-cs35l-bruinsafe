@@ -17,6 +17,7 @@ import * as Location from "expo-location";
 import { BASE_URL } from "../../../constants";
 import LocationButton from "../../../assets/location.svg";
 import useUserId from "../../hooks/useUserId";
+import ConfirmPath from './confirmPath';
 
 import MapViewDirections from "react-native-maps-directions";
 
@@ -24,6 +25,7 @@ import MapViewDirections from "react-native-maps-directions";
 // const destination = { latitude: 34.069201, longitude: -118.443515 };
 
 const GOOGLE_MAPS_APIKEY = process.env.GOOGLE_APIKEY;
+
 /*
 34.069201, -118.443515 boelter
 34.069871, -118.443453 intersection outside
@@ -64,6 +66,9 @@ export default function MapScreen() {
     start: null,
     end: null,
   });
+  // useEffect(() => {
+  //   console.log("Map marker", mapMarkerList)
+  // }, [mapMarkerList])
   const [path, setPath] = useState();
   const [markerStyles, setMarkerStyles] = useState({
     width: 60,
@@ -97,9 +102,21 @@ export default function MapScreen() {
       }
     }
   };
+  const findWalkPath = async () => {
+    if (id) {
+      const result = await axios.get(BASE_URL + '/walk/get');
+      let filtered = result.data.filter(w => w.user == id);
+      if (filtered.length > 0) {
+        setButtonAction(1);
+      }
+    }
+  };
   useEffect(() => {
     getPermissions();
   }, []);
+  useEffect(() => {
+    if (id) findWalkPath();
+  }, [id]);
   const fetchMarkers = async () => {
     let allMarkers = await axios.get(BASE_URL + "/walk/get");
     let copyMarkers = allMarkers.data.filter((x) => x.user === id);
@@ -111,7 +128,7 @@ export default function MapScreen() {
     // }
     // console.log(id, allMarkers.data[0].user)
     // console.log(allMarkers.data)
-    console.log(copyMarkers);
+    // console.log(copyMarkers);
     setMapMarkerList(copyMarkers);
   };
   const getLocation = async () => {
@@ -155,6 +172,7 @@ export default function MapScreen() {
           regionCoords={currentRegion}
           walkPath={walkPath}
           setWalkPath={setWalkPath}
+          curLocation={location}
         />
       );
     } else if (actionState == 1) {
@@ -167,7 +185,7 @@ export default function MapScreen() {
         />
       );
     } else if (actionState == 2) {
-      return <PathSelect />;
+      return <ConfirmPath onPress={setButtonAction} coordinates={mapMarkerList[0]} setMarkerList={setMapMarkerList} setThePath={setWalkPath} copyPath={walkPath} setWalking={setWalking} />
     } else {
       return null;
     }
@@ -199,6 +217,7 @@ export default function MapScreen() {
   };
   useEffect(() => {
     fetchData();
+    // console.log("MARKER LIST");
   }, []);
   // useEffect(() => {
   //   const interval = setInterval(getLocation, 1000);
@@ -259,6 +278,7 @@ export default function MapScreen() {
   }, [mapRef, permissionStatus]);
 
   useEffect(() => {
+    console.log("Walking", walking);
     if (walking) {
       animateToLocation(
         mapMarkerList[0].origin,
@@ -266,6 +286,7 @@ export default function MapScreen() {
       );
     }
   }, [walking]);
+
 
   return (
     <View className="flex-1 justify-center items-center h-full w-full">
@@ -305,15 +326,16 @@ export default function MapScreen() {
         ) : (
           ""
         )}
-        {(!mapMarkerList || mapMarkerList.length === 0) && walkPath.start ? (
-          <Marker
-            key={"start1"}
-            coordinate={walkPath.start}
-            pinColor="#FBBF24"
-          />
-        ) : (
-          ""
-        )}
+        {walkPath.start && (
+         <Marker key={"start1"} coordinate={walkPath.start} pinColor="#FBBF24" />
+       ) }
+
+      {walkPath.end && (
+        <Marker key={"end1"} coordinate={walkPath.end} pinColor="#BA132C" />
+       ) }
+
+
+        
         {/* {mapMarkerList.map((x, i) => <Marker key={x.user + i + "1"} coordinate={x.origin} pinColor="#FBBF24" />)[0]}
         {mapMarkerList.map((x, i) => <Marker key={x.user + i + "0"} coordinate={x.destination} pinColor="#C9123A" />)[0]} */}
         {/* <Marker coordinate={{latitude: 34.069201, longitude: -118.443515}}/> */}
@@ -328,7 +350,7 @@ export default function MapScreen() {
             mode="WALKING"
             onReady={(res) => {
               setPath(res);
-              setWalking(true);
+              //setWalking(false);
             }}
           />
         ) : (
