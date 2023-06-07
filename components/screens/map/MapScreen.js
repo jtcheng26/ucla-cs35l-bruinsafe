@@ -182,7 +182,7 @@ export default function MapScreen() {
       return (
         <WalkingPage
           locationName={data.cityName}
-          walkerFullName={"Carey Nachenberg"}
+          walkerFullName={currentWalker}
           currentTime={currentDateTime}
           onPress={setButtonAction}
         />
