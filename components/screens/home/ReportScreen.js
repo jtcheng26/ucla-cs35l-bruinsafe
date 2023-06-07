@@ -11,7 +11,7 @@ import { BASE_URL } from "../../../constants";
 
 export default function ReportScreen() {
     const styles = {
-        inputField: "p-2 rounded-xl w-12/12 m-2 bg-sky-200 justify-start",
+        inputField: "p-2 text-white rounded-xl w-12/12 m-2 bg-violet-300/60 justify-start",
         inputText: "text-white text-md align-left mt-6 mb-1 ml-3"
     }
 
@@ -78,7 +78,7 @@ export default function ReportScreen() {
 
     return (
         <SafeAreaView
-        className="flex-1 justify-center items-center bg-sky-950"
+        className="flex-1 justify-center items-center bg-blue-900/90"
         >
             {/* <ProfileHeader name={"David Smalberg"}/> */}
             <Text
@@ -111,16 +111,16 @@ export default function ReportScreen() {
                 open={ddopen}
                 onPress={() => setDDOpen(!ddopen)}
                 style={{
-                    backgroundColor: "rgb(186 230 253)",
+                    backgroundColor: "rgb(146 141 227)",
                     width: '96%',
                     marginLeft: '2%',
                     marginVertical: '2%'
                   }}
                 textStyle={{
-                    color: "#0369a1"
+                    color: "#ffffff"
                   }}
                 dropDownContainerStyle={{
-                    backgroundColor: "rgb(186 230 253)",
+                    backgroundColor: "rgb(146 141 227)",
                     width: '96%',
                     marginLeft: '2%'
                 }}
@@ -128,18 +128,18 @@ export default function ReportScreen() {
                     activeOpacity: 0.8
                 }}
                 listItemLabelStyle={{
-                    color: "#0369a1"
+                    color: "#ffffff"
                 }}
                 selectedItemContainerStyle={{
-                    backgroundColor: "#0369a1"
+                    backgroundColor: "#6d64ed"
                 }}
                 selectedItemLabelStyle={{
-                    color: "rgb(186 230 253)"
+                    color: "rgb(146 141 227)"
                 }}
                 badgeTextStyle={{
-                    color: "rgb(186 230 253)"
+                    color: "rgb(146 141 227)"
                 }}
-                badgeColors="#0369a1"
+                badgeColors="#4f46e5"
                 />
 
                 <Text
@@ -152,7 +152,7 @@ export default function ReportScreen() {
                 returnKeyType="done"
                 className={styles.inputField + " h-1/2 pt-3"}
                 textAlignVertical="bottom"
-                placeholderTextColor="#0369a1"
+                placeholderTextColor="#ffffff"
                 onChangeText={setDescription}
                 onKeyPress={enterPress}
                 multiline={true}
@@ -177,7 +177,7 @@ export default function ReportScreen() {
             className="justify-center items-center"
             >
                 <View
-                className="rounded-xl bg-sky-900 w-10/12 h-44 items-center"
+                className="rounded-xl bg-violet-300/70 w-10/12 h-44 items-center"
                 >
                     <Text
                     className="font-bold text-white text-2xl mt-4"
@@ -193,11 +193,11 @@ export default function ReportScreen() {
 
                     {/* <View> */}
                     <TouchableScale
-                    className=" bg-amber-400 rounded-md p-2 mt-3 items-center absolute bottom-4"
+                    className=" bg-zinc-300/80 rounded-md py-2 px-4 mt-3 items-center absolute bottom-4"
                     onPress={() => clear()}
                     >
                         <Text
-                        className="text-black"
+                        className="text-black font-bold"
                         >
                             Return
                         </Text>
@@ -208,12 +208,12 @@ export default function ReportScreen() {
 
 
             <TouchableScale
-            className="rounded-lg mt-16 h-10 w-40 justify-center items-center bg-red-500"
+            className="rounded-lg mt-16 h-10 w-40 justify-center items-center bg-zinc-300/80"
             activeScale={0.95}
             onPress={handleSubmit}
             >
                 <Text
-                className="text-white font-bold"
+                className="text-black font-bold"
                 >
                 Submit Incident
                 </Text>
