@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, Modal } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import NavBar from "../../overlays/NavBar";
@@ -19,6 +19,7 @@ import LocationButton from "../../../assets/location.svg";
 import useUserId from "../../hooks/useUserId";
 import ConfirmPath from "./confirmPath";
 import TouchableScale from "react-native-touchable-scale";
+import Megaphone from '../../../assets/megaphone.svg';
 
 import MapViewDirections from "react-native-maps-directions";
 import useSockets from "../../hooks/useSockets";
@@ -69,6 +70,7 @@ export default function MapScreen() {
   const [currentRegion, setRegion] = useState(null);
   const [waiting, setWaiting] = useState(false);
   const [currentWalker, setCurrentWalker] = useState("");
+  const [reports, setReports] = useState(null)
   const [walkPath, setWalkPath] = useState({
     start: null,
     end: null,
@@ -412,6 +414,23 @@ export default function MapScreen() {
     }
   }, [currentWalker, isGuardian, connected, roomId, id, path]);
 
+  useEffect(() => {
+    const fetchNearbyReports = async() => {
+        try {
+            const cur_loc = {
+              //center of ucla
+              latitude: 34.068925,
+              longitude: -118.446629
+            }
+            const response = await axios.post(BASE_URL + "/report/search", cur_loc); 
+            setReports((response.data))
+        } catch(e) {
+            console.error(e);
+        }
+    }
+    fetchNearbyReports();
+  }, [])
+
   return (
     <View className="flex-1 justify-center items-center h-full w-full">
       <MapView
@@ -484,6 +503,28 @@ export default function MapScreen() {
         ) : (
           ""
         )}
+
+        { (reports) ?
+          (reports.map(report => (
+            <Marker 
+            coordinate={report.location}
+            key={report._id}
+            title={report.types.join(", ")}
+            description={report.description}
+            >
+              <TouchableScale
+              className="w-10 h-10 bg-red-500 items-center justify-center rounded-full pt-1"
+              >
+                <Megaphone 
+                width={30}
+                height={30}
+                fill={"#000"}
+                />
+              </TouchableScale>
+            </Marker>
+          ))) : 
+          null
+        }
       </MapView>
       <View
         className="absolute top-0 left-0 bottom-0 right-0 bg-blue-700/40"
