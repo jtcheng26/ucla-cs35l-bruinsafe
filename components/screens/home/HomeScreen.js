@@ -13,7 +13,7 @@ import MapScreen from '../map/MapScreen';
 
 
 
-export default function HomeScreen() {
+export default function HomeScreen({updateScreen}) {
     const [walks, setWalks] = useState([]);
     const [fullWalks, setFullWalks] = useState([]);
     const [reports, setReports] = useState([]);
@@ -38,7 +38,6 @@ export default function HomeScreen() {
         const fetchNearbyUsers = async() => {
             try {
                 const response = await axios.get(BASE_URL + "/walk/get");
-                // console.log(response.data)
                 setWalks(response.data.filter(u => u.user._id !== id));
                 setFullWalks(response.data.filter(u => u.user._id !== id));
             } catch(e) {
@@ -63,15 +62,6 @@ export default function HomeScreen() {
         }
         fetchNearbyReports();
     }, [])
-
-
-        // LOCAL STROAGE
-    const handleDecline = (id) => {
-        let newArr = walks.filter(u => u._id !== id)
-        setWalks(newArr)
-        newArr = fullWalks.filter(u => u._id !== id)
-        setFullWalks(newArr)
-    }
 
     const handleAccept = (walk_id) => {
         const connectWalk = async() => {
@@ -105,15 +95,12 @@ export default function HomeScreen() {
         setWalks(newArr)
     }
 
-    if(walkAccepted) {
-        return (
-            <MapScreen />
-        )
-    }
+    useEffect(() => {
+        if(walkAccepted) updateScreen("map")
+    }, [walkAccepted])
 
     return (
         <View className="flex-1 bg-sky-950">
-            {/* <ProfileHeader /> */}
             <Text
             className="text-2xl font-semibold text-amber-400 mt-28 mb-2 ml-8"
             >
@@ -128,7 +115,6 @@ export default function HomeScreen() {
 
                 }}
                 >
-
                     <TextInput
                     className="w-full h-10 my-4 bg-gray-300 rounded-xl p-1 px-4"
                     placeholder='Search for a Walk by Name'
@@ -142,7 +128,6 @@ export default function HomeScreen() {
                         key={walk._id}
                         user={walk.user}
                         walk_id={walk._id}
-                        onDecline={handleDecline}
                         onAccept={handleAccept}
                         />
                         ))) : 
