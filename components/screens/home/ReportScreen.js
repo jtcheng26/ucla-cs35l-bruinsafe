@@ -46,8 +46,8 @@ export default function ReportScreen() {
         if( incidentValue.length != 0 && incidentDescription ) {
             const sendData = async () => {
                 try {
-                    const lat_offset = 0.0085 - (0.017 * Math.random());
-                    const lon_offset = 0.0085 - (0.017 * Math.random());
+                    const lat_offset = 0.0055 - (0.012 * Math.random());
+                    const lon_offset = 0.0055 - (0.012 * Math.random());
                     const data = {
                         types: incidentValue,
                         description: incidentDescription.replace('\n', ''),
