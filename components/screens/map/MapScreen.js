@@ -21,8 +21,6 @@ import ConfirmPath from "./confirmPath";
 import TouchableScale from "react-native-touchable-scale";
 import Megaphone from '../../../assets/megaphone.svg';
 import EndWalk from './endWalk';
-
-
 import MapViewDirections from "react-native-maps-directions";
 import useSockets from "../../hooks/useSockets";
 import isOutsidePath from "../../utils/isOutsidePath";
@@ -72,7 +70,7 @@ export default function MapScreen() {
   const [currentRegion, setRegion] = useState(null);
   const [waiting, setWaiting] = useState(false);
   const [currentWalker, setCurrentWalker] = useState("");
-  const [reports, setReports] = useState(null);
+  const [reports, setReports] = useState([])
   const [isAlerted, setIsAlerted] = useState(false);
   const [walkPath, setWalkPath] = useState({
     start: null,
@@ -495,7 +493,10 @@ export default function MapScreen() {
         showsCompass
       >
         {isGuardian && walkerLoc && (
-          <Marker coordinate={walkerLoc} pinColor="#FFFFFF" />
+          <Marker 
+          coordinate={walkerLoc}
+          pinColor={"#FFF"}
+          />
         )}
         {mapMarkerList && mapMarkerList.length >= 1 ? (
           <>
@@ -602,8 +603,8 @@ export default function MapScreen() {
         </LinearGradient>
       </View>
       {/* <ProfileHeader name={"David Smallberg"} /> */}
-      <NumberReports numReports={data.numReports} />
-      <SafetyLevel numReports={data.numReports} />
+      <NumberReports numReports={reports.length} />
+      <SafetyLevel numReports={reports.length} />
       <View className="w-1/12 h-1/12 absolute m-auto flex justify-center items-center">
         {markerVisible ? (
           <LocationButton
