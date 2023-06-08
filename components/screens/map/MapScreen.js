@@ -405,6 +405,7 @@ export default function MapScreen() {
   function endWalk() {
     setMapMarkerList([]);
     setWalking(false);
+    setIsGuardian(false);
     setCurrentWalker("");
     setButtonAction(0);
     axios.post(BASE_URL + "/walk/end", { id: currentWalkId });
@@ -494,8 +495,8 @@ export default function MapScreen() {
       >
         {isGuardian && walkerLoc && (
           <Marker 
-          coordinate={walkerLoc}
-          pinColor={"#FFF"}
+          coordinate={walkerLoc.coords}
+          pinColor={"#FFFFFF"}
           />
         )}
         {mapMarkerList && mapMarkerList.length >= 1 ? (
