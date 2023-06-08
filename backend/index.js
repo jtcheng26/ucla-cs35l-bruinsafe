@@ -179,7 +179,7 @@ app.post("/report/search", async (req, res) => {
     return Math.sqrt(dx * dx + dy * dy) <= MAX_RADIUS
     */
   });
-  res.send(all); //ISSUE: Returns all Reports not nearby reports, Not sure if this is intended functionality
+  res.send(nearby); //ISSUE: Returns all Reports not nearby reports, Not sure if this is intended functionality
 });
 
 const REPORT_TYPES = [
