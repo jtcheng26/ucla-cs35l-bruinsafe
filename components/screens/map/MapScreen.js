@@ -1,5 +1,5 @@
-import { View, Text, Modal } from "react-native";
-import { useState, useEffect, useRef } from "react";
+import { View, Text, Modal, Alert } from "react-native";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import NavBar from "../../overlays/NavBar";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
@@ -70,7 +70,8 @@ export default function MapScreen() {
   const [currentRegion, setRegion] = useState(null);
   const [waiting, setWaiting] = useState(false);
   const [currentWalker, setCurrentWalker] = useState("");
-  const [reports, setReports] = useState(null)
+  const [reports, setReports] = useState(null);
+  const [isAlerted, setIsAlerted] = useState(false);
   const [walkPath, setWalkPath] = useState({
     start: null,
     end: null,
@@ -410,23 +411,40 @@ export default function MapScreen() {
     setCurrentWalkId(null);
   }
   useEffect(() => {
+    console.log(isAlerted, walkerLoc, isGuardian)
+    if (walkerLoc && path && isGuardian && isOutsidePath(walkerLoc, path) && !isAlerted) {
+      setIsAlerted(true);
+      Alert.alert("User has gone off Path!", "Call them to make sure they are OK!", [
+      {
+        text: "Done",
+        onPress: () => {
+          setTimeout(() => {
+            setIsAlerted(false);
+          }, 30000)
+        }
+      }
+      ]);
+    console.log("User is leaving path!");
+    }
+  }, [walkerLoc, path, isAlerted, setIsAlerted, isGuardian])
+  useEffect(() => {
     console.log(currentWalker, currentWalkId, isGuardian, connected)
     if (currentWalker && connected && path && currentWalkId) {
       console.log("joined", currentWalkId)
       joinRoom(currentWalkId);
       const stream = setInterval(async () => {
         if (!currentWalkId) clearInterval(stream);
-        if (isGuardian) return;
         const { coords } = await getLocation(5);
-        if (isOutsidePath(coords, path)) {
-          // TODO: alert user
-          console.log("User is leaving path!");
-        } else if (isDoneWalk(coords, path)) {
+
+          // alertPath()
+        if (isDoneWalk(coords, path)) {
+          // if (isGuardian) return;
           console.log("User is finished walk.");
           endRoom(currentWalkId);
           endWalk();
           clearInterval(stream);
         }
+        if (isGuardian) return;
         shareLoc(coords, currentWalkId);
       }, 1000);
       return () => {
