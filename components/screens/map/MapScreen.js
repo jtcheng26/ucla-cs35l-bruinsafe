@@ -1,5 +1,5 @@
-import { View, Text, Modal } from "react-native";
-import { useState, useEffect, useRef } from "react";
+import { View, Text, Modal, Alert } from "react-native";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import NavBar from "../../overlays/NavBar";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
@@ -20,7 +20,7 @@ import useUserId from "../../hooks/useUserId";
 import ConfirmPath from "./confirmPath";
 import TouchableScale from "react-native-touchable-scale";
 import Megaphone from '../../../assets/megaphone.svg';
-import Walking from "../../../assets/walking.svg"
+import EndWalk from './endWalk';
 import MapViewDirections from "react-native-maps-directions";
 import useSockets from "../../hooks/useSockets";
 import isOutsidePath from "../../utils/isOutsidePath";
@@ -71,6 +71,7 @@ export default function MapScreen() {
   const [waiting, setWaiting] = useState(false);
   const [currentWalker, setCurrentWalker] = useState("");
   const [reports, setReports] = useState([])
+  const [isAlerted, setIsAlerted] = useState(false);
   const [walkPath, setWalkPath] = useState({
     start: null,
     end: null,
@@ -279,7 +280,7 @@ export default function MapScreen() {
           setCurrentWalkId(result[0]._id);
           setCurrentWalker(result[0].guardian.name); //if there is such a walkmodel, setCurrentWalker to guardian of Walk
           setWaiting(false);
-          setButtonAction(1)
+          setButtonAction(1);
           clearInterval(interval);
         }
       }, 1000);
@@ -396,7 +397,7 @@ export default function MapScreen() {
     roomId,
   } = useSockets();
   useEffect(() => {
-    console.log(walkerLoc)
+    console.log(walkerLoc);
     if (isGuardian && walkerLoc) {
       console.log("Received location from walker", walkerLoc);
     }
@@ -410,23 +411,39 @@ export default function MapScreen() {
     setCurrentWalkId(null);
   }
   useEffect(() => {
+    console.log(isAlerted, walkerLoc, isGuardian)
+    if (walkerLoc && path && isGuardian && isOutsidePath(walkerLoc, path) && !isAlerted) {
+      setIsAlerted(true);
+      Alert.alert("User has gone off Path!", "Call them to make sure they are OK!", [
+      {
+        text: "Done",
+        onPress: () => {
+          setTimeout(() => {
+            setIsAlerted(false);
+          }, 30000)
+        }
+      }
+      ]);
+    console.log("User is leaving path!");
+    }
+  }, [walkerLoc, path, isAlerted, setIsAlerted, isGuardian])
+  useEffect(() => {
     console.log(currentWalker, currentWalkId, isGuardian, connected)
     if (currentWalker && connected && path && currentWalkId) {
-      console.log("joined", currentWalkId)
       joinRoom(currentWalkId);
       const stream = setInterval(async () => {
         if (!currentWalkId) clearInterval(stream);
         if (isGuardian) return;
-        const { coords } = await getLocation(5);
-        if (isOutsidePath(coords, path)) {
-          // TODO: alert user
-          console.log("User is leaving path!");
-        } else if (isDoneWalk(coords, path)) {
+        const coords = await Location.getCurrentPositionAsync({
+          accuracy: 3,
+        });
+       if (isDoneWalk(coords, path)) {
           console.log("User is finished walk.");
           endRoom(currentWalkId);
           endWalk();
           clearInterval(stream);
         }
+        if (isGuardian) return;
         shareLoc(coords, currentWalkId);
       }, 1000);
       return () => {
@@ -437,21 +454,21 @@ export default function MapScreen() {
   }, [currentWalker, currentWalkId, isGuardian, connected, path]);
 
   useEffect(() => {
-    const fetchNearbyReports = async() => {
-        try {
-            const cur_loc = {
-              //center of ucla
-              latitude: 34.068925,
-              longitude: -118.446629
-            }
-            const response = await axios.post(BASE_URL + "/report/search", cur_loc); 
-            setReports((response.data))
-        } catch(e) {
-            console.error(e);
-        }
-    }
+    const fetchNearbyReports = async () => {
+      try {
+        const cur_loc = {
+          //center of ucla
+          latitude: 34.068925,
+          longitude: -118.446629,
+        };
+        const response = await axios.post(BASE_URL + "/report/search", cur_loc);
+        setReports(response.data);
+      } catch (e) {
+        console.error(e);
+      }
+    };
     fetchNearbyReports();
-  }, [])
+  }, []);
 
   return (
     <View className="flex-1 justify-center items-center h-full w-full">
@@ -531,27 +548,20 @@ export default function MapScreen() {
           ""
         )}
 
-        { (reports) ?
-          (reports.map(report => (
-            <Marker 
-            coordinate={report.location}
-            key={report._id}
-            title={report.types.join(", ")}
-            description={report.description}
-            >
-              <TouchableScale
-              className="w-10 h-10 bg-red-500 items-center justify-center rounded-full pt-1"
+        {reports
+          ? reports.map((report) => (
+              <Marker
+                coordinate={report.location}
+                key={report._id}
+                title={report.types.join(", ")}
+                description={report.description}
               >
-                <Megaphone 
-                width={30}
-                height={30}
-                fill={"#000"}
-                />
-              </TouchableScale>
-            </Marker>
-          ))) : 
-          null
-        }
+                <TouchableScale className="w-10 h-10 bg-red-500 items-center justify-center rounded-full pt-1">
+                  <Megaphone width={30} height={30} fill={"#000"} />
+                </TouchableScale>
+              </Marker>
+            ))
+          : null}
       </MapView>
       <View
         className="absolute top-0 left-0 bottom-0 right-0 bg-blue-700/40"
@@ -605,6 +615,7 @@ export default function MapScreen() {
         ) : null}
       </View>
       {CurrentButton(buttonAction)}
+      {(currentWalker || isGuardian) ? <EndWalk endWalkFunction={endWalk} /> : ""}
     </View>
   );
 }
