@@ -20,6 +20,7 @@ import useUserId from "../../hooks/useUserId";
 import ConfirmPath from "./confirmPath";
 import TouchableScale from "react-native-touchable-scale";
 import Megaphone from '../../../assets/megaphone.svg';
+import EndWalk from './endWalk';
 
 import MapViewDirections from "react-native-maps-directions";
 import useSockets from "../../hooks/useSockets";
@@ -620,6 +621,7 @@ export default function MapScreen() {
         ) : null}
       </View>
       {CurrentButton(buttonAction)}
+      {(currentWalker || isGuardian) ? <EndWalk endWalkFunction={endWalk} /> : ""}
     </View>
   );
 }
