@@ -71,10 +71,7 @@ export default function MapScreen() {
   const [waiting, setWaiting] = useState(false);
   const [currentWalker, setCurrentWalker] = useState("");
   const [reports, setReports] = useState(null);
-<<<<<<< HEAD
-=======
   const [isAlerted, setIsAlerted] = useState(false);
->>>>>>> origin/main
   const [walkPath, setWalkPath] = useState({
     start: null,
     end: null,
