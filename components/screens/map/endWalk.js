@@ -7,8 +7,8 @@ export default function endWalk({endWalkFunction}) {
         endWalkFunction();
     }
     return (
-        <TouchableScale className="absolute w-2/12 h-1/12 bottom-72 right-6 py-4 rounded-lg bg-zinc-300" activeScale={0.97} onPress={handleClick}>
-            <Text className="items-center text-center font-bold">End Path</Text>
+        <TouchableScale className="absolute w-3/12 h-1/12 bottom-72 right-6 py-4 rounded-lg bg-blue-500 border-2 border-blue-900" activeScale={0.97} onPress={handleClick}>
+            <Text className="items-center text-center font-bold text-white">End Path</Text>
         </TouchableScale>
     );
 }
