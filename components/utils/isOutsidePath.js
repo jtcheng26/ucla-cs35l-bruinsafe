@@ -1,7 +1,7 @@
 export function dist(a, b) {
   return Math.sqrt(
     (a.latitude - b.latitude) * (a.latitude - b.latitude) +
-    (a.longitude - b.longitude) * (a.longitude - b.longitude)
+      (a.longitude - b.longitude) * (a.longitude - b.longitude)
   );
 }
 

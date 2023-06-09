@@ -14,14 +14,16 @@ import LocationButton from "../../../assets/location.svg";
 import useUserId from "../../hooks/useUserId";
 import ConfirmPath from "./confirmPath";
 import TouchableScale from "react-native-touchable-scale";
-import Megaphone from '../../../assets/megaphone.svg';
-import PFP from "../../../assets/Default_pfp.svg.png"
-import EndWalk from './endWalk';
+import Megaphone from "../../../assets/megaphone.svg";
+import PFP from "../../../assets/Default_pfp.svg.png";
+import EndWalk from "./endWalk";
 import MapViewDirections from "react-native-maps-directions";
 import useSockets from "../../hooks/useSockets";
 import isOutsidePath from "../../utils/isOutsidePath";
 import isDoneWalk from "../../utils/isDoneWalk";
-import timeToDestination, { progressToDestination } from "../../utils/timeToDestination";
+import timeToDestination, {
+  progressToDestination,
+} from "../../utils/timeToDestination";
 
 const GOOGLE_MAPS_APIKEY = process.env.GOOGLE_APIKEY;
 
@@ -63,7 +65,7 @@ export default function MapScreen() {
   const [currentRegion, setRegion] = useState(null);
   const [waiting, setWaiting] = useState(false);
   const [currentWalker, setCurrentWalker] = useState("");
-  const [reports, setReports] = useState([])
+  const [reports, setReports] = useState([]);
   const [isAlerted, setIsAlerted] = useState(false);
   const [walkPath, setWalkPath] = useState({
     start: null,
@@ -211,7 +213,14 @@ export default function MapScreen() {
           walkerFullName={currentWalker}
           currentTime={currentDateTime}
           timeLeft={timeToDestination(location, path)}
-          progress={progressToDestination(walkerLoc ? walkerLoc.coords : path ? path.coordinates[0] : { latitude: 0, longitude: 0}, path)}
+          progress={progressToDestination(
+            walkerLoc
+              ? walkerLoc.coords
+              : path
+              ? path.coordinates[0]
+              : { latitude: 0, longitude: 0 },
+            path
+          )}
           onPress={setButtonAction}
         />
       );
@@ -346,11 +355,11 @@ export default function MapScreen() {
     walkerLoc,
     roomId,
     isEnded,
-    setEnd
+    setEnd,
   } = useSockets();
 
   function endWalk() {
-    console.log("Ending walk", isEnded, currentWalkId)
+    console.log("Ending walk", isEnded, currentWalkId);
     setMapMarkerList([]);
     setWalking(false);
     setIsGuardian(false);
@@ -359,43 +368,55 @@ export default function MapScreen() {
     if (!isGuardian) {
       axios.post(BASE_URL + "/walk/end", { id: currentWalkId });
       endRoom(currentWalkId);
-    }
-    else {
-      Alert.alert("Finished Walk!", "The user safely made it to their destination. Thank you for your service!", [
-        {
-          text: "Ok",
-          onPress: () => setEnd(false)
-        }
-        ])
+    } else {
+      Alert.alert(
+        "Finished Walk!",
+        "The user safely made it to their destination. Thank you for your service!",
+        [
+          {
+            text: "Ok",
+            onPress: () => setEnd(false),
+          },
+        ]
+      );
     }
     setCurrentWalkId(null);
-    setEnd(false)
-    console.log(id, "Set end to false")
+    setEnd(false);
+    console.log(id, "Set end to false");
   }
   useEffect(() => {
-    if (isGuardian && isEnded && currentWalkId)
-      endWalk()
-  }, [isGuardian, isEnded, currentWalkId])
+    if (isGuardian && isEnded && currentWalkId) endWalk();
+  }, [isGuardian, isEnded, currentWalkId]);
   useEffect(() => {
-    if (walkerLoc && path && isGuardian && isOutsidePath(walkerLoc.coords, path) && !isAlerted) {
+    if (
+      walkerLoc &&
+      path &&
+      isGuardian &&
+      isOutsidePath(walkerLoc.coords, path) &&
+      !isAlerted
+    ) {
       setIsAlerted(true);
-      Alert.alert("User has gone off Path!", "Call them to make sure they are OK!", [
-      {
-        text: "Done",
-        onPress: () => {
-          setTimeout(() => {
-            setIsAlerted(false);
-          }, 30000)
-        }
-      }
-      ]);
-    console.log("User is leaving path!");
+      Alert.alert(
+        "User has gone off Path!",
+        "Call them to make sure they are OK!",
+        [
+          {
+            text: "Done",
+            onPress: () => {
+              setTimeout(() => {
+                setIsAlerted(false);
+              }, 30000);
+            },
+          },
+        ]
+      );
+      console.log("User is leaving path!");
     }
-  }, [walkerLoc, path, isAlerted, setIsAlerted, isGuardian])
+  }, [walkerLoc, path, isAlerted, setIsAlerted, isGuardian]);
   useEffect(() => {
-    console.log(currentWalker, currentWalkId, isGuardian, connected)
+    console.log(currentWalker, currentWalkId, isGuardian, connected);
     if (currentWalker && connected && path && currentWalkId) {
-      setEnd(false)
+      setEnd(false);
       joinRoom(currentWalkId);
       const stream = setInterval(async () => {
         if (!currentWalkId) clearInterval(stream);
@@ -403,7 +424,7 @@ export default function MapScreen() {
         const coords = await Location.getCurrentPositionAsync({
           accuracy: 3,
         });
-       if (isDoneWalk(coords, path)) {
+        if (isDoneWalk(coords, path)) {
           endWalk();
           clearInterval(stream);
         }
@@ -443,8 +464,7 @@ export default function MapScreen() {
         showsPointsOfInterest={false}
         showsUserLocation
         onUserLocationChange={(e) => {
-          if (e.coordinate)
-            console.log(e.coordinate)
+          if (e.coordinate) console.log(e.coordinate);
         }}
         compassOffset={{
           x: 0,
@@ -454,18 +474,11 @@ export default function MapScreen() {
         showsCompass
       >
         {isGuardian && walkerLoc && (
-          <Marker
-        coordinate={walkerLoc.coords}
-        >
-          <View
-          className="w-10 h-10 bg-white rounded-full items-center just"
-          >
-            <Image
-            source={PFP}
-            className="w-10 h-10"
-            />
-          </View>
-        </Marker>
+          <Marker coordinate={walkerLoc.coords}>
+            <View className="w-10 h-10 bg-white rounded-full items-center just">
+              <Image source={PFP} className="w-10 h-10" />
+            </View>
+          </Marker>
         )}
         {mapMarkerList && mapMarkerList.length >= 1 ? (
           <>
@@ -579,7 +592,7 @@ export default function MapScreen() {
         ) : null}
       </View>
       {CurrentButton(buttonAction)}
-      {(currentWalker || isGuardian) ? <EndWalk endWalkFunction={endWalk} /> : ""}
+      {currentWalker || isGuardian ? <EndWalk endWalkFunction={endWalk} /> : ""}
     </View>
   );
 }

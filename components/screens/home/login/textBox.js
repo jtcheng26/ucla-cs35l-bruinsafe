@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { View, TextInput } from 'react-native';
+import React, { useState } from "react";
+import { View, TextInput } from "react-native";
 
 const MyComponent = () => {
-  const [text, setText] = useState('');
+  const [text, setText] = useState("");
 
   const handleTextChange = (newText) => {
     setText(newText);
