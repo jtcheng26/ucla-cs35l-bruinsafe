@@ -5,7 +5,7 @@ export function dist(a, b) {
   );
 }
 
-const MAX_SAFE_DIST = 0.0007;
+const MAX_SAFE_DIST = 0.0008;
 
 export default function isOutsidePath(location, path) {
   const pathDist = path.coordinates.slice(1).reduce((x, coord) => {

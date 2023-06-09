@@ -212,7 +212,7 @@ export default function MapScreen() {
           locationName={data.cityName}
           walkerFullName={currentWalker}
           currentTime={currentDateTime}
-          timeLeft={timeToDestination(location, path)}
+          timeLeft={timeToDestination(walkerLoc ? walkerLoc.coords : location, path)}
           progress={progressToDestination(
             walkerLoc
               ? walkerLoc.coords
@@ -424,7 +424,7 @@ export default function MapScreen() {
         const coords = await Location.getCurrentPositionAsync({
           accuracy: 3,
         });
-        if (isDoneWalk(coords, path)) {
+        if (isDoneWalk(coords.coords, path)) {
           endWalk();
           clearInterval(stream);
         }
