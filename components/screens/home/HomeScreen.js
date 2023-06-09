@@ -41,11 +41,13 @@ export default function HomeScreen({updateScreen}) {
         const fetchNearbyUsers = async() => {
             try {
                 const response = await axios.get(BASE_URL + "/walk/get");
-                setWalks(response.data.filter(u => u.user._id !== id).filter(u => u.state === 0));
-                setFullWalks(response.data.filter(u => u.user._id !== id).filter(u => u.state === 0));
-                setTimeout(() => {
-                    setRefreshWalks(false);
-                  }, (Math.random()*2000 + 100));
+                if(id) {
+                    setWalks(response.data.filter(u => u.user._id !== id).filter(u => u.state === 0));
+                    setFullWalks(response.data.filter(u => u.user._id !== id).filter(u => u.state === 0));
+                    setTimeout(() => {
+                        setRefreshWalks(false);
+                    }, (Math.random()*1000 + 100));
+                }
             } catch(e) {
                 console.error(e)
             }
