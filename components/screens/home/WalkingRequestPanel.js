@@ -14,22 +14,6 @@ export default function WalkingRequestPanel({
     walk_obj
 }) {
 
-    const [walkID, setWalkID] = useState(null);
-
-    // useEffect(() => {
-    //     const fetchWalks = async() => {
-    //         try {
-    //             const response = await axios.get(BASE_URL + "/walk/get");
-    //             walks = response.data;
-    //         } catch(e) {
-    //             console.error(e);
-    //         }
-    //         const foundWalk = walks.find(walk => walk.user === key);
-    //         setWalkID(foundWalk._id);
-    //     }
-    //     fetchWalks();
-    // }, []);
-
     return (
         <View
         className="rounded-3xl mt-6 mb-2 bg-blue-950 py-2"

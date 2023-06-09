@@ -1,16 +1,11 @@
-import { View, Text, Modal, Alert, Image } from "react-native";
+import { View, Text, Alert, Image } from "react-native";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import NavBar from "../../overlays/NavBar";
-import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
-import ProfileHeader from "../../overlays/ProfileHeader";
+import MapView, { Marker } from "react-native-maps";
 import WalkButton from "./walkButton";
 import WalkingPage from "./WalkingPage";
 import NumberReports from "./numberReports";
-import mapStyle from "./mapStyle.json";
 import moment from "moment";
-import EscortList from "./escortList";
-import PathSelect from "./PathSelect";
 import SafetyLevel from "./SafetyLevel";
 import axios from "axios";
 import * as Location from "expo-location";
@@ -20,7 +15,6 @@ import useUserId from "../../hooks/useUserId";
 import ConfirmPath from "./confirmPath";
 import TouchableScale from "react-native-touchable-scale";
 import Megaphone from '../../../assets/megaphone.svg';
-import Walking from "../../../assets/walking.svg"
 import PFP from "../../../assets/Default_pfp.svg.png"
 import EndWalk from './endWalk';
 import MapViewDirections from "react-native-maps-directions";
@@ -28,9 +22,6 @@ import useSockets from "../../hooks/useSockets";
 import isOutsidePath from "../../utils/isOutsidePath";
 import isDoneWalk from "../../utils/isDoneWalk";
 import timeToDestination, { progressToDestination } from "../../utils/timeToDestination";
-
-// const origin = { latitude: 34.070819, longitude: -118.449262 };
-// const destination = { latitude: 34.069201, longitude: -118.443515 };
 
 const GOOGLE_MAPS_APIKEY = process.env.GOOGLE_APIKEY;
 
@@ -79,9 +70,6 @@ export default function MapScreen() {
     end: null,
   });
   const [currentWalkId, setCurrentWalkId] = useState();
-  // useEffect(() => {
-  //   console.log("Map marker", mapMarkerList)
-  // }, [mapMarkerList])
   const [path, setPath] = useState();
   const [markerStyles, setMarkerStyles] = useState({
     width: 60,
@@ -107,10 +95,8 @@ export default function MapScreen() {
   const getPermissions = async () => {
     if (!permissionStatus || permissionStatus != "granted") {
       let { status } = await Location.requestForegroundPermissionsAsync();
-      //console.log(status);
       setPermissionStatus(status);
       if (permissionStatus != "granted") {
-        // console.log("Location Permissions Denied!");
         return;
       }
     }
@@ -156,15 +142,6 @@ export default function MapScreen() {
     let guardMarkers = allMarkers.data.filter((x) =>
       x.guardian ? x.guardian._id === id : false
     );
-    // for (let i = 0; i < allMarkers.data.length; i++) {
-    //   if (allMarkers.data[i].user == id) {
-    //     copyMarkers.push(<Marker coordinate={{latitude: allMarkers.data[i].origin.latitude, longitude: allMarkers.data[i].origin.longitude}} pinColor={'#C9123A'} />)
-    //     copyMarkers.push(<Marker coordinate={{latitude: allMarkers.data[i].destination.latitude, longitude: allMarkers.data[i].destination.longitude}} pinColor={'#FBBF24'} />)
-    //   }
-    // }
-    // console.log(id, allMarkers.data[0].user)
-    // console.log(allMarkers.data)
-    // console.log(copyMarkers);
 
     if (copyMarkers.length) {
       setMapMarkerList(copyMarkers);
@@ -207,7 +184,6 @@ export default function MapScreen() {
   useEffect(() => {
     (async () => {
       await getPermissions();
-      // await getLocation()
     })();
   }, []);
 
@@ -317,26 +293,10 @@ export default function MapScreen() {
   };
   useEffect(() => {
     fetchData();
-    // console.log("MARKER LIST");
   }, []);
-  // useEffect(() => {
-  //   const interval = setInterval(getLocation, 1000);
-  //   return () => {
-  //     clearInterval(interval);
-  //   };
-  // }, []);
   useEffect(() => {
     if (id) fetchMarkers();
-    // console.log("fetched marers");
-    // const interval = setInterval(fetchMarkers, 1000);
-    // console.log("Placed Markers");
-    // return () => {
-    //   clearInterval(interval);
-    // };
   }, [id]);
-  // setInterval(() => {
-  //   setDateTime(moment().format("hh:mm a"));
-  // }, 2500);
   const mapRef = useRef(null);
   function animateToLocation(
     coords,
@@ -356,31 +316,18 @@ export default function MapScreen() {
       duration
     );
   }
-  // console.log("render")
-  // console.log(mapMarkerList)
   useEffect(() => {
     if (mapRef && permissionStatus === "granted") {
-      //   const to = setTimeout(() => {
-      // const h = getHeading(path.coordinates[0], path.coordinates[1])
-      // const si = setInterval(() => {
-      //     animateToLocation(origin, mapRef.current.heading)
-      // }, 2000)
       (async () => {
         if (!isGuardian) {
           const { coords, heading } = await getLocation();
           animateToLocation(coords, heading, 700, 50, 500);
         }
       })();
-
-      // animateToLocation(origin, h)
-      // return () => clearTimeout(si)
-      //   }, 5000);
-      //   return clearTimeout(to);
     }
   }, [mapRef, isGuardian, permissionStatus]);
 
   useEffect(() => {
-    // console.log("WalkingMarkerList", mapMarkerList);
     if ((walking || isGuardian) && path) {
       animateToLocation(
         mapMarkerList[0].origin,
@@ -401,12 +348,7 @@ export default function MapScreen() {
     isEnded,
     setEnd
   } = useSockets();
-  // useEffect(() => {
-  //   // console.log(walkerLoc);
-  //   if (isGuardian && walkerLoc) {
-  //     console.log("Received location from walker");
-  //   }
-  // }, [isGuardian, walkerLoc]);
+
   function endWalk() {
     console.log("Ending walk", isEnded, currentWalkId)
     setMapMarkerList([]);
@@ -419,7 +361,6 @@ export default function MapScreen() {
       endRoom(currentWalkId);
     }
     else {
-      // TODO: alert the user finished walk safely
       Alert.alert("Finished Walk!", "The user safely made it to their destination. Thank you for your service!", [
         {
           text: "Ok",
@@ -436,7 +377,6 @@ export default function MapScreen() {
       endWalk()
   }, [isGuardian, isEnded, currentWalkId])
   useEffect(() => {
-    // console.log(isAlerted, walkerLoc, isGuardian)
     if (walkerLoc && path && isGuardian && isOutsidePath(walkerLoc.coords, path) && !isAlerted) {
       setIsAlerted(true);
       Alert.alert("User has gone off Path!", "Call them to make sure they are OK!", [
@@ -464,9 +404,6 @@ export default function MapScreen() {
           accuracy: 3,
         });
        if (isDoneWalk(coords, path)) {
-          console.log("User is finished walk.");
-          // if (currentWalkId)
-          //   endRoom(currentWalkId);
           endWalk();
           clearInterval(stream);
         }
@@ -474,8 +411,6 @@ export default function MapScreen() {
         shareLoc(coords, currentWalkId);
       }, 1000);
       return () => {
-        // if (currentWalkId)
-        //   endRoom(currentWalkId);
         clearInterval(stream);
       };
     }
@@ -501,17 +436,15 @@ export default function MapScreen() {
   return (
     <View className="flex-1 justify-center items-center h-full w-full">
       <MapView
-        // provider={PROVIDER_GOOGLE}
         userInterfaceStyle="dark"
         className="w-full h-full py-18"
-        // region={location}
         mapType="standard"
         onRegionChange={handleRegionChange}
         showsPointsOfInterest={false}
         showsUserLocation
         onUserLocationChange={(e) => {
-          // if (e.coordinate)
-          //   console.log(e.coordinate)
+          if (e.coordinate)
+            console.log(e.coordinate)
         }}
         compassOffset={{
           x: 0,
@@ -562,9 +495,6 @@ export default function MapScreen() {
           <Marker key={"end1"} coordinate={walkPath.end} pinColor="#BA132C" />
         )}
 
-        {/* {mapMarkerList.map((x, i) => <Marker key={x.user + i + "1"} coordinate={x.origin} pinColor="#FBBF24" />)[0]}
-        {mapMarkerList.map((x, i) => <Marker key={x.user + i + "0"} coordinate={x.destination} pinColor="#C9123A" />)[0]} */}
-        {/* <Marker coordinate={{latitude: 34.069201, longitude: -118.443515}}/> */}
         {GOOGLE_MAPS_APIKEY && mapMarkerList.length ? (
           <MapViewDirections
             origin={mapMarkerList[0].origin}
@@ -575,9 +505,7 @@ export default function MapScreen() {
             lineCap="round"
             mode="WALKING"
             onReady={(res) => {
-              console.log(res);
               setPath(res);
-              //setWalking(false);
             }}
           />
         ) : (

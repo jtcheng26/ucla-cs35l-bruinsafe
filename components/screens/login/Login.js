@@ -67,8 +67,6 @@ export default function Login() {
                 return;
             }
 
-            // quickCheck(email, pw);
-
             if(pw != confirmPW) {
                 setLogError("Passwords must match");
                 return;
@@ -116,15 +114,12 @@ export default function Login() {
             return;
         }
 
-        // quickCheck(email, pw);
-
         try {
             const correctUNPW = async() => {
                 const data = { //JSON data to send to endpoint
                     email: email,
                     password: pw
                 }
-                console.log("gay", data);
                 const response = await axios.post(BASE_URL + '/user/login', data); //Create user endpoint
                 console.log(response.data)
                 if (response.data.error) {
@@ -206,7 +201,6 @@ export default function Login() {
                 <TextInput
                 secureTextEntry
                 className={styles.inputBox}
-                // placeholder="Minimum 8 characters with one special character"
                 placeholderTextColor={"rgb(2 132 199)"}
                 onChangeText={setPW}
                 value={pw}

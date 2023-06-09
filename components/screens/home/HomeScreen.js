@@ -20,7 +20,6 @@ export default function HomeScreen({updateScreen}) {
     const {id} = useUserId();
     const [walkAccepted, setWalkAccepted] = useState(false)
     const [refreshWalks, setRefreshWalks] = useState(false);
-    // const [refreshReports, setRefreshReports] = useState(false);
     const month = {
         "01": "Jan",
         "02": "Feb",

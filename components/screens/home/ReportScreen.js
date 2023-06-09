@@ -19,7 +19,6 @@ export default function ReportScreen() {
     const [toSubmit, setToSubmit] = useState(false);
     const [submitPressed, setSubmitPressed] = useState(false);
     const [ddopen, setDDOpen] = useState(false);
-
     const [incidentType, setIncidentType] = useState([
         {label: 'Theft', value: 'Theft'},
         {label: 'Assault', value: 'Assault'},
@@ -191,8 +190,6 @@ export default function ReportScreen() {
                     >
                         Our servers are processing your query
                     </Text>
-
-                    {/* <View> */}
                     <TouchableScale
                     className=" bg-violet-300/80 rounded-md py-2 px-4 mt-3 items-center absolute bottom-4"
                     onPress={() => clear()}
@@ -203,7 +200,6 @@ export default function ReportScreen() {
                             Return
                         </Text>
                     </TouchableScale>
-                    {/* </View> */}
                 </View>
             </Modal>
 
@@ -219,17 +215,6 @@ export default function ReportScreen() {
                 Submit Incident
                 </Text>
             </TouchableScale>
-            {/* {
-                (submitPressed && (incidentValue.length == 0 || !incidentDescription))
-                ? (
-                    <Text
-                    className="text-sm text-red-500 mt-3"
-                    >
-                        Error: ALL fields must be filled out
-                    </Text>
-                )
-                : (<></>)
-            } */}
         </SafeAreaView>
     );
 }

@@ -16,9 +16,6 @@ export default function MainPage({ onLogout }) {
   };
   return (
     <View className="w-full h-full">
-      {/* <View className={screen === "map" ? "w-full h-full" : "hidden"}>
-        <MapScreen />
-      </View> */}
       {screen === "map" && <MapScreen />}
       {screen === "home" && <HomeScreen updateScreen={updateScreen} />}
       {screen === "report" && <ReportScreen />}

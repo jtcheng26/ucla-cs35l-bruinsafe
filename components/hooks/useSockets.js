@@ -32,7 +32,6 @@ export default function useSockets() {
   );
   const shareLoc = useCallback(
     (loc, room_id=id) => {
-        // if (roomId)
             socket.emit("update", room_id, loc);
     },
     [socket, roomId]
@@ -54,7 +53,6 @@ export default function useSockets() {
         setSocket(sock);
       });
       sock.on("loc", (val) => {
-        // console.log("Received location:", val);
         setWalkerLoc(val);
       });
     })();

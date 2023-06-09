@@ -39,16 +39,6 @@ export default function confirmPath({onPress, coordinates, setMarkerList, setThe
     };
     return (
         <View className="absolute bottom-32 content-center space-x-5 w-full flex-row items-center align-center justify-center">
-            {/* (waiting ? <>
-                <TouchableOpacity className="bg-green-500/80 py-5 rounded-full w-5/12 hover:bg-green-500/70" onPress={() => handleClick(true)}>
-                    <Text className="flex justify-center text-white text-xl font-bold text-center">Confirm</Text>
-                </TouchableOpacity>
-                <TouchableOpacity className="bg-red-600/80 py-5 rounded-full w-5/12 hover:bg-red-600/70" onPress={() => handleClick(false)}>
-                    <Text className="text-center text-white text-xl font-bold">Cancel</Text>
-                </TouchableOpacity>
-            </> : <>
-                <Text>Hello</Text>
-            </>) */}
             <TouchableOpacity className="bg-blue-500/90 py-3 rounded-2xl w-5/12" onPress={() => handleClick(true)}>
                 <Text className="flex justify-center text-zinc-200 text-base font-bold text-center">Confirm</Text>
             </TouchableOpacity>
