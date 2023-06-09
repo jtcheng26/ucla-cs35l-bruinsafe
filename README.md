@@ -96,6 +96,12 @@ Database should be fully setup for running app.
 
 If you run into any issues, visit [MongoDB Atlas Docs](https://www.mongodb.com/docs/atlas/getting-started/)
 
+### Google Maps Directions API
+
+The [Google Maps Directions API](https://developers.google.com/maps/documentation/directions/overview) is required to show directions in the application. You need to sign up for an account and generate an API key.
+
+Then, run `export GOOGLE_APIKEY={YOUR_API_KEY_HERE_WITHOUT_BRACKETS}` to set the key as an environment variable. `npx expo start` should then be run in the same terminal session where the environment variable was set.
+
 ### Running
 
 - Run:
