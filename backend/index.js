@@ -52,12 +52,12 @@ app.post("/user/login", async (req, res) => {
   const email = req.body.email;
   const model = await UserModel.findOne({ email: email }).exec();
   if (!model) {
-    res.status(400).json({ error: "User not found" });
+    res.status(200).json({ error: "User not found" });
   } else {
     if (!req.body.password) res.send("Invalid password", 400);
     const pw = hashpw(req.body.password); 
     if (model.password != pw) {
-      res.status(400).json({ error: "Wrong password" });
+      res.status(200).json({ error: "Wrong password" });
     } else {
       res.status(200).json(model.toJSON());
     }
