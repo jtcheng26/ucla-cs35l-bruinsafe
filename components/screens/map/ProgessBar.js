@@ -12,7 +12,7 @@ export default function ProgressBar({ progress=0 }) {
     useEffect(() => {
         if (progress || progress === 0)  {
             const t = Animated.timing(prog, {
-                toValue: progress * 200,
+                toValue: (isNaN(progress) ? 0 : progress) * 200,
                 duration: 500,
                 useNativeDriver: false,
             });
@@ -30,8 +30,7 @@ export default function ProgressBar({ progress=0 }) {
         <View className="relative mb-2">
             <TouchableScale className="absolute ml-3 py-1 rounded-full bg-amber-500/40 z-0 w-full" style={{width: 200}} activeScale={1}>
             </TouchableScale>
-            <TouchableScale className={progressStyle} style={{width: prog ? prog : 1}} activeScale={1}>
-            </TouchableScale>
+            <Animated.View className={progressStyle} style={{width: prog}} activeScale={1} />
         </View>
     );
 }
