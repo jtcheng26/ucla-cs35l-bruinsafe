@@ -10,30 +10,26 @@ export default function ReportsPanel({
 }) {
 
 
-    return (
+    return ( 
         <View
-        className="h-full items-center w-48"
-        >   
+        className="rounded-xl bg-blue-950 w-11/12 p-3 my-2 mx-2"
+        >
             <Text
-            className="text-amber-400 text-sm font-semibold mb-1"
+            className="text-amber-400 text-xs font-semibold mb-1"
             >
                 {date}
             </Text>
-
-            <View
-            className="rounded-xl bg-blue-950 h-5/6 w-11/12 p-1 items-center"
+            <Text
+            className="text-red-400/80 font-semibold mb-1"
             >
-                <Text
-                className="my-1 text-md text-blue-300 font-semibold text"
-                >
-                    {type}
-                </Text>
-                <Text
-                className="font-bold mx-1 text-xs text-zinc-200/80"
-                >
-                    {desc}
-                </Text>
-            </View>
+                {type}
+            </Text>
+            <Text
+            className="text-xs text-blue-200/80"
+            >
+                {desc}
+            </Text>
         </View>
+
     )
 }

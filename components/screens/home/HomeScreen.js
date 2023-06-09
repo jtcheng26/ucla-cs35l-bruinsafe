@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, SafeAreaView, TextInput, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, SafeAreaView, TextInput, RefreshControl, FlatList } from 'react-native';
 import { Stack, useRouter } from 'expo-router'
 import MapView from 'react-native-maps'
 import ProfileHeader from '../../overlays/ProfileHeader';
@@ -44,36 +44,20 @@ export default function HomeScreen({updateScreen}) {
                 if(id) {
                     setWalks(response.data.filter(u => u.user._id !== id).filter(u => u.state === 0));
                     setFullWalks(response.data.filter(u => u.user._id !== id).filter(u => u.state === 0));
-                    setTimeout(() => {
-                        setRefreshWalks(false);
-                    }, (Math.random()*1000 + 100));
+                    setRefreshWalks(false);
                 }
+                const cur_loc = {
+                    latitude: 34.068925,
+                    longitude: -118.446629
+                }
+                const response1 = await axios.post(BASE_URL + "/report/search", cur_loc); 
+                setReports((response1.data).reverse())
             } catch(e) {
                 console.error(e)
             }
         }
         fetchNearbyUsers();
-    }, [refreshWalks])
-
-    // const onRefreshReports = useCallback(() => {
-    //     setRefreshReports(true);
-    //     const fetchNearbyReports = async() => {
-    //         try {
-    //             const cur_loc = {
-    //                 latitude: 34.068925,
-    //                 longitude: -118.446629
-    //             }a
-    //             const response = await axios.post(BASE_URL + "/report/search", cur_loc); //All reports not nearby (possibly unintentional)
-    //             setReports((response.data).reverse())
-    //             setTimeout(() => {
-    //                 setRefreshReports(false);
-    //               }, (Math.random()*2000 + 100));
-    //         } catch(e) {
-    //             console.error(e);
-    //         }
-    //     }
-    //     fetchNearbyReports();
-    // }, [refreshReports])
+    }, [refreshWalks, id])
 
     //ran once when component is first rendered
     useEffect(() => {
@@ -89,7 +73,7 @@ export default function HomeScreen({updateScreen}) {
             }
         }
         fetchNearbyUsers();
-    }, []);
+    }, [id]);
 
     useEffect(() => {
         const fetchNearbyReports = async() => {
@@ -146,22 +130,14 @@ export default function HomeScreen({updateScreen}) {
     }, [walkAccepted])
 
     return (
-        <View className="flex-1 bg-blue-900/90">
-            <Text
-            className="text-2xl font-semibold text-amber-400 mt-28 ml-8"
-            >
-                Walk Requests
-            </Text>
+        <View
+        className="w-full h-full bg-blue-900/90 justify-center"
+        >
             <View
-            className="w-full h-2/5 items-center justify-center"
+            className="h-3/4"
             >
-                <TextInput
-                className="w-11/12 h-10 my-4 bg-gray-300 rounded-xl p-1 px-4"
-                placeholder='Search for a Walk by Name'
-                onChangeText={(query) => search(query)}
-                />
-                <ScrollView
-                className="w-11/12"
+                <ScrollView 
+                className=""
                 refreshControl={
                     <RefreshControl 
                     onRefresh={onRefreshWalks}
@@ -169,64 +145,99 @@ export default function HomeScreen({updateScreen}) {
                     />
                 }
                 >
-                    {(walks.length > 0) ? 
-                        (walks.map(walk => ( //All nondeclined walks
-                        <WalkingRequestPanel 
-                        key={walk._id}
-                        user={walk.user}
-                        walk_id={walk._id}
-                        onAccept={handleAccept}
-                        walk_obj={walk}
+                    <Text
+                    className="text-2xl font-semibold text-amber-400 ml-8 mt-4"
+                    >
+                        Walk Requests
+                    </Text>
+                    <View
+                    className="w-full items-center justify-center"
+                    >
+                        <TextInput
+                        className="w-11/12 h-10 my-4 bg-gray-300 rounded-xl p-1 px-4"
+                        placeholder='Search for a Walk by Name'
+                        onChangeText={(query) => search(query)}
                         />
-                        ))) : 
-                            (<Text
-                            className="text-sky-200 font-semibold top-full ml-4"
+                        <View
+                        className="w-11/12"
+                        >
+                            {(walks.length > 0) ? 
+                                (walks.map(walk => ( //All nondeclined walks
+                                <WalkingRequestPanel 
+                                key={walk._id}
+                                user={walk.user}
+                                walk_id={walk._id}
+                                onAccept={handleAccept}
+                                walk_obj={walk}
+                                />
+                                ))) : 
+                                    (<Text
+                                    className="text-sky-200 font-semibold top-full ml-4"
+                                    >
+                                        No Current Walking Requests
+                                    </Text>)
+                            }
+                        </View>
+                    </View>
+                    <Text
+                    className="text-2xl font-semibold text-blue-200 mt-4 mb-4 ml-8"
+                    >
+                        Nearby Incidents
+                    </Text>
+                    <View
+                    className="items-center"
+                    >
+                        <View
+                        className="w-11/12 flex-row"
+                        >
+                            <View
+                            className="w-1/2"
                             >
-                                No Current Walking Requests
-                            </Text>)
-                    }
+                                {(reports.length > 0) ? 
+                                    (reports.filter((_, i) => i%2).map((report) => ( //All reports
+                                    <ReportsPanel
+                                    key={report._id}
+                                    type={report.types.join(", ")}
+                                    desc={report.description}
+                                    date={month[report.timestamp.slice(5,7)] + " " +
+                                        report.timestamp.slice(8,10)
+                                    }
+                                    />))) : 
+                                    (
+                                        <Text
+                                        className="text-sky-200 font-semibold"
+                                        >
+                                            No Current Incidents Reported
+                                        </Text>
+                                    )
+                                }
+                            </View>
+                            <View
+                            className="w-1/2"
+                            >
+                                {(reports.length > 0) ? 
+                                    (reports.filter((_, i) => i%2===0).map((report) => ( //All reports
+                                    <ReportsPanel
+                                    key={report._id}
+                                    type={report.types.join(", ")}
+                                    desc={report.description}
+                                    date={month[report.timestamp.slice(5,7)] + " " +
+                                        report.timestamp.slice(8,10)
+                                    }
+                                    />))) : 
+                                    (
+                                        <Text
+                                        className="text-sky-200 font-semibold"
+                                        >
+                                            No Current Incidents Reported
+                                        </Text>
+                                    )
+                                }
+                            </View>
+                        </View>
+                    </View>
                 </ScrollView>
             </View>
-            <Text
-            className="text-2xl font-semibold text-blue-200 mt-4 mb-4 ml-8"
-            >
-                Nearby Incidents
-            </Text>
-            <View
-            className="w-full h-1/5 items-center justify-center"
-            >
-                <ScrollView
-                className="w-11/12"
-                horizontal
-                // refreshControl={
-                //     <RefreshControl 
-                //     onRefresh={onRefreshReports}
-                //     refreshing={refreshReports}
-                //     />
-                // }
-                >
-                    {(reports.length > 0) ? 
-                        (reports.map((report) => ( //All reports
-                        <ReportsPanel
-                        key={report._id}
-                        type={report.types.join(", ")}
-                        desc={report.description}
-                        date={month[report.timestamp.slice(5,7)] + " " +
-                            report.timestamp.slice(8,10) + 
-                            ", " + report.timestamp.slice(0,4)
-                        }
-                        />))) : 
-                        (
-                            <Text
-                            className="text-sky-200 font-semibold"
-                            >
-                                No Current Incidents Reported
-                            </Text>
-                        )
-                    }
-                </ScrollView>
-            </View>
-            
         </View>
     );
 }
