@@ -11,7 +11,7 @@ import { BASE_URL } from "../../../constants";
 
 export default function ReportScreen() {
     const styles = {
-        inputField: "p-2 text-white rounded-xl w-12/12 m-2 bg-violet-300/60 justify-start border-black",
+        inputField: "p-2 text-blue-100 rounded-xl w-12/12 m-2 bg-blue-950/80 justify-start",
         inputText: "text-blue-200 text-md align-left mt-6 mb-1 ml-3"
     }
 
@@ -111,7 +111,7 @@ export default function ReportScreen() {
                 open={ddopen}
                 onPress={() => setDDOpen(!ddopen)}
                 style={{
-                    backgroundColor: "rgb(146 141 227)",
+                    backgroundColor: "#172554",
                     width: '96%',
                     marginLeft: '2%',
                     marginVertical: '2%'
@@ -120,7 +120,7 @@ export default function ReportScreen() {
                     color: "#ffffff"
                   }}
                 dropDownContainerStyle={{
-                    backgroundColor: "rgb(146 141 227)",
+                    backgroundColor: "#172554",
                     width: '96%',
                     marginLeft: '2%'
                 }}
@@ -131,15 +131,15 @@ export default function ReportScreen() {
                     color: "#ffffff"
                 }}
                 selectedItemContainerStyle={{
-                    backgroundColor: "#6d64ed"
+                    backgroundColor: "#f87171"
                 }}
                 selectedItemLabelStyle={{
-                    color: "#FFF"
+                    color: "#000"
                 }}
                 badgeTextStyle={{
-                    color: "#FFF"
+                    color: "#000"
                 }}
-                badgeColors="#4f46e5"
+                badgeColors="#f87171"
                 />
 
                 <Text
@@ -178,7 +178,7 @@ export default function ReportScreen() {
             className="justify-center items-center"
             >
                 <View
-                className="rounded-xl bg-violet-300/70 w-10/12 h-44 items-center"
+                className="rounded-xl bg-blue-900/90 w-10/12 h-44 items-center"
                 >
                     <Text
                     className="font-bold text-white text-2xl mt-4"
@@ -194,7 +194,7 @@ export default function ReportScreen() {
 
                     {/* <View> */}
                     <TouchableScale
-                    className=" bg-zinc-300/80 rounded-md py-2 px-4 mt-3 items-center absolute bottom-4"
+                    className=" bg-violet-300/80 rounded-md py-2 px-4 mt-3 items-center absolute bottom-4"
                     onPress={() => clear()}
                     >
                         <Text
@@ -209,8 +209,8 @@ export default function ReportScreen() {
 
 
             <TouchableScale
-            className="rounded-lg mt-16 h-10 w-40 justify-center items-center bg-zinc-300/70"
-            activeScale={0.95}
+            className={"rounded-lg mt-16 h-10 w-40 justify-center items-center " +  ((incidentValue.length == 0 || !incidentDescription) ? "bg-zinc-300/70" : "bg-red-400/80")}
+            activeScale={((incidentValue.length == 0 || !incidentDescription) ? 1 : 0.95)}
             onPress={handleSubmit}
             >
                 <Text
@@ -219,7 +219,7 @@ export default function ReportScreen() {
                 Submit Incident
                 </Text>
             </TouchableScale>
-            {
+            {/* {
                 (submitPressed && (incidentValue.length == 0 || !incidentDescription))
                 ? (
                     <Text
@@ -229,7 +229,7 @@ export default function ReportScreen() {
                     </Text>
                 )
                 : (<></>)
-            }
+            } */}
         </SafeAreaView>
     );
 }
