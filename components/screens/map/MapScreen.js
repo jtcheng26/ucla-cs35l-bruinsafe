@@ -1,4 +1,4 @@
-import { View, Text, Modal, Alert } from "react-native";
+import { View, Text, Modal, Alert, Image } from "react-native";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import NavBar from "../../overlays/NavBar";
@@ -20,6 +20,8 @@ import useUserId from "../../hooks/useUserId";
 import ConfirmPath from "./confirmPath";
 import TouchableScale from "react-native-touchable-scale";
 import Megaphone from '../../../assets/megaphone.svg';
+import Walking from "../../../assets/walking.svg"
+import PFP from "../../../assets/Default_pfp.svg.png"
 import EndWalk from './endWalk';
 import MapViewDirections from "react-native-maps-directions";
 import useSockets from "../../hooks/useSockets";
@@ -519,10 +521,18 @@ export default function MapScreen() {
         showsCompass
       >
         {isGuardian && walkerLoc && (
-          <Marker 
-          coordinate={walkerLoc.coords}
-          pinColor={"#FFFFFF"}
-          />
+          <Marker
+        coordinate={walkerLoc.coords}
+        >
+          <View
+          className="w-10 h-10 bg-white rounded-full items-center just"
+          >
+            <Image
+            source={PFP}
+            className="w-10 h-10"
+            />
+          </View>
+        </Marker>
         )}
         {mapMarkerList && mapMarkerList.length >= 1 ? (
           <>
