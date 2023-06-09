@@ -151,7 +151,7 @@ export default function HomeScreen({updateScreen}) {
                         Walk Requests
                     </Text>
                     <View
-                    className="w-full items-center justify-center"
+                    className="w-full items-center justify-center mb-8"
                     >
                         <TextInput
                         className="w-11/12 h-10 my-4 bg-gray-300 rounded-xl p-1 px-4"
@@ -172,7 +172,7 @@ export default function HomeScreen({updateScreen}) {
                                 />
                                 ))) : 
                                     (<Text
-                                    className="text-sky-200 font-semibold top-full ml-4"
+                                    className="text-blue-400 font-semibold top-full ml-4"
                                     >
                                         No Current Walking Requests
                                     </Text>)
@@ -205,7 +205,7 @@ export default function HomeScreen({updateScreen}) {
                                     />))) : 
                                     (
                                         <Text
-                                        className="text-sky-200 font-semibold"
+                                        className="text-blue-400 font-semibold mt-4"
                                         >
                                             No Current Incidents Reported
                                         </Text>
