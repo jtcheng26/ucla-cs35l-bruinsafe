@@ -9,9 +9,11 @@ export default function useSockets() {
   const [socket, setSocket] = useState();
   const [walkerLoc, setWalkerLoc] = useState();
   const [roomId, setRoomId] = useState(null);
+  const [isEnded, setEnd] = useState(false)
   const createRoom = useCallback(() => {
     socket.emit("start", id);
     setRoomId(id)
+    setEnd(false)
   }, [socket, id]);
   const joinRoom = useCallback(
     (room_id) => {
@@ -22,8 +24,9 @@ export default function useSockets() {
   );
   const endRoom = useCallback(
     (room_id) => {
-      socket.emit("end", room_id); //end event, session is null
+      setEnd(false)
       setRoomId(null)
+      socket.emit("end", room_id); //end event, session is null
     },
     [socket]
   );
@@ -40,11 +43,18 @@ export default function useSockets() {
       sock.on("connect", () => {
         setSocket(sock);
       });
+      sock.on("end", () => {
+        console.log(roomId, "Received end signal")
+        setEnd(true)
+      })
+      sock.on("join", () => {
+        setEnd(false)
+      })
       sock.on("disconnect", () => {
         setSocket(sock);
       });
       sock.on("loc", (val) => {
-        console.log("Received location:", val);
+        // console.log("Received location:", val);
         setWalkerLoc(val);
       });
     })();
@@ -52,11 +62,13 @@ export default function useSockets() {
   return {
     socket,
     connected: socket && socket.connected,
+    isEnded,
     roomId,
     createRoom,
     joinRoom,
     endRoom,
     walkerLoc,
     shareLoc,
+    setEnd
   };
 }

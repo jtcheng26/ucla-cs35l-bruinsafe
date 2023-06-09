@@ -3,7 +3,7 @@ import Svg, { Path, SvgXml, SvgUri, Circle } from 'react-native-svg';
 import pfp from "../../../assets/Default_pfp.svg.png"
 import ProgressBar from './ProgessBar';
 
-export default function WalkingPage({walkerFullName, locationName, currentTime, timeLeft}) {
+export default function WalkingPage({walkerFullName, locationName, currentTime, timeLeft, progress}) {
     return (
         <View className="absolute bottom-10 mb-20 w-11/12 rounded-2xl px-2 pt-1 pb-3 bg-blue-600 shadow-xl">
             <View className="flex-row items-center align-center justify-between">
@@ -29,7 +29,7 @@ export default function WalkingPage({walkerFullName, locationName, currentTime, 
             </View>
             <View className="flex-row align-center items-center mt-2 ml-3">
                 <Text className="font-bold text-amber-400 text-base">{timeLeft} min left</Text>
-                <ProgressBar/>
+                <ProgressBar progress={progress}/>
             </View>
         </View>
     );

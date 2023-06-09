@@ -25,7 +25,7 @@ import MapViewDirections from "react-native-maps-directions";
 import useSockets from "../../hooks/useSockets";
 import isOutsidePath from "../../utils/isOutsidePath";
 import isDoneWalk from "../../utils/isDoneWalk";
-import timeToDestination from "../../utils/timeToDestination";
+import timeToDestination, { progressToDestination } from "../../utils/timeToDestination";
 
 // const origin = { latitude: 34.070819, longitude: -118.449262 };
 // const destination = { latitude: 34.069201, longitude: -118.443515 };
@@ -233,6 +233,7 @@ export default function MapScreen() {
           walkerFullName={currentWalker}
           currentTime={currentDateTime}
           timeLeft={timeToDestination(location, path)}
+          progress={progressToDestination(walkerLoc ? walkerLoc.coords : path ? path.coordinates[0] : { latitude: 0, longitude: 0}, path)}
           onPress={setButtonAction}
         />
       );
@@ -395,25 +396,46 @@ export default function MapScreen() {
     shareLoc,
     walkerLoc,
     roomId,
+    isEnded,
+    setEnd
   } = useSockets();
-  useEffect(() => {
-    console.log(walkerLoc);
-    if (isGuardian && walkerLoc) {
-      console.log("Received location from walker", walkerLoc);
-    }
-  }, [isGuardian, walkerLoc]);
+  // useEffect(() => {
+  //   // console.log(walkerLoc);
+  //   if (isGuardian && walkerLoc) {
+  //     console.log("Received location from walker");
+  //   }
+  // }, [isGuardian, walkerLoc]);
   function endWalk() {
+    console.log("Ending walk", isEnded, currentWalkId)
     setMapMarkerList([]);
     setWalking(false);
     setIsGuardian(false);
     setCurrentWalker("");
     setButtonAction(0);
-    axios.post(BASE_URL + "/walk/end", { id: currentWalkId });
+    if (!isGuardian) {
+      axios.post(BASE_URL + "/walk/end", { id: currentWalkId });
+      endRoom(currentWalkId);
+    }
+    else {
+      // TODO: alert the user finished walk safely
+      Alert.alert("Finished Walk!", "The user safely made it to their destination. Thank you for your service!", [
+        {
+          text: "Ok",
+          onPress: () => setEnd(false)
+        }
+        ])
+    }
     setCurrentWalkId(null);
+    setEnd(false)
+    console.log(id, "Set end to false")
   }
   useEffect(() => {
-    console.log(isAlerted, walkerLoc, isGuardian)
-    if (walkerLoc && path && isGuardian && isOutsidePath(walkerLoc, path) && !isAlerted) {
+    if (isGuardian && isEnded && currentWalkId)
+      endWalk()
+  }, [isGuardian, isEnded, currentWalkId])
+  useEffect(() => {
+    // console.log(isAlerted, walkerLoc, isGuardian)
+    if (walkerLoc && path && isGuardian && isOutsidePath(walkerLoc.coords, path) && !isAlerted) {
       setIsAlerted(true);
       Alert.alert("User has gone off Path!", "Call them to make sure they are OK!", [
       {
@@ -431,6 +453,7 @@ export default function MapScreen() {
   useEffect(() => {
     console.log(currentWalker, currentWalkId, isGuardian, connected)
     if (currentWalker && connected && path && currentWalkId) {
+      setEnd(false)
       joinRoom(currentWalkId);
       const stream = setInterval(async () => {
         if (!currentWalkId) clearInterval(stream);
@@ -440,7 +463,8 @@ export default function MapScreen() {
         });
        if (isDoneWalk(coords, path)) {
           console.log("User is finished walk.");
-          endRoom(currentWalkId);
+          // if (currentWalkId)
+          //   endRoom(currentWalkId);
           endWalk();
           clearInterval(stream);
         }
@@ -448,7 +472,8 @@ export default function MapScreen() {
         shareLoc(coords, currentWalkId);
       }, 1000);
       return () => {
-        endRoom(currentWalkId);
+        // if (currentWalkId)
+        //   endRoom(currentWalkId);
         clearInterval(stream);
       };
     }
