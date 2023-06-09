@@ -11,7 +11,7 @@ import { BASE_URL } from "../../../constants";
 
 export default function ReportScreen() {
     const styles = {
-        inputField: "p-2 text-white rounded-xl w-12/12 m-2 bg-violet-300/60 justify-start",
+        inputField: "p-2 text-white rounded-xl w-12/12 m-2 bg-violet-300/60 justify-start border-black",
         inputText: "text-blue-200 text-md align-left mt-6 mb-1 ml-3"
     }
 
