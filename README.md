@@ -13,19 +13,17 @@ BruinSafe is a mobile app that aims to enhance the personal safety of UCLA stude
 
 ## Table of Contents
 
-- [BruinSafe](#bruinsafe)
-  - [Table of Contents](#table-of-contents)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Running](#running)
-  - [Features](#features)
-  - [Issues](#issues)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Running](#running)
+- [Features](#features)
+- [Issues](#issues)
 
 ## Prerequisites
 
-- Node.js (>= v18.0.0)
+- Node.js (>= v18.0.0). Install Node [here](https://nodejs.org/en/download).
 - npm (>= v8.3.0)
-- Expo CLI (>= v6.3.0)
+- Expo CLI (>= v6.3.0).
   - For installation instructions: [Expo CLI Installation](https://docs.expo.dev/more/expo-cli#installation)
 - Expo Go (Mobile App)
 
@@ -42,11 +40,7 @@ BruinSafe is a mobile app that aims to enhance the personal safety of UCLA stude
    cd ./ucla-cs35L-bruinsafe
     ```
 
-2. Install dependencies by running:
-
-   ```shell
-   npm install
-   ```
+2. Install dependencies by running ``npm install``
 
 ### Setup MongoDB
 
@@ -73,7 +67,7 @@ Wait for Cluster Provisioning to finish.
 Once finished, press `Connect`. Under `Connect to your application`, select `Drivers`.
 
 Follow driver installation instructions. Copy your connection string.
-Should be in the format: 
+Should be in the format:
 ``mongodb+srv://<username>:<password>@cluster0.qan00x8.mongodb.net/?retryWrites=true&w=majority``.
 
 **Remember to replace &lt;username&gt; and &lt;password&gt; with your login credentials.**
@@ -104,26 +98,15 @@ Then, run `export GOOGLE_APIKEY={YOUR_API_KEY_HERE_WITHOUT_BRACKETS}` to set the
 
 ### Running
 
-- Run:
-
-    ``` shell
-    npm start
-    ```
-
+- Run ``npm start``
 - On mobile device switch to same WIFI as local device
 - On mobile device scan QR code:
   - If IOS scan using Camera App
   - If Android scan using Expo Go App
   - Certain networks may create issues, if so:
     - Stop hosting on local device by typing `CTRL-C`
-    - Run:
-
-        ```bash
-        expo-cli start --tunnel
-        ```
-
+    - Run:``expo-cli start --tunnel``
     - Repeat above steps
-
 
 ## Features
 
