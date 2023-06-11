@@ -45,8 +45,8 @@ user: userid coords
 const walkAccept = async (req, res) => {
   const walkId = req.body.id;
   const userId = req.body.user;
-  const walk = await WalkModel.findById(walkId).exec();
-  const findUser = await UserModel.findById(userId).exec();
+  const walk = await WalkModel.findById(walkId).exec(); //check if walk exists
+  const findUser = await UserModel.findById(userId).exec(); //check if guardian exists
   if (!findUser) {
     res.status(400).send("User not found");
   } else if (!walk) {
@@ -63,7 +63,7 @@ const walkAccept = async (req, res) => {
 
 const walkEnd = async (req, res) => {
   const walkId = req.body.id;
-  const deleteRes = await WalkModel.findByIdAndDelete(walkId).exec();
+  const deleteRes = await WalkModel.findByIdAndDelete(walkId).exec(); //delete walk if it exists
   if (deleteRes) {
     res.send("Walk deleted successfully");
   } else res.status(400).send("Cannot delete nonexistent walk");

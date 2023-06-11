@@ -115,16 +115,15 @@ app.post("/report/search", async (req, res) => {
     longitude: req.body.longitude,
   };
   // optimize this for larger datasets in the future
-  const all = await ReportModel.find({}); //potential issue: perhaps we should sort reports when sending b/c recent is more pressing
-
+  const all = await ReportModel.find({});
   const nearby = all.filter((report) => {
     //filter "nearby" report using distance formula per each report
     const reportLoc = report.get("location");
     const dx = Math.abs(myLoc.latitude - reportLoc.latitude);
     const dy = Math.abs(myLoc.longitude - reportLoc.longitude);
-    return dx * dx + dy * dy <= MAX_RADIUS; //ISSUE: Need to square root of dx^2 + dy^2 to check radius
+    return dx * dx + dy * dy <= MAX_RADIUS;
   });
-  res.send(nearby); //ISSUE: Returns all Reports not nearby reports, Not sure if this is intended functionality
+  res.send(nearby);
 });
 
 const REPORT_TYPES = [

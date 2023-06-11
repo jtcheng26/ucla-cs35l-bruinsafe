@@ -5,6 +5,7 @@ export default function SafetyLevel({ numReports }) {
     textStyle: "",
     text: "",
   };
+  //Arbitrary values describing safety level
   if (numReports > 20) {
     styles.textStyle += "text-red-600 font-bold text-lg";
     styles.text = "Dangerous";

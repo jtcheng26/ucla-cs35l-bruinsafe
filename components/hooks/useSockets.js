@@ -3,7 +3,7 @@ import { io } from "socket.io-client";
 import { BASE_URL } from "../../constants";
 import useUserId from "./useUserId";
 
-//session management
+//session management -> joining a walk
 export default function useSockets() {
   const { id } = useUserId();
   const [socket, setSocket] = useState();

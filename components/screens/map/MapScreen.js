@@ -106,53 +106,58 @@ export default function MapScreen() {
   const findWalkPath = async () => {
     if (id) {
       const result = await axios.get(BASE_URL + "/walk/get");
-      let filtered = result.data.filter((w) => w.user._id == id);
-      let guard = result.data.filter((w) =>
+      let filtered = result.data.filter((w) => w.user._id == id); //filter for user's requested walk if exists
+      let guard = result.data.filter((w) => //filter for walk where user is "guardian" if exists
         w.guardian ? w.guardian._id == id : false
       );
-      if (filtered.length > 0) {
-        if (filtered[0].state) {
+      if (filtered.length > 0) { //if user requested walk
+        if (filtered[0].state) { //if walk has been accepted
           setButtonAction(1);
-          setCurrentWalker(filtered[0].guardian.name);
+          setCurrentWalker(filtered[0].guardian.name); //person walking
           setCurrentWalkId(filtered[0]._id);
-        } else {
+        } else { //if waiting for walk
           setButtonAction(3);
           setWaiting(true);
         }
-      } else if (guard.length > 0) {
+      } else if (guard.length > 0) { //if user is guardian for a walk or walks
         setMapMarkerList(guard);
         setIsGuardian(true);
         setButtonAction(1);
         setCurrentWalkId(guard[0]._id);
-        setCurrentWalker(guard[0].user.name);
+        setCurrentWalker(guard[0].user.name); //person walking
       }
     }
   };
+  //on inital render ask for perms
   useEffect(() => {
     getPermissions();
   }, []);
+  //whenever path state is updated run
   useEffect(() => {
     const hrs = timeToDestination(location, path);
     console.log("TIME LEFT: " + Math.floor(hrs));
   }, [path]);
+
+  //whenever the current user's id is updated
   useEffect(() => {
     if (id) findWalkPath();
   }, [id]);
+
   const fetchMarkers = async () => {
-    let allMarkers = await axios.get(BASE_URL + "/walk/get");
-    let copyMarkers = allMarkers.data.filter((x) => x.user._id === id);
-    let guardMarkers = allMarkers.data.filter((x) =>
+    let allMarkers = await axios.get(BASE_URL + "/walk/get"); 
+    let copyMarkers = allMarkers.data.filter((x) => x.user._id === id); //all walks that curr user requested
+    let guardMarkers = allMarkers.data.filter((x) => //all walks that curr user is guardian for
       x.guardian ? x.guardian._id === id : false
     );
 
-    if (copyMarkers.length) {
-      setMapMarkerList(copyMarkers);
+    if (copyMarkers.length) { //if requested walk
+      setMapMarkerList(copyMarkers); //markers for your requested walks
       if (copyMarkers[0].state) {
         setWalking(true);
         setCurrentWalkId(copyMarkers[0]._id);
       }
-    } else if (guardMarkers.length) {
-      setMapMarkerList(guardMarkers);
+    } else if (guardMarkers.length) { //if guardian for a walk
+      setMapMarkerList(guardMarkers); //markers for marks youre guarding
       setMapMarkerList(guardMarkers);
       setIsGuardian(true);
       setCurrentWalkId(guardMarkers[0]._id);
@@ -160,6 +165,8 @@ export default function MapScreen() {
       setButtonAction(1);
     }
   };
+
+  //utilizing expo apis
   const getLocation = async (accuracy = 3) => {
     try {
       let curLocation = {
@@ -168,14 +175,14 @@ export default function MapScreen() {
           longitude: 0,
         },
       };
-      curLocation = await Location.getCurrentPositionAsync({
+      curLocation = await Location.getCurrentPositionAsync({ //expo api for curr pos
         accuracy: accuracy,
       });
       const heading = await Location.getHeadingAsync();
       let locCopy = { ...location };
       locCopy.latitude = curLocation.coords.latitude;
       locCopy.longitude = curLocation.coords.longitude;
-      setLocation(locCopy);
+      setLocation(locCopy); //set location to curr location
       setDeviceHeading(heading);
       setFoundUserLoc(true);
       return { coords: locCopy, heading: heading.magHeading };
@@ -183,6 +190,7 @@ export default function MapScreen() {
       console.error(e);
     }
   };
+
   useEffect(() => {
     (async () => {
       await getPermissions();
@@ -256,6 +264,7 @@ export default function MapScreen() {
     }
   };
 
+  //calleded whenever waiting state is updated
   useEffect(() => {
     if (waiting) {
       const interval = setInterval(async () => {
@@ -275,6 +284,8 @@ export default function MapScreen() {
       return () => clearInterval(interval);
     }
   }, [waiting]);
+
+
   const fetchData = async () => {
     try {
       let dataCopy = { ...data };
@@ -282,7 +293,7 @@ export default function MapScreen() {
         latitude: location.latitude,
         longitude: location.longitude,
       });
-      let currentLocation = await axios.get(
+      let currentLocation = await axios.get( //curr location for openweathermpa api
         "http://api.openweathermap.org/geo/1.0/reverse?lat=" +
           location.latitude +
           "&lon=" +
@@ -300,12 +311,15 @@ export default function MapScreen() {
   const handleRegionChange = (region) => {
     setRegion(region);
   };
+
   useEffect(() => {
     fetchData();
   }, []);
+
   useEffect(() => {
     if (id) fetchMarkers();
   }, [id]);
+
   const mapRef = useRef(null);
   function animateToLocation(
     coords,
@@ -356,7 +370,7 @@ export default function MapScreen() {
     roomId,
     isEnded,
     setEnd,
-  } = useSockets();
+  } = useSockets(); //destructed vals from sockets hook 
 
   function endWalk() {
     console.log("Ending walk", isEnded, currentWalkId);
@@ -366,8 +380,8 @@ export default function MapScreen() {
     setCurrentWalker("");
     setButtonAction(0);
     if (!isGuardian) {
-      axios.post(BASE_URL + "/walk/end", { id: currentWalkId });
-      endRoom(currentWalkId);
+      axios.post(BASE_URL + "/walk/end", { id: currentWalkId }); //api endpoint for deleting walk from db
+      endRoom(currentWalkId); //end current session
     } else {
       Alert.alert(
         "Finished Walk!",
@@ -384,6 +398,7 @@ export default function MapScreen() {
     setEnd(false);
     console.log(id, "Set end to false");
   }
+  
   useEffect(() => {
     if (isGuardian && isEnded && currentWalkId) endWalk();
   }, [isGuardian, isEnded, currentWalkId]);
@@ -413,6 +428,8 @@ export default function MapScreen() {
       console.log("User is leaving path!");
     }
   }, [walkerLoc, path, isAlerted, setIsAlerted, isGuardian]);
+
+
   useEffect(() => {
     console.log(currentWalker, currentWalkId, isGuardian, connected);
     if (currentWalker && connected && path && currentWalkId) {
